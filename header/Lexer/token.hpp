@@ -10,7 +10,7 @@ keywords:
 "move","mut","pub","ref","return","self","Self","static","struct","super",
 "trait","true","type","unsafe","use","where","while".
 operator&signals:
-"LPARENT(","RPARENT)","LBRACK[","RBRACK]","SEMI;","ADD+","MINUS-","MULT*","DIV/","MOD%","&&LOGICAND","||LOGICOR","LOGICNOT",
+"LPARENT(","RPARENT)","LBRACK[","RBRACK]","SEMI;","ADD+","MINUS-","MULT*","DIV/","MOD%","&&LOGICAND","||LOGICOR","!LOGICNOT",
 "&AND","|OR","^XOR","!NOT","<<LEFTSHIHT","RIGHTSHIFT","GE>=","LE<=","GT>","LT<","EQUAL==","NOTEQUAL!=","ASSIGN".
 identifier.
 integer.
@@ -56,12 +56,34 @@ enum class TokenType {
   WHERE,
   WHILE,
 
+  ASSIGN,
+  EQUAL,
+  NOT_EQUAL,
+  LESS_THAN,
+  LESS_EQUAL,
+  GREATER_THAN,
+  GREATER_EQUAL,
+
+  LOGIC_AND,
+  LOGIC_OR,
+  NOT,
+
+  PLUS,
+  MINUS,
+  MUL,
+  DIV,
+  MOD,
+  XOR,
+  AND,
+  OR,
+  LEFT_SHIFT,
   RIGHT_SHIFT,
+
   PLUS_EQUAL,
   MINUS_EQUAL,
-  STAR_EQUAL,
-  SLASH_EQUAL,
-  PERCENT_EQUAL,
+  MUL_EQUAL,
+  DIV_EQUAL,
+  MOD_EQUAL,
   XOR_EQUAL,
   AND_EQUAL,
   OR_EQUAL,
@@ -81,12 +103,12 @@ enum class TokenType {
 
   ARROW,
   LEFT_ARROW,
-  FAT_ARROW,
+  FAT_ARROW, //?What?
 
-  HASH,
+  HASH, //#
   DOLLAR,
   QUESTION,
-  UNDERSCORE,
+  UNDERSCORE, //_
 
   LEFT_BRACE,
   RIGHT_BRACE,
@@ -107,7 +129,6 @@ enum class TokenType {
 
   RESERVED
 };
-
 struct Token {
   std::string content;
   TokenType type;
