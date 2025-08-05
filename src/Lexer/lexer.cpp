@@ -1,5 +1,6 @@
 #include "lexer.hpp"
 #include <regex>
+#include <stack>
 #include <stdexcept>
 #include <stdint.h>
 
@@ -173,9 +174,30 @@ auto Matcher::lexString(const std::string &target) const -> Token {
   return result;
 }
 
+auto commentLex(const std::string &target) -> std::string {
+  std::string result = target;
+  std::stack<int32_t> front;
+  for (int32_t i = 0; result[i] != 0; ++i) {
+    if (i > 0 && result[i] == '\\' && result[i - 1] == '*') {
+      if (!front.empty()) {
+        int32_t front_index = front.top();
+        int32_t length = i - front_index + 1;
+        result.erase(front_index, length);
+        i = front_index;
+        front.pop();
+      } else {
+        throw std::runtime_error("Block comment signs \\* not match");
+      }
+    } else if (result[i] == '\\' && result[i + 1] == '*') {
+      front.push(i);
+    }
+  }
+  return result;
+}
+
 auto lex(const std::string &target) -> std::vector<Token> {
   std::vector<Token> result;
-  std::string buffer = target;
+  std::string buffer = commentLex(target);
   while (!buffer.empty()) {
     auto next_token = Matcher::getInstance().lexString(buffer);
     if (next_token.type == TokenType::RESERVED) {
