@@ -52,7 +52,9 @@ auto lex(const std::string &target) -> std::vector<Token> {
   std::string buffer = target;
   while (!buffer.empty()) {
     auto next_token = Matcher::getInstance().lexString(buffer);
-    result.push_back(next_token);
+    if (next_token.type != TokenType::WHITESPACE) {
+      result.push_back(next_token);
+    }
     buffer.erase(0, next_token.content.length());
   }
   return result;
