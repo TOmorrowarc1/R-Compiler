@@ -8,109 +8,128 @@ struct Rule {
   TokenType type;
 };
 
-const int32_t RULES_NUM = 100;
+const int32_t RULES_NUM = 94;
 
 const Rule config_rules[RULES_NUM] = {
     /*
-    The list for a lex gramma, in which all keywords and punctions were done by
-    the AI.
+    The list for Lexer gramma, in which all keywords and punctions were done by
+    Gemini 2.5 Pro while others done by hands.
     */
-    {std::regex(R"(as)"), TokenType::AS},
-    {std::regex(R"(break)"), TokenType::BREAK},
-    {std::regex(R"(const)"), TokenType::CONST},
-    {std::regex(R"(continue)"), TokenType::CONTINUE},
-    {std::regex(R"(crate)"), TokenType::CRATE},
-    {std::regex(R"(else)"), TokenType::ELSE},
-    {std::regex(R"(enum)"), TokenType::ENUM},
-    {std::regex(R"(extern)"), TokenType::EXTERN},
-    {std::regex(R"(false)"), TokenType::FALSE},
-    {std::regex(R"(fn)"), TokenType::FN},
-    {std::regex(R"(for)"), TokenType::FOR},
-    {std::regex(R"(if)"), TokenType::IF},
-    {std::regex(R"(impl)"), TokenType::IMPL},
-    {std::regex(R"(in)"), TokenType::IN},
-    {std::regex(R"(let)"), TokenType::LET},
-    {std::regex(R"(loop)"), TokenType::LOOP},
-    {std::regex(R"(match)"), TokenType::MATCH},
-    {std::regex(R"(mod)"), TokenType::MOD},
-    {std::regex(R"(move)"), TokenType::MOVE},
-    {std::regex(R"(mut)"), TokenType::MUT},
-    {std::regex(R"(pub)"), TokenType::PUB},
-    {std::regex(R"(ref)"), TokenType::REF},
-    {std::regex(R"(return)"), TokenType::RETURN},
-    {std::regex(R"(self)"), TokenType::SELF},
-    {std::regex(R"(Self)"), TokenType::SELF_TYPE}, // 大写的 Self
-    {std::regex(R"(static)"), TokenType::STATIC},
-    {std::regex(R"(struct)"), TokenType::STRUCT},
-    {std::regex(R"(super)"), TokenType::SUPER},
-    {std::regex(R"(trait)"), TokenType::TRAIT},
-    {std::regex(R"(true)"), TokenType::TRUE},
-    {std::regex(R"(type)"), TokenType::TYPE},
-    {std::regex(R"(unsafe)"), TokenType::UNSAFE},
-    {std::regex(R"(use)"), TokenType::USE},
-    {std::regex(R"(where)"), TokenType::WHERE},
-    {std::regex(R"(while)"), TokenType::WHILE},
+    {std::regex(R"(^as)"), TokenType::AS},
+    {std::regex(R"(^break)"), TokenType::BREAK},
+    {std::regex(R"(^const)"), TokenType::CONST},
+    {std::regex(R"(^continue)"), TokenType::CONTINUE},
+    {std::regex(R"(^crate)"), TokenType::CRATE},
+    {std::regex(R"(^else)"), TokenType::ELSE},
+    {std::regex(R"(^enum)"), TokenType::ENUM},
+    {std::regex(R"(^extern)"), TokenType::EXTERN},
+    {std::regex(R"(^false)"), TokenType::FALSE},
+    {std::regex(R"(^fn)"), TokenType::FN},
+    {std::regex(R"(^for)"), TokenType::FOR},
+    {std::regex(R"(^if)"), TokenType::IF},
+    {std::regex(R"(^impl)"), TokenType::IMPL},
+    {std::regex(R"(^in)"), TokenType::IN},
+    {std::regex(R"(^let)"), TokenType::LET},
+    {std::regex(R"(^loop)"), TokenType::LOOP},
+    {std::regex(R"(^match)"), TokenType::MATCH},
+    {std::regex(R"(^mod)"), TokenType::MOD},
+    {std::regex(R"(^move)"), TokenType::MOVE},
+    {std::regex(R"(^mut)"), TokenType::MUT},
+    {std::regex(R"(^pub)"), TokenType::PUB},
+    {std::regex(R"(^ref)"), TokenType::REF},
+    {std::regex(R"(^return)"), TokenType::RETURN},
+    {std::regex(R"(^self)"), TokenType::SELF},
+    {std::regex(R"(^Self)"), TokenType::SELF_TYPE}, // 大写的 Self
+    {std::regex(R"(^static)"), TokenType::STATIC},
+    {std::regex(R"(^struct)"), TokenType::STRUCT},
+    {std::regex(R"(^super)"), TokenType::SUPER},
+    {std::regex(R"(^trait)"), TokenType::TRAIT},
+    {std::regex(R"(^true)"), TokenType::TRUE},
+    {std::regex(R"(^type)"), TokenType::TYPE},
+    {std::regex(R"(^unsafe)"), TokenType::UNSAFE},
+    {std::regex(R"(^use)"), TokenType::USE},
+    {std::regex(R"(^where)"), TokenType::WHERE},
+    {std::regex(R"(^while)"), TokenType::WHILE},
 
-    {std::regex(R"(=)"), TokenType::ASSIGN},
-    {std::regex(R"(==)"), TokenType::EQUAL},
-    {std::regex(R"(!=)"), TokenType::NOT_EQUAL},
-    {std::regex(R"(<)"), TokenType::LESS_THAN},
-    {std::regex(R"(<=)"), TokenType::LESS_EQUAL},
-    {std::regex(R"(>)"), TokenType::GREATER_THAN},
-    {std::regex(R"(>=)"), TokenType::GREATER_EQUAL},
+    {std::regex(R"(^=)"), TokenType::ASSIGN},
+    {std::regex(R"(^==)"), TokenType::EQUAL},
+    {std::regex(R"(^!=)"), TokenType::NOT_EQUAL},
+    {std::regex(R"(^<)"), TokenType::LESS_THAN},
+    {std::regex(R"(^<=)"), TokenType::LESS_EQUAL},
+    {std::regex(R"(^>)"), TokenType::GREATER_THAN},
+    {std::regex(R"(^>=)"), TokenType::GREATER_EQUAL},
 
-    {std::regex(R"(&&)"), TokenType::LOGIC_AND},
-    {std::regex(R"(\|\|)"), TokenType::LOGIC_OR},
-    {std::regex(R"(!)"), TokenType::NOT},
+    {std::regex(R"(^&&)"), TokenType::LOGIC_AND},
+    {std::regex(R"(^\|\|)"), TokenType::LOGIC_OR},
+    {std::regex(R"(^!)"), TokenType::NOT},
 
-    {std::regex(R"(\+)"), TokenType::PLUS},
-    {std::regex(R"(-)"), TokenType::MINUS},
-    {std::regex(R"(\*)"), TokenType::MUL},
-    {std::regex(R"(/)"), TokenType::DIV},
-    {std::regex(R"(%)"), TokenType::MOD},
-    {std::regex(R"(\^)"), TokenType::XOR},
-    {std::regex(R"(&)"), TokenType::AND},
-    {std::regex(R"(\|)"), TokenType::OR},
-    {std::regex(R"(<<)"), TokenType::LEFT_SHIFT},
-    {std::regex(R"(>>)"), TokenType::RIGHT_SHIFT},
+    {std::regex(R"(^\+)"), TokenType::PLUS},
+    {std::regex(R"(^-)"), TokenType::MINUS},
+    {std::regex(R"(^\*)"), TokenType::MUL},
+    {std::regex(R"(^/)"), TokenType::DIV},
+    {std::regex(R"(^%)"), TokenType::MOD},
+    {std::regex(R"(^\^)"), TokenType::XOR},
+    {std::regex(R"(^&)"), TokenType::AND},
+    {std::regex(R"(^\|)"), TokenType::OR},
+    {std::regex(R"(^<<)"), TokenType::LEFT_SHIFT},
+    {std::regex(R"(^>>)"), TokenType::RIGHT_SHIFT},
 
-    {std::regex(R"(\+=)"), TokenType::PLUS_EQUAL},
-    {std::regex(R"(-=)"), TokenType::MINUS_EQUAL},
-    {std::regex(R"(\*=)"), TokenType::MUL_EQUAL},
-    {std::regex(R"(/=)"), TokenType::DIV_EQUAL},
-    {std::regex(R"(%=)"), TokenType::MOD_EQUAL},
-    {std::regex(R"(\^=)"), TokenType::XOR_EQUAL},
-    {std::regex(R"(&=)"), TokenType::AND_EQUAL},
-    {std::regex(R"(\|=)"), TokenType::OR_EQUAL},
-    {std::regex(R"(<<=)"), TokenType::LEFT_SHIFT_EQUAL},
-    {std::regex(R"(>>=)"), TokenType::RIGHT_SHIFT_EQUAL},
+    {std::regex(R"(^\+=)"), TokenType::PLUS_EQUAL},
+    {std::regex(R"(^-=)"), TokenType::MINUS_EQUAL},
+    {std::regex(R"(^\*=)"), TokenType::MUL_EQUAL},
+    {std::regex(R"(^/=)"), TokenType::DIV_EQUAL},
+    {std::regex(R"(^%=)"), TokenType::MOD_EQUAL},
+    {std::regex(R"(^\^=)"), TokenType::XOR_EQUAL},
+    {std::regex(R"(^&=)"), TokenType::AND_EQUAL},
+    {std::regex(R"(^\|=)"), TokenType::OR_EQUAL},
+    {std::regex(R"(^<<=)"), TokenType::LEFT_SHIFT_EQUAL},
+    {std::regex(R"(^>>=)"), TokenType::RIGHT_SHIFT_EQUAL},
 
-    {std::regex(R"(@)"), TokenType::AT},
-    {std::regex(R"(\.)"), TokenType::DOT},
-    {std::regex(R"(\.\.)"), TokenType::DOT_DOT},
-    {std::regex(R"(\.\.\.)"), TokenType::DOT_DOT_DOT},
-    {std::regex(R"(\.\.=)"), TokenType::DOT_DOT_EQUAL},
+    {std::regex(R"(^@)"), TokenType::AT},
+    {std::regex(R"(^\.)"), TokenType::DOT},
+    {std::regex(R"(^\.\.)"), TokenType::DOT_DOT},
+    {std::regex(R"(^\.\.\.)"), TokenType::DOT_DOT_DOT},
+    {std::regex(R"(^\.\.=)"), TokenType::DOT_DOT_EQUAL},
 
-    {std::regex(R"(,)"), TokenType::COMMA},
-    {std::regex(R"(;)"), TokenType::SEMICOLON},
-    {std::regex(R"(:)"), TokenType::COLON},
-    {std::regex(R"(::)"), TokenType::COLON_COLON},
+    {std::regex(R"(^,)"), TokenType::COMMA},
+    {std::regex(R"(^;)"), TokenType::SEMICOLON},
+    {std::regex(R"(^:)"), TokenType::COLON},
+    {std::regex(R"(^::)"), TokenType::COLON_COLON},
 
-    {std::regex(R"(->)"), TokenType::ARROW},
-    {std::regex(R"(<-)"), TokenType::LEFT_ARROW},
-    {std::regex(R"(=>)"), TokenType::FAT_ARROW},
+    {std::regex(R"(^->)"), TokenType::ARROW},
+    {std::regex(R"(^<-)"), TokenType::LEFT_ARROW},
+    {std::regex(R"(^=>)"), TokenType::FAT_ARROW},
 
-    {std::regex(R"(#)"), TokenType::HASH},
-    {std::regex(R"(\$)"), TokenType::DOLLAR},
-    {std::regex(R"(\?)"), TokenType::QUESTION},
-    {std::regex(R"(_)"), TokenType::UNDERSCORE},
+    {std::regex(R"(^#)"), TokenType::HASH},
+    {std::regex(R"(^\$)"), TokenType::DOLLAR},
+    {std::regex(R"(^\?)"), TokenType::QUESTION},
+    {std::regex(R"(^_)"), TokenType::UNDERSCORE},
 
-    {std::regex(R"(\{)"), TokenType::LEFT_BRACE},
-    {std::regex(R"(\})"), TokenType::RIGHT_BRACE},
-    {std::regex(R"(\[)"), TokenType::LEFT_BRACKET},
-    {std::regex(R"(\])"), TokenType::RIGHT_BRACKET},
-    {std::regex(R"(\()"), TokenType::LEFT_PAREN},
-    {std::regex(R"(\))"), TokenType::RIGHT_PAREN},
+    {std::regex(R"(^\{)"), TokenType::LEFT_BRACE},
+    {std::regex(R"(^\})"), TokenType::RIGHT_BRACE},
+    {std::regex(R"(^\[)"), TokenType::LEFT_BRACKET},
+    {std::regex(R"(^\])"), TokenType::RIGHT_BRACKET},
+    {std::regex(R"(^\()"), TokenType::LEFT_PAREN},
+    {std::regex(R"(^\))"), TokenType::RIGHT_PAREN},
+
+    {std::regex(
+         R"(^[a-z][a-zA-Z0-9_]*|r#(?!(crate|self|super|Self)\b)[a-z][a-zA-Z0-9_]*)"),
+     TokenType::IDENTIFIER},
+
+    {std::regex(R"(^[^'\\\n\r\t]|(\\x[0-7][0-9a-fA-F]|\\[ntr0'\\]))"),
+     TokenType::CHARLITERAL},
+    {std::regex(
+         R"(^[0-9][0-9_]*|0b[0-1_]*[0-1][0-1_]*|0o[0-7_]*[0-7][0-7_]*|0x[0-9a-fA-F_]*[0-9a-fA-F][0-9a-fA-F_]*)"),
+     TokenType::INTEGERLITERAL},
+    // Float may have problem on "1."
+    {std::regex(R"(^[0-9][0-9_]*\.[0-9][0-9_])"), TokenType::FLOATLITERAL},
+
+    {std::regex(R"(^\s+)"), TokenType::WHITESPACE},
+    {std::regex(R"(^\/\/.*|\/\*(.|\n)*?\*\/)"), TokenType::COMMENT},
+
+    {std::regex(
+         R"(^0b[0-1_]*[0-1][0-1_]*[2-9]|0o[0-7_]*[0-7][0-7_]*[8-9]|0b[0-1_]*[0-1][0-1_]*\.[^_\.]|0o[0-7_]*[0-7][0-7_]*\.[^_\.]|0x[0-9a-fA-F_]*[0-9a-fA-F][0-9a-fA-F_]*\.[^_\.])"),
+     TokenType::RESERVED},
 
     /*End here.*/
 };
@@ -159,7 +178,11 @@ auto lex(const std::string &target) -> std::vector<Token> {
   std::string buffer = target;
   while (!buffer.empty()) {
     auto next_token = Matcher::getInstance().lexString(buffer);
-    if (next_token.type != TokenType::WHITESPACE) {
+    if (next_token.type == TokenType::RESERVED) {
+      throw std::runtime_error("The token reached some corner cases.");
+    }
+    if (next_token.type != TokenType::WHITESPACE &&
+        next_token.type != TokenType::COMMENT) {
       result.push_back(next_token);
     }
     buffer.erase(0, next_token.content.length());
