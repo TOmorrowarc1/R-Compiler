@@ -124,10 +124,9 @@ const Rule config_rules[RULES_NUM] = {
      TokenType::STRINGLITERAL},
     {std::regex(R"(^r(#*)\".*?\"\1)"), TokenType::RAWSTRINGLITERAL},
 
-    {std::regex(R"(^b'([^'\\\r]|\\x[0-9a-fA-F][0-9a-fA-F]|\\[nrt0'\\])*")"),
+    {std::regex(R"(^b'([^'\\\r]|\\x[0-7][0-9a-fA-F]|\\[nrt0'\\])*")"),
      TokenType::BYTELITERAL},
-    {std::regex(
-         R"(^b"([^"\\\r]|\\x[0-9a-fA-F][0-9a-fA-F]|\\[nrt0"\\]|\\\n)*")"),
+    {std::regex(R"(^b"([^"\\\r]|\\x[0-7][0-9a-fA-F]|\\[nrt0"\\]|\\\n)*")"),
      TokenType::BYTESTRINGLITERAL},
     {std::regex(R"(^br(#*)\".*?\"\1)"), TokenType::RAWBYTESTRINGLITERAL},
 
