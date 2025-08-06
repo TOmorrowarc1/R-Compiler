@@ -9,12 +9,13 @@ struct Rule {
   TokenType type;
 };
 
-const int32_t RULES_NUM = 94;
+const int32_t RULES_NUM = 102;
 
 const Rule config_rules[RULES_NUM] = {
     /*
     The list for Lexer gramma, in which all keywords and punctions were done by
     Gemini 2.5 Pro while others done by hands.
+    Undone: suffix, comment, merge.
     */
     {std::regex(R"(^as)"), TokenType::AS},
     {std::regex(R"(^break)"), TokenType::BREAK},
@@ -68,7 +69,7 @@ const Rule config_rules[RULES_NUM] = {
     {std::regex(R"(^-)"), TokenType::MINUS},
     {std::regex(R"(^\*)"), TokenType::MUL},
     {std::regex(R"(^/)"), TokenType::DIV},
-    {std::regex(R"(^%)"), TokenType::MOD},
+    {std::regex(R"(^%)"), TokenType::MOD_CAL},
     {std::regex(R"(^\^)"), TokenType::XOR},
     {std::regex(R"(^&)"), TokenType::AND},
     {std::regex(R"(^\|)"), TokenType::OR},
@@ -113,15 +114,33 @@ const Rule config_rules[RULES_NUM] = {
     {std::regex(R"(^\()"), TokenType::LEFT_PAREN},
     {std::regex(R"(^\))"), TokenType::RIGHT_PAREN},
 
-    {std::regex(
-         R"(^[a-z][a-zA-Z0-9_]*|r#(?!(crate|self|super|Self)\b)[a-z][a-zA-Z0-9_]*)"),
-     TokenType::IDENTIFIER},
+    {std::regex(R"(^[a-z][a-zA-Z0-9_]*)"), TokenType::IDENTIFIER},
+    {std::regex(R"(^r#(?!(crate|self|super|Self)\b)[a-z][a-zA-Z0-9_]*)"),
+     TokenType::RAWIDENTIFIER},
 
-    {std::regex(R"(^[^'\\\n\r\t]|(\\x[0-7][0-9a-fA-F]|\\[ntr0'\\]))"),
+    {std::regex(R"(^'([^'\\\n\r\t]|\\x[0-7][0-9a-fA-F]|\\[nrt0'\\])')"),
      TokenType::CHARLITERAL},
+
+    {std::regex(R"(^"([^"\\\r]|\\x[0-7][0-9a-fA-F]|\\[nrt0"\\]|\\\n)*")"),
+     TokenType::STRINGLITERAL},
+    {std::regex(R"(^r(#*)\".*?\"\1)"), TokenType::RAWSTRINGLITERAL},
+
+    {std::regex(R"(^b'([^'\\\r]|\\x[0-9a-fA-F][0-9a-fA-F]|\\[nrt0'\\])*")"),
+     TokenType::BYTELITERAL},
+    {std::regex(
+         R"(^b"([^"\\\r]|\\x[0-9a-fA-F][0-9a-fA-F]|\\[nrt0"\\]|\\\n)*")"),
+     TokenType::BYTESTRINGLITERAL},
+    {std::regex(R"(^br(#*)\".*?\"\1)"), TokenType::RAWBYTESTRINGLITERAL},
+
+    {std::regex(
+         R"(^c"([^"\\\r\x00]|\\x(?!00)[0-7][0-9a-fA-F]|\\[nrt"\\]|\\\n)*")"),
+     TokenType::CSTRINGLITERAL},
+    {std::regex(R"(^cr(#*)\"[^\r\x00]*?\"\1)"), TokenType::RAWCSTRINGLITERAL},
+
     {std::regex(
          R"(^[0-9][0-9_]*|0b[0-1_]*[0-1][0-1_]*|0o[0-7_]*[0-7][0-7_]*|0x[0-9a-fA-F_]*[0-9a-fA-F][0-9a-fA-F_]*)"),
      TokenType::INTEGERLITERAL},
+
     // Float may have problem on "1."
     {std::regex(R"(^[0-9][0-9_]*\.[0-9][0-9_])"), TokenType::FLOATLITERAL},
 
@@ -177,7 +196,8 @@ auto Matcher::lexString(const std::string &target) const -> Token {
 auto commentLex(const std::string &target) -> std::string {
   std::string result = target;
   std::stack<int32_t> front;
-  for (int32_t i = 0; result[i] != 0; ++i) {
+  int32_t str_length = target.length();
+  for (int32_t i = 0; i != str_length; ++i) {
     if (i > 0 && result[i] == '\\' && result[i - 1] == '*') {
       if (!front.empty()) {
         int32_t front_index = front.top();
@@ -194,6 +214,8 @@ auto commentLex(const std::string &target) -> std::string {
   }
   return result;
 }
+
+// All kinds of "raw" tokens are covered in Parser phase.
 
 auto lex(const std::string &target) -> std::vector<Token> {
   std::vector<Token> result;
