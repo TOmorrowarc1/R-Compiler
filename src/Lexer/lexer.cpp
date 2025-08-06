@@ -1,6 +1,5 @@
 #include "lexer.hpp"
 #include <regex>
-#include <stack>
 #include <stdexcept>
 #include <stdint.h>
 
@@ -150,7 +149,6 @@ const Rule config_rules[RULES_NUM] = {
     {std::regex(
          R"(^0b[0-1_]*[0-1][0-1_]*[2-9]|0o[0-7_]*[0-7][0-7_]*[8-9]|0b[0-1_]*[0-1][0-1_]*\.[^_\.]|0o[0-7_]*[0-7][0-7_]*\.[^_\.]|0x[0-9a-fA-F_]*[0-9a-fA-F][0-9a-fA-F_]*\.[^_\.])"),
      TokenType::RESERVED},
-
     /*End here.*/
 };
 
@@ -194,28 +192,63 @@ auto Matcher::lexString(const std::string &target) const -> Token {
 }
 
 auto commentLex(const std::string &target) -> std::string {
+  enum class CtxStatus { CODE, STRING, BLOCKCOMMENT, LINECOMMENT };
+  CtxStatus status = CtxStatus::CODE;
   std::string result = target;
-  std::stack<int32_t> front;
   int32_t str_length = target.length();
+  int32_t block_count = 0;
   for (int32_t i = 0; i != str_length; ++i) {
-    if (i > 0 && result[i] == '\\' && result[i - 1] == '*') {
-      if (!front.empty()) {
-        int32_t front_index = front.top();
-        int32_t length = i - front_index + 1;
-        result.erase(front_index, length);
-        i = front_index;
-        front.pop();
-      } else {
-        throw std::runtime_error("Block comment signs \\* not match");
+    switch (status) {
+    case CtxStatus::CODE:
+      if (result[i] == '\"') {
+        status = CtxStatus::STRING;
+      } else if (i + 1 < str_length && result[i] == '/' &&
+                 result[i + 1] == '*') {
+        status = CtxStatus::BLOCKCOMMENT;
+        result[i] = result[i + 1] = ' ';
+        ++i;
+        block_count = 1;
+      } else if (i + 1 < str_length && result[i] == '/' &&
+                 result[i + 1] == '/') {
+        status = CtxStatus::LINECOMMENT;
+        result[i] = result[i + 1] = ' ';
+        ++i;
       }
-    } else if (result[i] == '\\' && result[i + 1] == '*') {
-      front.push(i);
-    }
+      break;
+    case CtxStatus::STRING:
+      if (i + 1 < str_length && result[i] == '\\') {
+        ++i;
+      } else if (result[i] == '\"') {
+        status = CtxStatus::CODE;
+      }
+      break;
+    case CtxStatus::BLOCKCOMMENT:
+      if (i + 1 < str_length && result[i] == '/' && result[i + 1] == '*') {
+        ++block_count;
+        result[i + 1] = ' ';
+        ++i;
+      } else if (i + 1 < str_length && result[i] == '*' &&
+                 result[i + 1] == '/') {
+        --block_count;
+        result[i + 1] = ' ';
+        ++i;
+        status = block_count == 0 ? CtxStatus::CODE : CtxStatus::BLOCKCOMMENT;
+      }
+      result[i] = result[i] == '\n' ? ' ' : '\n';
+      break;
+    case CtxStatus::LINECOMMENT:
+      if (result[i] == '\n') {
+        status = CtxStatus::CODE;
+      } else {
+        result[i] = ' ';
+      }
+      break;
+    };
   }
   return result;
 }
 
-// All kinds of "raw" tokens are covered in Parser phase.
+auto literalLex(std::vector<Token> &target) -> std::vector<Token> {}
 
 auto lex(const std::string &target) -> std::vector<Token> {
   std::vector<Token> result;
@@ -231,5 +264,6 @@ auto lex(const std::string &target) -> std::vector<Token> {
     }
     buffer.erase(0, next_token.content.length());
   }
+  result = literalLex(result);
   return result;
 }
