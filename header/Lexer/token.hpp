@@ -136,7 +136,6 @@ enum class TokenType {
   FLOATLITERAL,
 
   WHITESPACE,
-  COMMENT,
 
   RESERVED
 };

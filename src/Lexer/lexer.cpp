@@ -8,7 +8,7 @@ struct Rule {
   TokenType type;
 };
 
-const int32_t RULES_NUM = 102;
+const int32_t RULES_NUM = 101;
 
 const Rule config_rules[RULES_NUM] = {
     /*
@@ -137,17 +137,16 @@ const Rule config_rules[RULES_NUM] = {
     {std::regex(R"(^cr(#*)\"[^\r\x00]*?\"\1)"), TokenType::RAWCSTRINGLITERAL},
 
     {std::regex(
-         R"(^[0-9][0-9_]*|0b[0-1_]*[0-1][0-1_]*|0o[0-7_]*[0-7][0-7_]*|0x[0-9a-fA-F_]*[0-9a-fA-F][0-9a-fA-F_]*)"),
+         R"(^([0-9][0-9_]*|0b[0-1_]*[0-1][0-1_]*|0o[0-7_]*[0-7][0-7_]*|0x[0-9a-fA-F_]*[0-9a-fA-F][0-9a-fA-F_]*)([a-df-zA-DF-Z][a-zA-Z0-9_]*)?)"),
      TokenType::INTEGERLITERAL},
 
     // Float may have problem on "1."
     {std::regex(R"(^[0-9][0-9_]*\.[0-9][0-9_])"), TokenType::FLOATLITERAL},
 
     {std::regex(R"(^\s+)"), TokenType::WHITESPACE},
-    {std::regex(R"(^\/\/.*|\/\*(.|\n)*?\*\/)"), TokenType::COMMENT},
 
     {std::regex(
-         R"(^0b[0-1_]*[0-1][0-1_]*[2-9]|0o[0-7_]*[0-7][0-7_]*[8-9]|0b[0-1_]*[0-1][0-1_]*\.[^_\.]|0o[0-7_]*[0-7][0-7_]*\.[^_\.]|0x[0-9a-fA-F_]*[0-9a-fA-F][0-9a-fA-F_]*\.[^_\.])"),
+         R"(^0b[0-1_]*[0-1][0-1_]*[2-9]|0o[0-7_]*[0-7][0-7_]*[8-9]|(0b[0-1_]*[0-1][0-1_]*|0o[0-7_]*[0-7][0-7_]*|0x[0-9a-fA-F_]*[0-9a-fA-F][0-9a-fA-F_]*)\.[^_\.a-zA-Z])"),
      TokenType::RESERVED},
     /*End here.*/
 };
@@ -248,22 +247,18 @@ auto commentLex(const std::string &target) -> std::string {
   return result;
 }
 
-auto literalLex(std::vector<Token> &target) -> std::vector<Token> {}
-
 auto lex(const std::string &target) -> std::vector<Token> {
   std::vector<Token> result;
   std::string buffer = commentLex(target);
   while (!buffer.empty()) {
     auto next_token = Matcher::getInstance().lexString(buffer);
     if (next_token.type == TokenType::RESERVED) {
-      throw std::runtime_error("The token reached some corner cases.");
+      throw std::runtime_error("The token reached some reserved cases.");
     }
-    if (next_token.type != TokenType::WHITESPACE &&
-        next_token.type != TokenType::COMMENT) {
+    if (next_token.type != TokenType::WHITESPACE) {
       result.push_back(next_token);
     }
     buffer.erase(0, next_token.content.length());
   }
-  result = literalLex(result);
   return result;
 }
