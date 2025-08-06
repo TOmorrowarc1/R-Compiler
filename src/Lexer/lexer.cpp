@@ -113,8 +113,8 @@ const Rule config_rules[RULES_NUM] = {
     {std::regex(R"(^\()"), TokenType::LEFT_PAREN},
     {std::regex(R"(^\))"), TokenType::RIGHT_PAREN},
 
-    {std::regex(R"(^[a-z][a-zA-Z0-9_]*)"), TokenType::IDENTIFIER},
-    {std::regex(R"(^r#(?!(crate|self|super|Self)\b)[a-z][a-zA-Z0-9_]*)"),
+    {std::regex(R"(^[a-zA-Z][a-zA-Z0-9_]*)"), TokenType::IDENTIFIER},
+    {std::regex(R"(^r#(?!(crate|self|super|Self)\b)[a-zA-Z][a-zA-Z0-9_]*)"),
      TokenType::RAWIDENTIFIER},
 
     {std::regex(R"(^'([^'\\\n\r\t]|\\x[0-7][0-9a-fA-F]|\\[nrt0'\\])')"),
@@ -224,16 +224,16 @@ auto commentLex(const std::string &target) -> std::string {
     case CtxStatus::BLOCKCOMMENT:
       if (i + 1 < str_length && result[i] == '/' && result[i + 1] == '*') {
         ++block_count;
-        result[i + 1] = ' ';
+        result[i] = ' ';
         ++i;
       } else if (i + 1 < str_length && result[i] == '*' &&
                  result[i + 1] == '/') {
         --block_count;
-        result[i + 1] = ' ';
+        result[i] = ' ';
         ++i;
         status = block_count == 0 ? CtxStatus::CODE : CtxStatus::BLOCKCOMMENT;
       }
-      result[i] = result[i] == '\n' ? ' ' : '\n';
+      result[i] = result[i] == '\n' ? '\n' : ' ';
       break;
     case CtxStatus::LINECOMMENT:
       if (result[i] == '\n') {
