@@ -1,0 +1,138 @@
+/*The first editon of syntax, decribing a program consist of 
+only one function "main" and const var declartions. Types of variants
+are restrict to int32, uint32, bool, char, string, bytestring, cstring
+which are equvilant to all "basic" types.*/
+
+Syntax
+Crate →
+    Item*
+
+Item →
+    VisItem
+
+VisItem →
+      | Function
+      | ConstantItem
+
+      /*
+      | Module
+      | Struct
+      | Enumeration
+      | Trait
+      | Implementation
+      */
+
+Module →
+     mod IDENTIFIER ;
+    | mod IDENTIFIER {
+        Item*
+      }
+
+Function →
+    FunctionQualifiers fn IDENTIFIER GenericParams?
+        ( FunctionParameters? )
+        FunctionReturnType? WhereClause?
+        ( BlockExpression | ; )
+
+FunctionQualifiers → const? ItemSafety?
+
+ItemSafety → safe | unsafe
+
+FunctionParameters →
+      SelfParam ,?
+    | ( SelfParam , )? FunctionParam ( , FunctionParam )* ,?
+
+SelfParam → ( ShorthandSelf | TypedSelf )
+
+ShorthandSelf → ( & | & Lifetime )? mut? self
+
+TypedSelf → mut? self : Type
+
+FunctionParam → ( FunctionParamPattern | ... | Type )
+
+FunctionParamPattern → PatternNoTopAlt : ( Type | ... )
+
+FunctionReturnType → -> Type
+
+Struct →
+      StructStruct
+    | TupleStruct
+
+StructStruct →
+    struct IDENTIFIER GenericParams? WhereClause? ( { StructFields? } | ; )
+
+TupleStruct →
+    struct IDENTIFIER GenericParams? ( TupleFields? ) WhereClause? ;
+
+StructFields → StructField ( , StructField )* ,?
+
+StructField → IDENTIFIER : Type
+
+TupleFields → TupleField ( , TupleField )* ,?
+
+TupleField → Type
+
+Enumeration →
+    enum IDENTIFIER GenericParams? WhereClause? { EnumVariants? }
+
+EnumVariants → EnumVariant ( , EnumVariant )* ,?
+
+EnumVariant →
+        IDENTIFIER ( EnumVariantTuple | EnumVariantStruct )? EnumVariantDiscriminant?
+
+EnumVariantTuple → ( TupleFields? )
+
+EnumVariantStruct → { StructFields? }
+
+EnumVariantDiscriminant → = Expression
+
+ConstantItem →
+    const ( IDENTIFIER | _ ) : Type ( = Expression )? ;
+
+Trait →
+    unsafe? trait IDENTIFIER GenericParams? ( : TypeParamBounds? )? WhereClause?
+    {
+        AssociatedItem*
+    }
+
+Implementation → InherentImpl | TraitImpl
+
+InherentImpl →
+    impl GenericParams? Type WhereClause? {
+        AssociatedItem*
+    }
+
+TraitImpl →
+    unsafe? impl GenericParams? !? TypePath for Type
+    WhereClause?
+    {
+        AssociatedItem*
+    }
+
+GenericParams → < ( GenericParam ( , GenericParam )* ,? )? >
+
+GenericParam → ( LifetimeParam | TypeParam | ConstParam )
+
+LifetimeParam → Lifetime ( : LifetimeBounds )?
+
+TypeParam → IDENTIFIER ( : TypeParamBounds? )? ( = Type )?
+
+ConstParam →
+    const IDENTIFIER : Type
+    ( = BlockExpression | IDENTIFIER | -? LiteralExpression )?
+
+WhereClause → where ( WhereClauseItem , )* WhereClauseItem?
+
+WhereClauseItem →
+      LifetimeWhereClauseItem
+    | TypeBoundWhereClauseItem
+
+LifetimeWhereClauseItem → Lifetime : LifetimeBounds
+
+TypeBoundWhereClauseItem → ForLifetimes? Type : TypeParamBounds?
+
+AssociatedItem →
+    (
+        MacroInvocationSemi
+      | ( ( TypeAlias | ConstantItem | Function ) )
+    )
