@@ -1,7 +1,5 @@
-/*The first editon of syntax, decribing a program consist of 
-only one function "main" and const var declartions. Types of variants
-are restrict to int32, uint32, bool, char, string, bytestring, cstring
-which are equvilant to all "basic" types. All sugar are erased.*/
+/*The intermidiate version of the Syntax, adding the OOP characteristics above 
+the C-like syntax.*/
 
 ITEM Syntax
 Crate →
@@ -13,27 +11,105 @@ Item →
 VisItem →
       | Function
       | ConstantItem
+      | Struct
+      | Implementation
+
+Module →
+     mod IDENTIFIER ;
+    | mod IDENTIFIER {
+        Item*
+      }
 
 Function →
-    fn IDENTIFIER
+    FunctionQualifiers fn IDENTIFIER GenericParams?
         ( FunctionParameters? )
-        FunctionReturnType?
+        FunctionReturnType? WhereClause?
         ( BlockExpression | ; )
 
 FunctionQualifiers → const?
 
-FunctionParameters →
-    | FunctionParam ( , FunctionParam )* ,?
+FunctionParameters → FunctionParam ( , FunctionParam )* ,?
 
-SelfParam → TypedSelf
+FunctionParam → ( FunctionParamPattern | Type )
 
-TypedSelf → mut? self : Type
-
-FunctionParam →( FunctionParamPattern | Type )
-
-FunctionParamPattern → IDENTIFIER : Type
+FunctionParamPattern → PatternNoTopAlt : Type 
 
 FunctionReturnType → -> Type
+
+Struct →
+      StructStruct
+    | TupleStruct
+
+StructStruct →
+    struct IDENTIFIER GenericParams? WhereClause? ( { StructFields? } | ; )
+
+TupleStruct →
+    struct IDENTIFIER GenericParams? ( TupleFields? ) WhereClause? ;
+
+StructFields → StructField ( , StructField )* ,?
+
+StructField → IDENTIFIER : Type
+
+TupleFields → TupleField ( , TupleField )* ,?
+
+TupleField → Type
+
+Enumeration →
+    enum IDENTIFIER GenericParams? WhereClause? { EnumVariants? }
+
+EnumVariants → EnumVariant ( , EnumVariant )* ,?
+
+EnumVariant →
+        IDENTIFIER ( EnumVariantTuple | EnumVariantStruct )? EnumVariantDiscriminant?
+
+EnumVariantTuple → ( TupleFields? )
+
+EnumVariantStruct → { StructFields? }
+
+EnumVariantDiscriminant → = Expression
+
+ConstantItem →
+    const ( IDENTIFIER | _ ) : Type ( = Expression )? ;
+
+Trait →
+    trait IDENTIFIER GenericParams? ( : TypeParamBounds? )? WhereClause?
+    {
+        AssociatedItem*
+    }
+
+Implementation → InherentImpl | TraitImpl
+
+InherentImpl →
+    impl GenericParams? Type WhereClause? {
+        AssociatedItem*
+    }
+
+TraitImpl →
+    impl GenericParams? !? TypePath for Type
+    WhereClause?
+    {
+        AssociatedItem*
+    }
+
+GenericParams → < ( GenericParam ( , GenericParam )* ,? )? >
+
+GenericParam → ( TypeParam | ConstParam )
+
+TypeParam → IDENTIFIER ( : TypeParamBounds? )? ( = Type )?
+
+ConstParam →
+    const IDENTIFIER : Type
+    ( = BlockExpression | IDENTIFIER | -? LiteralExpression )?
+
+WhereClause → where ( WhereClauseItem , )* WhereClauseItem?
+
+WhereClauseItem →
+      LifetimeWhereClauseItem
+    | TypeBoundWhereClauseItem
+
+TypeBoundWhereClauseItem → ForLifetimes? Type : TypeParamBounds?
+
+AssociatedItem → ( ConstantItem | Function  )
 
 
 STATEMENT Syntax
@@ -43,9 +119,11 @@ Statement →
     | LetStatement
     | ExpressionStatement
 
-LetStatement → 
-    let IDENTIFIER ( : Type )?
-    ( = Expression )? ;
+LetStatement →
+    let PatternNoTopAlt ( : Type )?
+    (
+        = Expression
+    )? ;
 
 ExpressionStatement →
       ExpressionWithoutBlock ;
@@ -59,22 +137,28 @@ Expression →
 
 ExpressionWithoutBlock →
         LiteralExpression
+      | PathExpression
       | OperatorExpression
       | GroupedExpression
+      | ArrayExpression
+      | IndexExpression
+      | TupleExpression
+      | TupleIndexingExpression
+      | StructExpression
       | CallExpression
+      | MethodCallExpression
+      | FieldExpression
       | ContinueExpression
       | BreakExpression
       | ReturnExpression
       | UnderscoreExpression
-    
 
 ExpressionWithBlock →
-    (
         BlockExpression
       | ConstBlockExpression
       | LoopExpression
       | IfExpression
-    )
+      | MatchExpression
 
 LiteralExpression →
       CHAR_LITERAL
@@ -89,9 +173,13 @@ LiteralExpression →
     | true
     | false
 
+PathExpression →
+      PathInExpression
+    | QualifiedPathInExpression
+
 BlockExpression →
     {
-      Statements?
+        Statements?
     }
 
 Statements →
@@ -102,7 +190,7 @@ Statements →
 ConstBlockExpression → const BlockExpression
 
 OperatorExpression →
-    | NegationExpression
+    NegationExpression
     | ArithmeticOrLogicalExpression
     | ComparisonExpression
     | LazyBooleanExpression
@@ -156,9 +244,39 @@ CompoundAssignmentExpression →
 
 GroupedExpression → ( Expression )
 
+ArrayExpression → [ ArrayElements? ]
+
+ArrayElements →
+      Expression ( , Expression )* ,?
+    | Expression ; Expression
+
+IndexExpression → Expression [ Expression ]
+
+TupleExpression → ( TupleElements? )
+
+TupleElements → ( Expression , )+ Expression?
+
+TupleIndexingExpression → Expression . TUPLE_INDEX
+
+StructExpression →
+    PathInExpression { ( StructExprFields | StructBase )? }
+
+StructExprFields →
+    StructExprField ( , StructExprField )* ( , StructBase | ,? )
+
+StructExprField →
+        IDENTIFIER
+      | ( IDENTIFIER | TUPLE_INDEX ) : Expression
+
+StructBase → .. Expression
+
 CallExpression → Expression ( CallParams? )
 
 CallParams → Expression ( , Expression )* ,?
+
+MethodCallExpression → Expression . PathExprSegment ( CallParams? )
+
+FieldExpression → Expression . IDENTIFIER
 
 LoopExpression →
     InfiniteLoopExpression
@@ -178,20 +296,124 @@ IfExpression →
 
 Conditions →
       Expressionexcept StructExpression
+    | LetChain
+
+LetChain → LetChainCondition ( && LetChainCondition )*
+
+LetChainCondition →
+      Expressionexcept ExcludedConditions
+    | OuterAttribute* let Pattern = Scrutineeexcept ExcludedConditions
+
+ExcludedConditions →
+      StructExpression
+    | LazyBooleanExpression
+    | RangeExpr
+    | RangeFromExpr
+    | RangeInclusiveExpr
+    | AssignmentExpression
+    | CompoundAssignmentExpression
+
+MatchExpression →
+    match Scrutinee {
+        MatchArms?
+    }
+
+Scrutinee → Expressionexcept StructExpression
+
+MatchArms →
+    ( MatchArm => ( ExpressionWithoutBlock , | ExpressionWithBlock ,? ) )*
+    MatchArm => Expression ,?
+
+MatchArm → OuterAttribute* Pattern MatchArmGuard?
+
+MatchArmGuard → if Expression
 
 ReturnExpression → return Expression?
 
 UnderscoreExpression → _
 
 
+PATTERN Syntax
+Pattern → |? PatternNoTopAlt ( | PatternNoTopAlt )*
+
+PatternNoTopAlt →
+      PatternWithoutRange
+    | RangePattern
+
+PatternWithoutRange →
+      LiteralPattern
+    | IdentifierPattern
+    | WildcardPattern
+    | RestPattern
+    | StructPattern
+    | TupleStructPattern
+    | TuplePattern
+    | GroupedPattern
+    | SlicePattern
+    | PathPattern
+
+LiteralPattern → -? LiteralExpression
+
+IdentifierPattern → ref? mut? IDENTIFIER ( @ PatternNoTopAlt )?
+
+WildcardPattern → _
+
+RestPattern → ..
+
+StructPattern →
+    PathInExpression {
+        StructPatternElements?
+    }
+
+StructPatternElements →
+      StructPatternFields ( , | , StructPatternEtCetera )?
+    | StructPatternEtCetera
+
+StructPatternFields →
+    StructPatternField ( , StructPatternField )*
+
+StructPatternField →
+    TUPLE_INDEX : Pattern
+    | IDENTIFIER : Pattern
+    | ref? mut? IDENTIFIER
+
+StructPatternEtCetera → ..
+
+TupleStructPattern → PathInExpression ( TupleStructItems? )
+
+TupleStructItems → Pattern ( , Pattern )* ,?
+
+TuplePattern → ( TuplePatternItems? )
+
+TuplePatternItems →
+      Pattern ,
+    | RestPattern
+    | Pattern ( , Pattern )+ ,?
+
+GroupedPattern → ( Pattern )
+
+SlicePattern → [ SlicePatternItems? ]
+
+SlicePatternItems → Pattern ( , Pattern )* ,?
+
+PathPattern → PathExpression
+
+
 TYPE Syntax
 Type →
       TypeNoBounds
+    | ImplTraitType
+    | TraitObjectType
 
 TypeNoBounds →
       ParenthesizedType
+    | ImplTraitTypeOneBound
+    | TraitObjectTypeOneBound
     | TypePath
+    | TupleType
     | NeverType
+    | ArrayType
+    | SliceType
     | InferredType
     | QualifiedPathInType
 
@@ -199,12 +421,70 @@ ParenthesizedType → ( Type )
 
 NeverType → !
 
+TupleType →
+      ( )
+    | ( ( Type , )+ Type? )
+
+ArrayType → [ Type ; Expression ]
+
+SliceType → [ Type ]
+
+TraitObjectType → dyn? TypeParamBounds
+
+TraitObjectTypeOneBound → dyn? TraitBound
+
+ImplTraitType → impl TypeParamBounds
+
+ImplTraitTypeOneBound → impl TraitBound
+
 InferredType → _
 
 
 PATH Syntax
 SimplePath →
-    SimplePathSegment ( :: SimplePathSegment )*
+    ::? SimplePathSegment ( :: SimplePathSegment )*
 
 SimplePathSegment →
-    IDENTIFIER | self | Self
+    IDENTIFIER | super | self | crate 
+
+PathInExpression →
+    ::? PathExprSegment ( :: PathExprSegment )*
+
+PathExprSegment →
+    PathIdentSegment ( :: GenericArgs )?
+
+PathIdentSegment →
+    IDENTIFIER | super | self | Self | crate | $crate
+
+GenericArgs →
+      < >
+    | < ( GenericArg , )* GenericArg ,? >
+
+GenericArg →
+    Lifetime | Type | GenericArgsConst | GenericArgsBinding | GenericArgsBounds
+
+GenericArgsConst →
+      BlockExpression
+    | LiteralExpression
+    | - LiteralExpression
+    | SimplePathSegment
+
+GenericArgsBinding →
+    IDENTIFIER GenericArgs? = Type
+
+GenericArgsBounds →
+    IDENTIFIER GenericArgs? : TypeParamBounds
+
+QualifiedPathInExpression → QualifiedPathType ( :: PathExprSegment )+
+
+QualifiedPathType → < Type ( as TypePath )? >
+
+QualifiedPathInType → QualifiedPathType ( :: TypePathSegment )+
+
+TypePath → ::? TypePathSegment ( :: TypePathSegment )*
+
+TypePathSegment → PathIdentSegment ( ::? ( GenericArgs | TypePathFn ) )?
+
+TypePathFn → ( TypePathFnInputs? ) ( -> TypeNoBounds )?
+
+TypePathFnInputs → Type ( , Type )* ,?
