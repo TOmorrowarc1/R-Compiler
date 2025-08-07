@@ -22,10 +22,6 @@ Function →
 
 FunctionParameters → FunctionParam ( , FunctionParam )* ,?
 
-SelfParam → TypedSelf
-
-TypedSelf → mut? self : Type
-
 FunctionParam →( FunctionParamPattern | Type )
 
 FunctionParamPattern → IDENTIFIER : Type

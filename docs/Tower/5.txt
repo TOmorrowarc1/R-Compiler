@@ -1,1 +1,3 @@
-/*Ladies and gentlemen, the momment we are waiting for: trait.*/
+/*Ladies and gentlemen————
+The moment you are waiting for—————
+Welcome the pride of R language: trait.*/
