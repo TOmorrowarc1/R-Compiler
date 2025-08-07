@@ -1,5 +1,6 @@
 /*The intermidiate version of the Syntax, adding the OOP characteristics above 
-the C-like syntax, including struct, tuple and implement.*/
+the C-like syntax, including struct, tuple and implement. A brief intro to Pattern
+has been revalued.*/
 
 ITEM Syntax
 Crate →
@@ -104,7 +105,6 @@ ExpressionWithBlock →
       | ConstBlockExpression
       | LoopExpression
       | IfExpression
-      | MatchExpression
 
 LiteralExpression →
       CHAR_LITERAL
@@ -118,10 +118,6 @@ LiteralExpression →
     | INTEGER_LITERAL
     | true
     | false
-
-PathExpression →
-      PathInExpression
-    | QualifiedPathInExpression
 
 BlockExpression →
     {
@@ -197,7 +193,7 @@ TupleElements → ( Expression , )+ Expression?
 TupleIndexingExpression → Expression . TUPLE_INDEX
 
 StructExpression →
-    PathInExpression { ( StructExprFields | StructBase )? }
+    IDENTIFIER { ( StructExprFields | StructBase )? }
 
 StructExprFields →
     StructExprField ( , StructExprField )* ( , StructBase | ,? )
@@ -257,7 +253,6 @@ PatternWithoutRange →
     | TuplePattern
     | GroupedPattern
     | SlicePattern
-    | PathPattern
 
 LiteralPattern → -? LiteralExpression
 
@@ -282,7 +277,7 @@ StructPatternFields →
 StructPatternField →
     TUPLE_INDEX : Pattern
     | IDENTIFIER : Pattern
-    | ref? mut? IDENTIFIER
+    | mut? IDENTIFIER
 
 StructPatternEtCetera → ..
 
@@ -299,8 +294,6 @@ TuplePatternItems →
 
 GroupedPattern → ( Pattern )
 
-PathPattern → PathExpression
-
 
 TYPE Syntax
 Type →
@@ -312,7 +305,6 @@ TypeNoBounds →
     | TupleType
     | NeverType
     | InferredType
-    | QualifiedPathInType
 
 ParenthesizedType → ( Type )
 

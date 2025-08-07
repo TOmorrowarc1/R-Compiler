@@ -62,12 +62,10 @@ ExpressionWithoutBlock →
     
 
 ExpressionWithBlock →
-    (
-        BlockExpression
-      | ConstBlockExpression
-      | LoopExpression
-      | IfExpression
-    )
+      BlockExpression
+    | ConstBlockExpression
+    | LoopExpression
+    | IfExpression
 
 LiteralExpression →
       CHAR_LITERAL
