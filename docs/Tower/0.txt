@@ -20,12 +20,7 @@ Function →
         FunctionReturnType?
         ( BlockExpression | ; )
 
-FunctionQualifiers → const? ItemSafety?
-
-ItemSafety → safe | unsafe
-
-FunctionParameters →
-    | FunctionParam ( , FunctionParam )* ,?
+FunctionParameters → FunctionParam ( , FunctionParam )* ,?
 
 SelfParam → TypedSelf
 
@@ -202,11 +197,3 @@ ParenthesizedType → ( Type )
 NeverType → !
 
 InferredType → _
-
-
-PATH Syntax
-SimplePath →
-    SimplePathSegment ( :: SimplePathSegment )*
-
-SimplePathSegment →
-    IDENTIFIER | self | Self
