@@ -1,4 +1,5 @@
 #include "ItemFnNode.hpp"
+#include "Visitor.hpp"
 
 ItemFnNode::ItemFnNode(const std::string &ID,
                        std::unique_ptr<TypeNode> &&returnType,
@@ -6,4 +7,4 @@ ItemFnNode::ItemFnNode(const std::string &ID,
     : ItemNode(), ID_(ID), returnType_(std::move(returnType)),
       parameters_(std::move(parameters)) {}
 
-void ItemFnNode::accept(Visitor &visitor) { visitor.visit(this); }
+void ItemFnNode::accept(Visitor &visitor) { visitor.visit(*this); }
