@@ -1,0 +1,9 @@
+#include "ExprCallNode.hpp"
+#include "Visitor.hpp"
+
+ExprCallNode::ExprCallNode(std::unique_ptr<ExprNode> &&caller,
+                           std::vector<std::unique_ptr<ExprNode>> &&arguments)
+    : ExprBlockOutNode(), caller_(std::move(caller)),
+      arguments_(std::move(arguments)) {}
+
+void ExprCallNode::accept(Visitor &visitor) { visitor.visit(*this); }

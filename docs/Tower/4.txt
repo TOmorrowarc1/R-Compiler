@@ -19,9 +19,9 @@ Module →
       }
 
 Function →
-    FunctionQualifiers fn IDENTIFIER GenericParams?
+    FunctionQualifiers fn IDENTIFIER
         ( FunctionParameters? )
-        FunctionReturnType? WhereClause?
+        FunctionReturnType?
         ( BlockExpression | ; )
 
 FunctionQualifiers → const?
@@ -65,7 +65,7 @@ EnumVariantStruct → { StructFields? }
 EnumVariantDiscriminant → = Expression
 
 ConstantItem →
-    const ( IDENTIFIER | _ ) : Type ( = Expression )? ;
+    const IDENTIFIER : Type ( = Expression )? ;
 
 Implementation → InherentImpl
 
@@ -299,16 +299,13 @@ IdentifierPattern → ref? mut? IDENTIFIER ( @ PatternNoTopAlt )?
 
 WildcardPattern → _
 
-RestPattern → ..
-
 StructPattern →
     PathInExpression {
         StructPatternElements?
     }
 
 StructPatternElements →
-      StructPatternFields ( , | , StructPatternEtCetera )?
-    | StructPatternEtCetera
+      StructPatternFields ( , )?
 
 StructPatternFields →
     StructPatternField ( , StructPatternField )*
@@ -318,8 +315,6 @@ StructPatternField →
     | IDENTIFIER : Pattern
     | mut? IDENTIFIER
 
-StructPatternEtCetera → ..
-
 TupleStructPattern → PathInExpression ( TupleStructItems? )
 
 TupleStructItems → Pattern ( , Pattern )* ,?
@@ -328,7 +323,6 @@ TuplePattern → ( TuplePatternItems? )
 
 TuplePatternItems →
       Pattern ,
-    | RestPattern
     | Pattern ( , Pattern )+ ,?
 
 GroupedPattern → ( Pattern )

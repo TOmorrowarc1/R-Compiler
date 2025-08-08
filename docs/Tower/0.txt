@@ -8,11 +8,8 @@ Crate →
     Item*
 
 Item →
-    VisItem
-
-VisItem →
-      | Function
-      | ConstantItem
+  | Function
+  | ConstantItem
 
 Function →
     fn IDENTIFIER
@@ -22,7 +19,7 @@ Function →
 
 FunctionParameters → FunctionParam ( , FunctionParam )* ,?
 
-FunctionParam →( FunctionParamPattern | Type )
+FunctionParam → FunctionParamPattern
 
 FunctionParamPattern → IDENTIFIER : Type
 
@@ -51,14 +48,14 @@ Expression →
     | ExpressionWithBlock
 
 ExpressionWithoutBlock →
-        LiteralExpression
-      | OperatorExpression
-      | GroupedExpression
-      | CallExpression
-      | ContinueExpression
-      | BreakExpression
-      | ReturnExpression
-      | UnderscoreExpression
+      LiteralExpression
+    | OperatorExpression
+    | GroupedExpression
+    | CallExpression
+    | ContinueExpression
+    | BreakExpression
+    | ReturnExpression
+    | UnderscoreExpression
     
 
 ExpressionWithBlock →
@@ -171,8 +168,6 @@ Conditions →
       Expressionexcept StructExpression
 
 ReturnExpression → return Expression?
-
-UnderscoreExpression → _
 
 
 TYPE Syntax

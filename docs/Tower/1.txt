@@ -1,6 +1,6 @@
 /*The intermidiate version of the Syntax, adding the OOP characteristics above 
 the C-like syntax, including struct, tuple and implement. A brief intro to Pattern
-has been revalued.*/
+has been realised.*/
 
 ITEM Syntax
 Crate →
