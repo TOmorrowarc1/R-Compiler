@@ -5,15 +5,12 @@ Crate →
     Item*
 
 Item →
-    VisItem
-
-VisItem →
-      | Function
-      | ConstantItem
-      | Module
-      | Struct
-      | Enumeration
-      | Implementation
+    | Function
+    | ConstantItem
+    | Module
+    | Struct
+    | Enumeration
+    | Implementation
 
 Module →
      mod IDENTIFIER ;
@@ -31,9 +28,7 @@ FunctionQualifiers → const?
 
 FunctionParameters → FunctionParam ( , FunctionParam )* ,?
 
-FunctionParam → ( FunctionParamPattern | Type )
-
-FunctionParamPattern → PatternNoTopAlt : Type 
+FunctionParam → PatternNoTopAlt : Type
 
 FunctionReturnType → -> Type
 
@@ -56,7 +51,7 @@ TupleFields → TupleField ( , TupleField )* ,?
 TupleField → Type
 
 Enumeration →
-    enum IDENTIFIER GenericParams? WhereClause? { EnumVariants? }
+    enum IDENTIFIER { EnumVariants? }
 
 EnumVariants → EnumVariant ( , EnumVariant )* ,?
 
@@ -378,4 +373,4 @@ SimplePath → ::? SimplePathSegment ( :: SimplePathSegment )*
 
 TypePath → ::? SimplePathSegment ( :: SimplePathSegment )*
 
-SimplePathSegment → IDENTIFIER | self | Self | crate
+SimplePathSegment → IDENTIFIER | self | Self | crate | super

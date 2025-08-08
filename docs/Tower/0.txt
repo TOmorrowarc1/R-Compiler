@@ -176,15 +176,13 @@ UnderscoreExpression → _
 
 
 TYPE Syntax
-Type →
-      TypeNoBounds
+Type →  TypeNoBounds
 
 TypeNoBounds →
-      ParenthesizedType
-    | TypePath
-    | NeverType
-    | InferredType
-    | QualifiedPathInType
+    ParenthesizedType
+  | IDENTIFIER
+  | NeverType
+  | InferredType
 
 ParenthesizedType → ( Type )
 

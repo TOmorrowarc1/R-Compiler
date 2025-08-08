@@ -14,9 +14,9 @@ VisItem →
       | Implementation
 
 Function →
-    FunctionQualifiers fn IDENTIFIER GenericParams?
+    FunctionQualifiers fn IDENTIFIER
         ( FunctionParameters? )
-        FunctionReturnType? WhereClause?
+        FunctionReturnType?
         ( BlockExpression | ; )
 
 FunctionQualifiers → const?
@@ -264,7 +264,7 @@ PatternWithoutRange →
 
 LiteralPattern → -? LiteralExpression
 
-IdentifierPattern → ref? mut? IDENTIFIER ( @ PatternNoTopAlt )?
+IdentifierPattern → mut? IDENTIFIER
 
 WildcardPattern → _
 

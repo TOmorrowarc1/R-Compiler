@@ -16,9 +16,9 @@ VisItem →
       | Implementation
 
 Function →
-    FunctionQualifiers fn IDENTIFIER GenericParams?
+    FunctionQualifiers fn IDENTIFIER
         ( FunctionParameters? )
-        FunctionReturnType? WhereClause?
+        FunctionReturnType? 
         ( BlockExpression | ; )
 
 FunctionQualifiers → const?
@@ -229,8 +229,7 @@ IfExpression →
     ( else ( BlockExpression | IfExpression ) )?
 
 Conditions →
-      Expressionexcept StructExpression
-    | LetChain
+    Expressionexcept StructExpression
 
 ReturnExpression → return Expression?
 
@@ -240,8 +239,7 @@ UnderscoreExpression → _
 PATTERN Syntax
 Pattern → |? PatternNoTopAlt ( | PatternNoTopAlt )*
 
-PatternNoTopAlt →
-      PatternWithoutRange
+PatternNoTopAlt → PatternWithoutRange
 
 PatternWithoutRange →
       LiteralPattern
@@ -252,11 +250,10 @@ PatternWithoutRange →
     | TupleStructPattern
     | TuplePattern
     | GroupedPattern
-    | SlicePattern
 
 LiteralPattern → -? LiteralExpression
 
-IdentifierPattern → ref? mut? IDENTIFIER ( @ PatternNoTopAlt )?
+IdentifierPattern → mut? IDENTIFIER
 
 WildcardPattern → _
 
@@ -301,7 +298,7 @@ Type →
 
 TypeNoBounds →
       ParenthesizedType
-    | TypePath
+    | IDENTIFIER
     | TupleType
     | NeverType
     | InferredType

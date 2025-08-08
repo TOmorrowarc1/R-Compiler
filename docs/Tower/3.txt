@@ -277,7 +277,7 @@ PatternWithoutRange →
 
 LiteralPattern → -? LiteralExpression
 
-IdentifierPattern → ref? mut? IDENTIFIER ( @ PatternNoTopAlt )?
+IdentifierPattern → mut? IDENTIFIER
 
 WildcardPattern → _
 
