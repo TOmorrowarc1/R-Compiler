@@ -25,6 +25,11 @@ class StmtEmptyNode;
 class StmtItemNode;
 class StmtLetNode;
 
+class TypeInferNode;
+class TypeNeverNode;
+class TypePathNode;
+class TypeParentNode;
+
 class Visitor {
 public:
   Visitor() = default;
@@ -54,4 +59,9 @@ public:
   virtual void visit(StmtEmptyNode &node) = 0;
   virtual void visit(StmtItemNode &node) = 0;
   virtual void visit(StmtLetNode &node) = 0;
+
+  virtual void visit(TypeInferNode &node) = 0;
+  virtual void visit(TypeNeverNode &node) = 0;
+  virtual void visit(TypePathNode &node) = 0;
+  virtual void visit(TypeParentNode &node) = 0;
 };
