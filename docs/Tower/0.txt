@@ -25,6 +25,9 @@ FunctionParamPattern → IDENTIFIER : Type
 
 FunctionReturnType → -> Type
 
+ConstantItem →
+    const ( IDENTIFIER | _ ) : Type ( = Expression )? ;
+
 
 STATEMENT Syntax
 Statement →
@@ -55,7 +58,6 @@ ExpressionWithoutBlock →
     | ContinueExpression
     | BreakExpression
     | ReturnExpression
-    | UnderscoreExpression
     
 
 ExpressionWithBlock →

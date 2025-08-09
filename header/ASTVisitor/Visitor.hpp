@@ -1,5 +1,7 @@
 #include <stdint.h>
 
+class ASTRootNode;
+
 class ItemConstantNode;
 class ItemFnNode;
 
@@ -35,6 +37,8 @@ public:
   Visitor() = default;
   virtual ~Visitor() = default;
 
+  virtual void visit(ASTRootNode &node) = 0;
+  
   virtual void visit(ItemConstantNode &node) = 0;
   virtual void visit(ItemFnNode &node) = 0;
 
