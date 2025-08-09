@@ -259,5 +259,6 @@ auto lex(const std::string &target) -> std::vector<Token> {
     }
     buffer.erase(0, next_token.content.length());
   }
+  result.push_back(Token{"", TokenType::END_OF_FILE});
   return result;
 }

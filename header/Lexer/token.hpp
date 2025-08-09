@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <vector>
 
 /*
 Define type of tokens:
@@ -136,9 +137,24 @@ enum class TokenType {
 
   WHITESPACE,
 
-  RESERVED
+  RESERVED,
+
+  END_OF_FILE,
 };
 struct Token {
   std::string content;
   TokenType type;
+};
+
+class TokenStream {
+private:
+  std::vector<Token> tokens;
+  int32_t index;
+
+public:
+  TokenStream(const std::vector<Token> &tokens);
+  auto next() -> Token;
+  auto peek() const -> Token;
+  auto getIndex() const -> int32_t;
+  void restoreIndex(int32_t newIndex);
 };

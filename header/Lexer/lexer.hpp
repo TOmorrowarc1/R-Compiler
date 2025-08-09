@@ -1,6 +1,6 @@
 #pragma once
 #include "token.hpp"
-#include <vector>
+
 /*
 In the Lexer, I convert the input string into a token stream and do nothing
 else except make raw literals into common ones.

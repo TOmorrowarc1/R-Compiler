@@ -6,6 +6,7 @@ class ItemConstantNode;
 class ItemFnNode;
 
 class ExprBlockNode;
+class ExprBlockConstNode;
 class ExprCallNode;
 class ExprBreakNode;
 class ExprReturnNode;
@@ -43,6 +44,7 @@ public:
   virtual void visit(ItemFnNode &node) = 0;
 
   virtual void visit(ExprBlockNode &node) = 0;
+  virtual void visit(ExprBlockConstNode &node) = 0;
   virtual void visit(ExprCallNode &node) = 0;
   virtual void visit(ExprBreakNode &node) = 0;
   virtual void visit(ExprReturnNode &node) = 0;

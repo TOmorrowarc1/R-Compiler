@@ -3,6 +3,6 @@
 #include <memory>
 #include <vector>
 
-class ASTNode;
+class ASTRootNode;
 
-auto parse(const std::vector<Token> &tokens) -> std::unique_ptr<ASTNode>;
+auto parse(const std::vector<Token> &tokens) -> std::unique_ptr<ASTRootNode>;

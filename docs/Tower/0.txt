@@ -19,9 +19,7 @@ Function →
 
 FunctionParameters → FunctionParam ( , FunctionParam )* ,?
 
-FunctionParam → FunctionParamPattern
-
-FunctionParamPattern → IDENTIFIER : Type
+FunctionParam → IDENTIFIER : Type
 
 FunctionReturnType → -> Type
 
@@ -59,7 +57,6 @@ ExpressionWithoutBlock →
     | BreakExpression
     | ReturnExpression
     
-
 ExpressionWithBlock →
       BlockExpression
     | ConstBlockExpression

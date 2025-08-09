@@ -6,7 +6,7 @@ private:
 public:
   ExprLiteralNode() : ExprBlockOutNode(){};
   ~ExprLiteralNode() = default;
-  virtual void accept(Visitor &visitor) override;
+  virtual void accept(Visitor &visitor) override = 0;
 };
 
 class ExprLiteralIntNode : public ExprLiteralNode {
