@@ -22,6 +22,7 @@ class ExprLoopNode;
 class ExprWhileNode;
 class ExprOperBinaryNode;
 class ExprOperUnaryNode;
+class ExprPathNode;
 
 class StmtExprNode;
 class StmtEmptyNode;
@@ -39,7 +40,7 @@ public:
   virtual ~Visitor() = default;
 
   virtual void visit(ASTRootNode &node) = 0;
-  
+
   virtual void visit(ItemConstantNode &node) = 0;
   virtual void visit(ItemFnNode &node) = 0;
 
@@ -60,6 +61,7 @@ public:
   virtual void visit(ExprWhileNode &node) = 0;
   virtual void visit(ExprOperBinaryNode &node) = 0;
   virtual void visit(ExprOperUnaryNode &node) = 0;
+  virtual void visit(ExprPathNode &node) = 0;
 
   virtual void visit(StmtExprNode &node) = 0;
   virtual void visit(StmtEmptyNode &node) = 0;

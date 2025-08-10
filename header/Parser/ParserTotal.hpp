@@ -1,5 +1,4 @@
 #pragma once
-#include "Parser.hpp"
 #include "ASTRootNode.hpp"
 #include "ExprBlockNode.hpp"
 #include "ExprCallNode.hpp"
@@ -10,8 +9,10 @@
 #include "ExprLoopNode.hpp"
 #include "ExprOperBinaryNode.hpp"
 #include "ExprOperUnaryNode.hpp"
+#include "ExprPathNode.hpp"
 #include "ItemConstantNode.hpp"
 #include "ItemFnNode.hpp"
+#include "Parser.hpp"
 #include "StmtEmptyNode.hpp"
 #include "StmtExprNode.hpp"
 #include "StmtItemNode.hpp"
@@ -61,10 +62,9 @@ auto parseExprLiteralStringNode(TokenStream &stream)
     -> std::unique_ptr<ExprLiteralStringNode>;
 auto parseExprLiteralByteNode(TokenStream &stream)
     -> std::unique_ptr<ExprLiteralByteNode>;
-auto parseExprOperBinaryNode(TokenStream &stream)
-    -> std::unique_ptr<ExprOperBinaryNode>;
 auto parseExprOperUnaryNode(TokenStream &stream)
     -> std::unique_ptr<ExprOperUnaryNode>;
+auto parseExprPathNode(TokenStream &stream) -> std::unique_ptr<ExprPathNode>;
 auto parseExprGroupNode(TokenStream &stream) -> std::unique_ptr<ExprGroupNode>;
 auto parseExprCallNode(TokenStream &stream) -> std::unique_ptr<ExprCallNode>;
 auto parseExprBreakNode(TokenStream &stream) -> std::unique_ptr<ExprBreakNode>;

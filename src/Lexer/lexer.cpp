@@ -10,7 +10,7 @@ struct Rule {
 
 const int32_t RULES_NUM = 101;
 
-const Rule config_rules[RULES_NUM] = {
+const std::vector<Rule> config_rules = {
     /*
     The list for Lexer gramma, in which all keywords and punctions were done by
     Gemini 2.5 Pro while others done by hands.

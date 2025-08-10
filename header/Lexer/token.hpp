@@ -103,7 +103,7 @@ enum class TokenType {
 
   ARROW,
   LEFT_ARROW,
-  FAT_ARROW, //?What?
+  FAT_ARROW, //=>
 
   HASH, //#
   DOLLAR,
@@ -133,7 +133,6 @@ enum class TokenType {
   RAWCSTRINGLITERAL,
 
   INTEGERLITERAL,
-  FLOATLITERAL,
 
   WHITESPACE,
 
