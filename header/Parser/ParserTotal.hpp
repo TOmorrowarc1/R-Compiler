@@ -58,8 +58,6 @@ auto parseExprLiteralCharNode(TokenStream &stream)
     -> std::unique_ptr<ExprLiteralCharNode>;
 auto parseExprLiteralStringNode(TokenStream &stream)
     -> std::unique_ptr<ExprLiteralStringNode>;
-auto parseExprLiteralByteNode(TokenStream &stream)
-    -> std::unique_ptr<ExprLiteralByteNode>;
 auto parseExprOperUnaryNode(TokenStream &stream)
     -> std::unique_ptr<ExprOperUnaryNode>;
 auto parseExprPathNode(TokenStream &stream) -> std::unique_ptr<ExprPathNode>;
