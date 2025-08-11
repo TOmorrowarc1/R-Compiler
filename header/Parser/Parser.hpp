@@ -1,4 +1,5 @@
 #pragma once
+#include "cast.hpp"
 #include "token.hpp"
 #include <memory>
 #include <vector>

@@ -42,8 +42,6 @@ auto parseStmtEmptyNode(TokenStream &stream) -> std::unique_ptr<StmtEmptyNode>;
 auto parseExprNode(TokenStream &stream) -> std::unique_ptr<ExprNode>;
 auto parseExprBlockInNode(TokenStream &stream)
     -> std::unique_ptr<ExprBlockInNode>;
-auto parseExprBlockOutNode(TokenStream &stream)
-    -> std::unique_ptr<ExprBlockOutNode>;
 auto parseExprBlockNode(TokenStream &stream) -> std::unique_ptr<ExprBlockNode>;
 auto parseExprBlockConstNode(TokenStream &stream)
     -> std::unique_ptr<ExprBlockConstNode>;

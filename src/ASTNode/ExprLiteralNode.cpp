@@ -1,8 +1,8 @@
-#include"ExprLiteralNode.hpp"
+#include "ExprLiteralNode.hpp"
 #include "Visitor.hpp"
 
-ExprLiteralIntNode::ExprLiteralIntNode(int64_t value)
-    : ExprLiteralNode(), value_(static_cast<int32_t>(value)) {}
+ExprLiteralIntNode::ExprLiteralIntNode(int32_t value)
+    : ExprLiteralNode(), value_(value) {}
 
 void ExprLiteralIntNode::accept(Visitor &visitor) { visitor.visit(*this); }
 
@@ -20,8 +20,3 @@ ExprLiteralStringNode::ExprLiteralStringNode(const std::string &value)
     : ExprLiteralNode(), value_(value) {}
 
 void ExprLiteralStringNode::accept(Visitor &visitor) { visitor.visit(*this); }
-
-ExprLiteralByteNode::ExprLiteralByteNode(uint8_t value)
-    : ExprLiteralNode(), value_(value) {}
-    
-void ExprLiteralByteNode::accept(Visitor &visitor) { visitor.visit(*this); }

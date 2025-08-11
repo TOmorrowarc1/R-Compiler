@@ -8,8 +8,6 @@ struct Rule {
   TokenType type;
 };
 
-const int32_t RULES_NUM = 101;
-
 const std::vector<Rule> config_rules = {
     /*
     The list for Lexer gramma, in which all keywords and punctions were done by
@@ -124,12 +122,6 @@ const std::vector<Rule> config_rules = {
      TokenType::STRINGLITERAL},
     {std::regex(R"(^r(#*)\".*?\"\1)"), TokenType::RAWSTRINGLITERAL},
 
-    {std::regex(R"(^b'([^'\\\r]|\\x[0-7][0-9a-fA-F]|\\[nrt0'\\])*")"),
-     TokenType::BYTELITERAL},
-    {std::regex(R"(^b"([^"\\\r]|\\x[0-7][0-9a-fA-F]|\\[nrt0"\\]|\\\n)*")"),
-     TokenType::BYTESTRINGLITERAL},
-    {std::regex(R"(^br(#*)\".*?\"\1)"), TokenType::RAWBYTESTRINGLITERAL},
-
     {std::regex(
          R"(^c"([^"\\\r\x00]|\\x(?!00)[0-7][0-9a-fA-F]|\\[nrt"\\]|\\\n)*")"),
      TokenType::CSTRINGLITERAL},
@@ -138,9 +130,6 @@ const std::vector<Rule> config_rules = {
     {std::regex(
          R"(^([0-9][0-9_]*|0b[0-1_]*[0-1][0-1_]*|0o[0-7_]*[0-7][0-7_]*|0x[0-9a-fA-F_]*[0-9a-fA-F][0-9a-fA-F_]*)([a-df-zA-DF-Z][a-zA-Z0-9_]*)?)"),
      TokenType::INTEGERLITERAL},
-
-    // Float may have problem on "1."
-    {std::regex(R"(^[0-9][0-9_]*\.[0-9][0-9_])"), TokenType::FLOATLITERAL},
 
     {std::regex(R"(^\s+)"), TokenType::WHITESPACE},
 
@@ -161,7 +150,7 @@ public:
 };
 
 Matcher::Matcher() {
-  for (int32_t i = 0; i < RULES_NUM; ++i) {
+  for (int32_t i = 0; i < config_rules.size(); ++i) {
     rules.push_back(config_rules[i]);
   }
 }

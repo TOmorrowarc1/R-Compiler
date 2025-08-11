@@ -14,7 +14,7 @@ private:
   int32_t value_;
 
 public:
-  ExprLiteralIntNode(int64_t value);
+  ExprLiteralIntNode(int32_t value);
   ~ExprLiteralIntNode() = default;
   void accept(Visitor &visitor) override;
 };
@@ -46,15 +46,5 @@ private:
 public:
   ExprLiteralStringNode(const std::string &value);
   ~ExprLiteralStringNode() = default;
-  void accept(Visitor &visitor) override;
-};
-
-class ExprLiteralByteNode : public ExprLiteralNode {
-private:
-  uint8_t value_;
-
-public:
-  ExprLiteralByteNode(uint8_t value);
-  ~ExprLiteralByteNode() = default;
   void accept(Visitor &visitor) override;
 };
