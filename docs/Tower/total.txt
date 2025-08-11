@@ -23,10 +23,8 @@ Module →
       }
 
 Function →
-    FunctionQualifiers fn IDENTIFIER GenericParams?
-        ( FunctionParameters? )
-        FunctionReturnType? WhereClause?
-        ( BlockExpression | ; )
+    FunctionQualifiers fn IDENTIFIER         ( FunctionParameters? )
+        FunctionReturnType?         ( BlockExpression | ; )
 
 FunctionQualifiers → const?
 
@@ -38,15 +36,7 @@ FunctionParamPattern → PatternNoTopAlt : Type
 
 FunctionReturnType → -> Type
 
-Struct →
-      StructStruct
-    | TupleStruct
-
-StructStruct →
-    struct IDENTIFIER GenericParams? WhereClause? ( { StructFields? } | ; )
-
-TupleStruct →
-    struct IDENTIFIER GenericParams? ( TupleFields? ) WhereClause? ;
+Struct → struct IDENTIFIER ( { StructFields? } | ; )
 
 StructFields → StructField ( , StructField )* ,?
 
@@ -57,7 +47,7 @@ TupleFields → TupleField ( , TupleField )* ,?
 TupleField → Type
 
 Enumeration →
-    enum IDENTIFIER GenericParams? WhereClause? { EnumVariants? }
+    enum IDENTIFIER { EnumVariants? }
 
 EnumVariants → EnumVariant ( , EnumVariant )* ,?
 
@@ -74,7 +64,7 @@ ConstantItem →
     const ( IDENTIFIER | _ ) : Type ( = Expression )? ;
 
 Trait →
-    trait IDENTIFIER GenericParams? ( : TypeParamBounds? )? WhereClause?
+    trait IDENTIFIER ( : TypeParamBounds? )?     
     {
         AssociatedItem*
     }
@@ -82,34 +72,19 @@ Trait →
 Implementation → InherentImpl | TraitImpl
 
 InherentImpl →
-    impl GenericParams? Type WhereClause? {
+    impl Type {
         AssociatedItem*
     }
 
 TraitImpl →
-    impl GenericParams? !? TypePath for Type
-    WhereClause?
+    impl !? TypePath for Type
     {
         AssociatedItem*
     }
 
-GenericParams → < ( GenericParam ( , GenericParam )* ,? )? >
-
-GenericParam → ( TypeParam | ConstParam )
-
-TypeParam → IDENTIFIER ( : TypeParamBounds? )? ( = Type )?
-
 ConstParam →
     const IDENTIFIER : Type
     ( = BlockExpression | IDENTIFIER | -? LiteralExpression )?
-
-WhereClause → where ( WhereClauseItem , )* WhereClauseItem?
-
-WhereClauseItem →
-      LifetimeWhereClauseItem
-    | TypeBoundWhereClauseItem
-
-TypeBoundWhereClauseItem → ForLifetimes? Type : TypeParamBounds?
 
 AssociatedItem → ( ConstantItem | Function  )
 
@@ -124,7 +99,8 @@ Statement →
 LetStatement →
     let PatternNoTopAlt ( : Type )?
     (
-        = Expression
+          = Expression
+        | = Expressionexcept LazyBooleanExpression or end with a } else BlockExpression
     )? ;
 
 ExpressionStatement →
