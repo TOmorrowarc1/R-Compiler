@@ -413,11 +413,7 @@ ImplTraitTypeOneBound → impl SimplePath
 
 InferredType → _
 
-
-MISCELLANEOUS SYNTAX
 TypeParamBounds → SimplePath ( + SimplePath )* +?
-
-SimplePath → SimplePath
 
 
 PATH Syntax

@@ -29,6 +29,9 @@ class StmtEmptyNode;
 class StmtItemNode;
 class StmtLetNode;
 
+class TypeTupleNode;
+class TypeArrayNode;
+class TypeSliceNode;
 class TypeInferNode;
 class TypeNeverNode;
 class TypePathNode;
@@ -71,6 +74,9 @@ public:
   virtual void visit(StmtItemNode &node) = 0;
   virtual void visit(StmtLetNode &node) = 0;
 
+  virtual void visit(TypeTupleNode &node) = 0;
+  virtual void visit(TypeArrayNode &node) = 0;
+  virtual void visit(TypeSliceNode &node) = 0;
   virtual void visit(TypeInferNode &node) = 0;
   virtual void visit(TypeNeverNode &node) = 0;
   virtual void visit(TypePathNode &node) = 0;

@@ -2,12 +2,13 @@
 #include "TypeANode.hpp"
 
 class PathNode;
+
 class TypePathNode : public TypeNode {
 private:
-  std::vector<std::string> path_;
+  std::unique_ptr<PathNode> path_;
 
 public:
-  TypePathNode(std::vector<std::string> path);
+  TypePathNode(std::unique_ptr<PathNode> &&path);
   ~TypePathNode() = default;
   void accept(Visitor &visitor) override;
 };
