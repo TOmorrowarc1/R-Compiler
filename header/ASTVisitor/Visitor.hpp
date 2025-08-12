@@ -29,6 +29,9 @@ class StmtEmptyNode;
 class StmtItemNode;
 class StmtLetNode;
 
+class PatternMultNode;
+class PatternLiteralNode;
+
 class TypeTupleNode;
 class TypeArrayNode;
 class TypeSliceNode;
@@ -73,6 +76,9 @@ public:
   virtual void visit(StmtEmptyNode &node) = 0;
   virtual void visit(StmtItemNode &node) = 0;
   virtual void visit(StmtLetNode &node) = 0;
+
+  virtual void visit(PatternMultNode &node) = 0;
+  virtual void visit(PatternLiteralNode &node) = 0;
 
   virtual void visit(TypeTupleNode &node) = 0;
   virtual void visit(TypeArrayNode &node) = 0;

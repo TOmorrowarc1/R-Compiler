@@ -7,22 +7,20 @@ Crate →
     Item*
 
 Item →
-    VisItem
-
-VisItem →
-      | Function
-      | ConstantItem
-      | Module
-      | Struct
-      | Enumeration
-      | Trait
-      | Implementation
+    Function
+    | ConstantItem
+    | Module
+    | Struct
+    | Enumeration
+    | Trait
+    | Implementation
 
 Module →
      mod IDENTIFIER ;
-    | mod IDENTIFIER {
+    | mod IDENTIFIER 
+    {
         Item*
-      }
+    }
 
 Function →
     FunctionQualifiers fn IDENTIFIER ( FunctionParameters? )
@@ -34,7 +32,7 @@ FunctionParameters → FunctionParam ( , FunctionParam )* ,?
 
 FunctionParam → ( FunctionParamPattern | Type )
 
-FunctionParamPattern → PatternNoTopAlt : Type 
+FunctionParamPattern → PatternOne : Type 
 
 FunctionReturnType → -> Type
 
@@ -99,7 +97,7 @@ Statement →
     | ExpressionStatement
 
 LetStatement →
-    let PatternNoTopAlt ( : Type )?
+    let PatternOne ( : Type )?
     (
           = Expression
         | = Expressionexcept LazyBooleanExpression or end with a } else BlockExpression
@@ -309,19 +307,17 @@ UnderscoreExpression → _
 
 
 PATTERN Syntax
-Pattern → |? PatternNoTopAlt ( | PatternNoTopAlt )*
+Pattern →
+      PatternMult
+    | PatternOne
 
-PatternNoTopAlt →
-      PatternWithoutRange
-    | RangePattern
+PatternMult → |? PatternOne ( | PatternOne )*
 
-PatternWithoutRange →
+PatternOne →
       LiteralPattern
     | IdentifierPattern
     | WildcardPattern
-    | RestPattern
     | StructPattern
-    | TupleStructPattern
     | TuplePattern
     | GroupedPattern
     | SlicePattern
@@ -329,11 +325,9 @@ PatternWithoutRange →
 
 LiteralPattern → -? LiteralExpression
 
-IdentifierPattern → ref? mut? IDENTIFIER ( @ PatternNoTopAlt )?
+IdentifierPattern → IDENTIFIER ( @ PatternOne )?
 
 WildcardPattern → _
-
-RestPattern → ..
 
 StructPattern →
     SimplePath {
@@ -341,28 +335,19 @@ StructPattern →
     }
 
 StructPatternElements →
-      StructPatternFields ( , | , StructPatternEtCetera )?
-    | StructPatternEtCetera
+      StructPatternFields ,?
 
 StructPatternFields →
     StructPatternField ( , StructPatternField )*
 
 StructPatternField →
-    TUPLE_INDEX : Pattern
-    | IDENTIFIER : Pattern
-    | ref? mut? IDENTIFIER
-
-StructPatternEtCetera → ..
-
-TupleStructPattern → SimplePath ( TupleStructItems? )
-
-TupleStructItems → Pattern ( , Pattern )* ,?
+    IDENTIFIER : Pattern
+    | IDENTIFIER
 
 TuplePattern → ( TuplePatternItems? )
 
 TuplePatternItems →
       Pattern ,
-    | RestPattern
     | Pattern ( , Pattern )+ ,?
 
 GroupedPattern → ( Pattern )
@@ -371,7 +356,7 @@ SlicePattern → [ SlicePatternItems? ]
 
 SlicePatternItems → Pattern ( , Pattern )* ,?
 
-PathPattern → PathExpression
+PathPattern → Path
 
 
 TYPE Syntax
