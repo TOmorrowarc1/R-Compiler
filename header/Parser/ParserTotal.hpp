@@ -19,10 +19,13 @@
 #include "StmtExprNode.hpp"
 #include "StmtItemNode.hpp"
 #include "StmtLetNode.hpp"
+#include "TypeArrayNode.hpp"
 #include "TypeInferNode.hpp"
 #include "TypeNeverNode.hpp"
 #include "TypeParentNode.hpp"
 #include "TypePathNode.hpp"
+#include "TypeSliceNode.hpp"
+#include "TypeTupleNode.hpp"
 #include "token.hpp"
 #include <stdexcept>
 
