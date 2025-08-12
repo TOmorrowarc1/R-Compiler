@@ -31,6 +31,13 @@ class StmtLetNode;
 
 class PatternMultNode;
 class PatternLiteralNode;
+class PatternStructNode;
+class PatternSliceNode;
+class PatternTupleNode;
+class PatternWildNode;
+class PatternPathNode;
+class PatternGroupNode;
+class PatternIDNode;
 
 class TypeTupleNode;
 class TypeArrayNode;
@@ -79,6 +86,13 @@ public:
 
   virtual void visit(PatternMultNode &node) = 0;
   virtual void visit(PatternLiteralNode &node) = 0;
+  virtual void visit(PatternStructNode &node) = 0;
+  virtual void visit(PatternSliceNode &node) = 0;
+  virtual void visit(PatternTupleNode &node) = 0;
+  virtual void visit(PatternWildNode &node) = 0;
+  virtual void visit(PatternPathNode &node) = 0;
+  virtual void visit(PatternGroupNode &node) = 0;
+  virtual void visit(PatternIDNode &node) = 0;
 
   virtual void visit(TypeTupleNode &node) = 0;
   virtual void visit(TypeArrayNode &node) = 0;

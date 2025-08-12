@@ -6,7 +6,7 @@ private:
   std::string identifier_;
 
 public:
-  PatternIDNode(const std::string &identifier_);
+  PatternIDNode(const std::string &identifier);
   ~PatternIDNode() = default;
   void accept(Visitor &visitor) override;
 };
