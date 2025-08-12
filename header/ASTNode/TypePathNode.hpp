@@ -1,6 +1,7 @@
 #pragma once
 #include "TypeANode.hpp"
 
+class PathNode;
 class TypePathNode : public TypeNode {
 private:
   std::vector<std::string> path_;

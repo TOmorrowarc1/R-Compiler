@@ -13,6 +13,8 @@
 #include "ItemConstantNode.hpp"
 #include "ItemFnNode.hpp"
 #include "Parser.hpp"
+#include "PathQualifiedNode.hpp"
+#include "PathSimpleNode.hpp"
 #include "StmtEmptyNode.hpp"
 #include "StmtExprNode.hpp"
 #include "StmtItemNode.hpp"
@@ -40,38 +42,15 @@ auto parseStmtExprNode(TokenStream &stream) -> std::unique_ptr<StmtExprNode>;
 auto parseStmtEmptyNode(TokenStream &stream) -> std::unique_ptr<StmtEmptyNode>;
 
 auto parseExprNode(TokenStream &stream) -> std::unique_ptr<ExprNode>;
-auto parseExprBlockInNode(TokenStream &stream)
-    -> std::unique_ptr<ExprBlockInNode>;
 auto parseExprBlockNode(TokenStream &stream) -> std::unique_ptr<ExprBlockNode>;
-auto parseExprBlockConstNode(TokenStream &stream)
-    -> std::unique_ptr<ExprBlockConstNode>;
-auto parseExprLoopNode(TokenStream &stream) -> std::unique_ptr<ExprLoopNode>;
-auto parseExprWhileNode(TokenStream &stream) -> std::unique_ptr<ExprWhileNode>;
-auto parseExprIfNode(TokenStream &stream) -> std::unique_ptr<ExprIfNode>;
 auto parseExprLiteralNode(TokenStream &stream)
     -> std::unique_ptr<ExprLiteralNode>;
-auto parseExprLiteralIntNode(TokenStream &stream)
-    -> std::unique_ptr<ExprLiteralIntNode>;
-auto parseExprLiteralBoolNode(TokenStream &stream)
-    -> std::unique_ptr<ExprLiteralBoolNode>;
-auto parseExprLiteralCharNode(TokenStream &stream)
-    -> std::unique_ptr<ExprLiteralCharNode>;
-auto parseExprLiteralStringNode(TokenStream &stream)
-    -> std::unique_ptr<ExprLiteralStringNode>;
-auto parseExprOperUnaryNode(TokenStream &stream)
-    -> std::unique_ptr<ExprOperUnaryNode>;
 auto parseExprPathNode(TokenStream &stream) -> std::unique_ptr<ExprPathNode>;
-auto parseExprGroupNode(TokenStream &stream) -> std::unique_ptr<ExprGroupNode>;
-auto parseExprCallNode(TokenStream &stream) -> std::unique_ptr<ExprCallNode>;
-auto parseExprBreakNode(TokenStream &stream) -> std::unique_ptr<ExprBreakNode>;
-auto parseExprReturnNode(TokenStream &stream)
-    -> std::unique_ptr<ExprReturnNode>;
-auto parseExprContinueNode(TokenStream &stream)
-    -> std::unique_ptr<ExprContinueNode>;
 
 auto parseTypeNode(TokenStream &stream) -> std::unique_ptr<TypeNode>;
-auto parseTypeInferNode(TokenStream &stream) -> std::unique_ptr<TypeInferNode>;
-auto parseTypeNeverNode(TokenStream &stream) -> std::unique_ptr<TypeNeverNode>;
-auto parseTypePathNode(TokenStream &stream) -> std::unique_ptr<TypePathNode>;
-auto parseTypeParentNode(TokenStream &stream)
-    -> std::unique_ptr<TypeParentNode>;
+
+auto parsePathNode(TokenStream &stream) -> std::unique_ptr<PathNode>;
+auto parsePathSimpleNode(TokenStream &stream)
+    -> std::unique_ptr<PathSimpleNode>;
+auto parsePathQualifiedNode(TokenStream &stream)
+    -> std::unique_ptr<PathQualifiedNode>;

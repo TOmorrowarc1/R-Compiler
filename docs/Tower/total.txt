@@ -461,8 +461,4 @@ QualifiedPathInType → QualifiedPathType ( :: TypePathSegment )+
 
 TypePath → ::? TypePathSegment ( :: TypePathSegment )*
 
-TypePathSegment → PathIdentSegment ( ::? ( GenericArgs | TypePathFn ) )?
-
-TypePathFn → ( TypePathFnInputs? ) ( -> TypeNoBounds )?
-
-TypePathFnInputs → Type ( , Type )* ,?
+TypePathSegment → PathIdentSegment 

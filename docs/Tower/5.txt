@@ -79,7 +79,7 @@ InherentImpl →
     }
 
 TraitImpl →
-    impl !? PathIn for Type
+    impl !? SimplePath for Type
     {
         AssociatedItem*
     }
@@ -150,8 +150,7 @@ LiteralExpression →
     | true
     | false
 
-PathExpression →
-      PathIn
+PathExpression → Path
 
 BlockExpression →
     {
@@ -235,7 +234,7 @@ TupleElements → ( Expression , )+ Expression?
 TupleIndexingExpression → Expression . TUPLE_INDEX
 
 StructExpression →
-    PathIn { ( StructExprFields | StructBase )? }
+    SimplePath { ( StructExprFields | StructBase )? }
 
 StructExprFields →
     StructExprField ( , StructExprField )* ( , StructBase | ,? )
@@ -337,7 +336,7 @@ WildcardPattern → _
 RestPattern → ..
 
 StructPattern →
-    PathIn {
+    SimplePath {
         StructPatternElements?
     }
 
@@ -355,7 +354,7 @@ StructPatternField →
 
 StructPatternEtCetera → ..
 
-TupleStructPattern → PathIn ( TupleStructItems? )
+TupleStructPattern → SimplePath ( TupleStructItems? )
 
 TupleStructItems → Pattern ( , Pattern )* ,?
 
@@ -385,7 +384,7 @@ TypeNoBounds →
       ParenthesizedType
     | ImplTraitTypeOneBound
     | TraitObjectTypeOneBound
-    | PathIn
+    | Path
     | TupleType
     | NeverType
     | ArrayType
@@ -406,18 +405,28 @@ SliceType → [ Type ]
 
 TraitObjectType → dyn? TypeParamBounds
 
-TraitObjectTypeOneBound → dyn? TraitBound
+TraitObjectTypeOneBound → dyn? SimplePath
 
 ImplTraitType → impl TypeParamBounds
 
-ImplTraitTypeOneBound → impl TraitBound
+ImplTraitTypeOneBound → impl SimplePath
 
 InferredType → _
 
 
+MISCELLANEOUS SYNTAX
+TypeParamBounds → SimplePath ( + SimplePath )* +?
+
+SimplePath → SimplePath
+
+
 PATH Syntax
-PathIn →
+Path -> SimplePath | QualifiedPath
+
+SimplePath →
     ::? PathExprSegment ( :: PathExprSegment )*
+
+QualifiedPath → < Type ( as SimplePath )? > ( :: PathExprSegment )+
 
 PathExprSegment →
     IDENTIFIER | super | self | Self | crate
