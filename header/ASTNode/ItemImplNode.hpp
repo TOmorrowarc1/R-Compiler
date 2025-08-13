@@ -1,12 +1,12 @@
 #pragma once
 #include "ItemANode.hpp"
 
-class ItemFunctionNode;
+class ItemFnNode;
 class ItemConstNode;
 class TypeNode;
 
 struct ItemAssociatedItem {
-  std::unique_ptr<ItemFunctionNode> function;
+  std::unique_ptr<ItemFnNode> function;
   std::unique_ptr<ItemConstNode> constant;
 };
 

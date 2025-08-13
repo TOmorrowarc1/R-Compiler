@@ -24,7 +24,7 @@ Module →
 
 Function →
     FunctionQualifiers fn IDENTIFIER ( FunctionParameters? )
-    FunctionReturnType? ( BlockExpression | ; )
+    FunctionReturnType? ( BlockExpression | ; )//是否允许声明与实现分离？如果不允许，似乎不必考虑匿名参数。
 
 FunctionQualifiers → const?
 
@@ -32,7 +32,7 @@ FunctionParameters → FunctionParam ( , FunctionParam )* ,?
 
 FunctionParam → ( FunctionParamPattern | Type )
 
-FunctionParamPattern → PatternOne : Type //如何区分？
+FunctionParamPattern → PatternOne : Type
 
 FunctionReturnType → -> Type
 
@@ -42,13 +42,13 @@ StructFields → StructField ( , StructField )* ,?
 
 StructField → IDENTIFIER : Type
 
-Enumeration → //了解枚举的含义？语法？语义？
+Enumeration →
     enum IDENTIFIER { EnumVariants? }
 
 EnumVariants → EnumVariant ( , EnumVariant )* ,?
 
 EnumVariant →
-        IDENTIFIER ( EnumVariantTuple | EnumVariantStruct )? EnumVariantDiscriminant? //这啥？
+        IDENTIFIER ( EnumVariantTuple | EnumVariantStruct )? EnumVariantDiscriminant?
 
 EnumVariantTuple → ( TupleFields? )
 
@@ -73,7 +73,7 @@ Implementation → InherentImpl | TraitImpl
 
 InherentImpl →
     impl Type {
-        AssociatedItem* //为什么有常量的角色？
+        AssociatedItem*
     }
 
 TraitImpl → //需要设计两种类型吗？

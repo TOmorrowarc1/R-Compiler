@@ -5,7 +5,7 @@ class TypeNode;
 class ExprBlockNode;
 class PatternOneNode;
 
-struct FnParameter {
+struct ItemFnPara {
   std::unique_ptr<PatternOneNode> pattern;
   std::unique_ptr<TypeNode> type;
 };
@@ -13,14 +13,14 @@ struct FnParameter {
 class ItemFnNode : public ItemNode {
 private:
   std::string ID_;
-  std::vector<FnParameter> parameters_;
+  std::vector<ItemFnPara> parameters_;
   std::unique_ptr<TypeNode> returnType_;
   std::unique_ptr<ExprBlockNode> body_;
   bool const_flag;
 
 public:
   ItemFnNode(const std::string &ID, std::unique_ptr<TypeNode> &&returnType,
-             std::vector<FnParameter> &&parameters,
+             std::vector<ItemFnPara> &&parameters,
              std::unique_ptr<ExprBlockNode> &&body);
   ~ItemFnNode() = default;
   void accept(Visitor &visitor) override;

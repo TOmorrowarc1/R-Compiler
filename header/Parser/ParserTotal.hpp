@@ -11,7 +11,11 @@
 #include "ExprOperUnaryNode.hpp"
 #include "ExprPathNode.hpp"
 #include "ItemConstNode.hpp"
+#include "ItemEnumNode.hpp"
 #include "ItemFnNode.hpp"
+#include "ItemImplNode.hpp"
+#include "ItemModuleNode.hpp"
+#include "ItemStructNode.hpp"
 #include "Parser.hpp"
 #include "PathQualifiedNode.hpp"
 #include "PathSimpleNode.hpp"
@@ -41,10 +45,6 @@ auto parse(const std::vector<Token> &tokens) -> std::unique_ptr<ASTRootNode>;
 auto parseRootNode(TokenStream &stream) -> std::unique_ptr<ASTRootNode>;
 
 auto parseItemNode(TokenStream &stream) -> std::unique_ptr<ItemNode>;
-auto parseItemFnNode(TokenStream &stream) -> std::unique_ptr<ItemNode>;
-auto parseFnParameters(TokenStream &stream) -> std::vector<FnParameter>;
-auto parseFnParameter(TokenStream &stream) -> FnParameter;
-auto parseItemConstNode(TokenStream &stream) -> std::unique_ptr<ItemNode>;
 
 auto parseStmtNode(TokenStream &stream) -> std::unique_ptr<StmtNode>;
 auto parseStmtItemNode(TokenStream &stream) -> std::unique_ptr<StmtItemNode>;
