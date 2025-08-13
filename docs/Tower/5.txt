@@ -32,7 +32,7 @@ FunctionParameters → FunctionParam ( , FunctionParam )* ,?
 
 FunctionParam → ( FunctionParamPattern | Type )
 
-FunctionParamPattern → PatternOne : Type 
+FunctionParamPattern → PatternOne : Type //如何区分？
 
 FunctionReturnType → -> Type
 
@@ -42,13 +42,13 @@ StructFields → StructField ( , StructField )* ,?
 
 StructField → IDENTIFIER : Type
 
-Enumeration →
+Enumeration → //了解枚举的含义？语法？语义？
     enum IDENTIFIER { EnumVariants? }
 
 EnumVariants → EnumVariant ( , EnumVariant )* ,?
 
 EnumVariant →
-        IDENTIFIER ( EnumVariantTuple | EnumVariantStruct )? EnumVariantDiscriminant?
+        IDENTIFIER ( EnumVariantTuple | EnumVariantStruct )? EnumVariantDiscriminant? //这啥？
 
 EnumVariantTuple → ( TupleFields? )
 
@@ -61,23 +61,23 @@ EnumVariantStruct → { StructFields? }
 EnumVariantDiscriminant → = Expression
 
 ConstantItem →
-    const ( IDENTIFIER | _ ) : Type ( = Expression )? ;
+    const IDENTIFIER : Type ( = Expression )? ;
 
 Trait →
     trait IDENTIFIER ( : TypeParamBounds? )?     
     {
-        AssociatedItem*
+        AssociatedItem* //这里的常量是什么鬼？
     }
 
 Implementation → InherentImpl | TraitImpl
 
 InherentImpl →
     impl Type {
-        AssociatedItem*
+        AssociatedItem* //为什么有常量的角色？
     }
 
-TraitImpl →
-    impl !? SimplePath for Type
+TraitImpl → //需要设计两种类型吗？
+    impl !? SimplePath for Type //这个！是什么？
     {
         AssociatedItem*
     }
@@ -86,7 +86,7 @@ ConstParam →
     const IDENTIFIER : Type
     ( = BlockExpression | IDENTIFIER | -? LiteralExpression )?
 
-AssociatedItem → ( ConstantItem | Function  )
+AssociatedItem → ( ConstantItem | Function )
 
 
 STATEMENT Syntax

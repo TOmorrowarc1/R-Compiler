@@ -10,7 +10,7 @@
 #include "ExprOperBinaryNode.hpp"
 #include "ExprOperUnaryNode.hpp"
 #include "ExprPathNode.hpp"
-#include "ItemConstantNode.hpp"
+#include "ItemConstNode.hpp"
 #include "ItemFnNode.hpp"
 #include "Parser.hpp"
 #include "PathQualifiedNode.hpp"

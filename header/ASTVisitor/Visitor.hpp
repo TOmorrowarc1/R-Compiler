@@ -2,8 +2,13 @@
 
 class ASTRootNode;
 
-class ItemConstantNode;
+class ItemConstNode;
 class ItemFnNode;
+class ItemModuleNode;
+class ItemStructNode;
+class ItemEnumNode;
+class ItemImplNode;
+class ItemTraitNode;
 
 class ExprBlockNode;
 class ExprBlockConstNode;
@@ -57,8 +62,13 @@ public:
 
   virtual void visit(ASTRootNode &node) = 0;
 
-  virtual void visit(ItemConstantNode &node) = 0;
+  virtual void visit(ItemConstNode &node) = 0;
   virtual void visit(ItemFnNode &node) = 0;
+  virtual void visit(ItemModuleNode &node) = 0;
+  virtual void visit(ItemStructNode &node) = 0;
+  virtual void visit(ItemEnumNode &node) = 0;
+  virtual void visit(ItemImplNode &node) = 0;
+  virtual void visit(ItemTraitNode &node) = 0;
 
   virtual void visit(ExprBlockNode &node) = 0;
   virtual void visit(ExprBlockConstNode &node) = 0;
