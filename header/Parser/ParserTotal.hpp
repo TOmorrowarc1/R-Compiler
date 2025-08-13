@@ -15,6 +15,14 @@
 #include "Parser.hpp"
 #include "PathQualifiedNode.hpp"
 #include "PathSimpleNode.hpp"
+#include "PatternGroupNode.hpp"
+#include "PatternIDNode.hpp"
+#include "PatternLiteralNode.hpp"
+#include "PatternPathNode.hpp"
+#include "PatternSliceNode.hpp"
+#include "PatternStructNode.hpp"
+#include "PatternTupleNode.hpp"
+#include "PatternWildNode.hpp"
 #include "StmtEmptyNode.hpp"
 #include "StmtExprNode.hpp"
 #include "StmtItemNode.hpp"
@@ -49,6 +57,10 @@ auto parseExprBlockNode(TokenStream &stream) -> std::unique_ptr<ExprBlockNode>;
 auto parseExprLiteralNode(TokenStream &stream)
     -> std::unique_ptr<ExprLiteralNode>;
 auto parseExprPathNode(TokenStream &stream) -> std::unique_ptr<ExprPathNode>;
+
+auto parsePatternNode(TokenStream &stream) -> std::unique_ptr<PatternNode>;
+auto parsePatternOneNode(TokenStream &stream)
+    -> std::unique_ptr<PatternOneNode>;
 
 auto parseTypeNode(TokenStream &stream) -> std::unique_ptr<TypeNode>;
 

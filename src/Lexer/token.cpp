@@ -18,6 +18,13 @@ auto TokenStream::peek() const -> Token {
   return Token{"", TokenType::END_OF_FILE};
 }
 
+auto TokenStream::peekNum(int32_t shift) const -> Token {
+  if (index + shift < tokens.size()) {
+    return tokens[index + shift];
+  }
+  return Token{"", TokenType::END_OF_FILE};
+}
+
 auto TokenStream::getIndex() const -> int32_t { return index; }
 
 void TokenStream::restoreIndex(int32_t newIndex) {

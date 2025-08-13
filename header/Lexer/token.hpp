@@ -150,6 +150,7 @@ public:
   TokenStream(const std::vector<Token> &tokens);
   auto next() -> Token;
   auto peek() const -> Token;
+  auto peekNum(int32_t index) const -> Token;
   auto getIndex() const -> int32_t;
-  void restoreIndex(int32_t newIndex);
+  void restoreIndex(int32_t new_index);
 };
