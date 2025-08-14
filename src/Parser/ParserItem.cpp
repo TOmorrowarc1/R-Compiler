@@ -68,13 +68,13 @@ auto parseItemFnNode(TokenStream &stream) -> std::unique_ptr<ItemFnNode> {
   stream.next();
   if (stream.peek().type == TokenType::ARROW) {
     stream.next();
-    returnType = std::move(parseTypeNode(stream));
+    returnType = parseTypeNode(stream);
   } else {
     returnType = nullptr;
   }
   if (stream.peek().type == TokenType::LEFT_BRACE) {
     stream.next();
-    body = std::move(parseExprBlockNode(stream));
+    body = parseExprBlockNode(stream);
   } else if (stream.peek().type == TokenType::SEMICOLON) {
     stream.next();
   } else {
@@ -133,7 +133,7 @@ auto parseItemConstNode(TokenStream &stream) -> std::unique_ptr<ItemConstNode> {
   name = stream.next().content;
   if (stream.peek().type == TokenType::COLON) {
     stream.next();
-    type = std::move(parseTypeNode(stream));
+    type = parseTypeNode(stream);
   } else {
     throw std::runtime_error("Expected ':' after Const name");
   }
@@ -141,7 +141,7 @@ auto parseItemConstNode(TokenStream &stream) -> std::unique_ptr<ItemConstNode> {
     throw std::runtime_error("Expected '=' after Const type");
   }
   stream.next();
-  value = std::move(parseExprBlockNode(stream));
+  value = parseExprBlockNode(stream);
   return std::make_unique<ItemConstNode>(name, std::move(type),
                                          std::move(value));
 }
