@@ -69,3 +69,4 @@ auto parsePathSimpleNode(TokenStream &stream)
     -> std::unique_ptr<PathSimpleNode>;
 auto parsePathQualifiedNode(TokenStream &stream)
     -> std::unique_ptr<PathQualifiedNode>;
+auto parsePathSegment(TokenStream &stream) -> PathSegment;

@@ -15,36 +15,13 @@ auto parsePathSimpleNode(TokenStream &stream)
     -> std::unique_ptr<PathSimpleNode> {
   std::vector<PathSegment> segments;
   if (stream.peek().type == TokenType::COLON_COLON) {
-    segments.push_back({PathSegmentType::CRATE, ""});
     stream.next();
+    segments.push_back({PathSegmentType::CRATE, ""});
   }
-  while (true) {
-    switch (stream.peek().type) {
-    case TokenType::IDENTIFIER:
-      segments.push_back({PathSegmentType::IDENTIFER, stream.next().content});
-      break;
-    case TokenType::SELF:
-      segments.push_back({PathSegmentType::SELF, ""});
-      stream.next();
-      break;
-    case TokenType::SELF_TYPE:
-      segments.push_back({PathSegmentType::SELF_TYPE, ""});
-      stream.next();
-      break;
-    case TokenType::SUPER:
-      segments.push_back({PathSegmentType::SUPER, ""});
-      stream.next();
-      break;
-    case TokenType::CRATE:
-      segments.push_back({PathSegmentType::CRATE, ""});
-      stream.next();
-      break;
-    default:
-      throw std::runtime_error("Unexpected token in path simple node parsing");
-    }
-    if (stream.peek().type != TokenType::COLON_COLON) {
-      break;
-    }
+  segments.push_back(parsePathSegment(stream));
+  while (stream.peek().type != TokenType::COLON_COLON) {
+    stream.next();
+    segments.push_back(parsePathSegment(stream));
   }
   return std::make_unique<PathSimpleNode>(std::move(segments));
 }
@@ -67,35 +44,31 @@ auto parsePathQualifiedNode(TokenStream &stream)
   if (stream.peek().type != TokenType::COLON_COLON) {
     throw std::runtime_error("Expected '::' in path qualified node parsing");
   }
-  stream.next();
-  while (true) {
-    switch (stream.peek().type) {
-    case TokenType::IDENTIFIER:
-      segments.push_back({PathSegmentType::IDENTIFER, stream.next().content});
-      break;
-    case TokenType::SELF:
-      segments.push_back({PathSegmentType::SELF, ""});
-      stream.next();
-      break;
-    case TokenType::SELF_TYPE:
-      segments.push_back({PathSegmentType::SELF_TYPE, ""});
-      stream.next();
-      break;
-    case TokenType::SUPER:
-      segments.push_back({PathSegmentType::SUPER, ""});
-      stream.next();
-      break;
-    case TokenType::CRATE:
-      segments.push_back({PathSegmentType::CRATE, ""});
-      stream.next();
-      break;
-    default:
-      throw std::runtime_error("Unexpected token in path simple node parsing");
-    }
-    if (stream.peek().type != TokenType::COLON_COLON) {
-      break;
-    }
+  while (stream.peek().type == TokenType::COLON_COLON) {
+    stream.next();
+    segments.push_back(parsePathSegment(stream));
   }
   return std::make_unique<PathQualifiedNode>(
       std::move(segments), std::move(parent), std::move(type));
+}
+
+auto parsePathSegment(TokenStream &stream) -> PathSegment {
+  switch (stream.peek().type) {
+  case TokenType::IDENTIFIER:
+    return {PathSegmentType::IDENTIFER, stream.next().content};
+  case TokenType::SELF:
+    stream.next();
+    return {PathSegmentType::SELF, ""};
+  case TokenType::SELF_TYPE:
+    stream.next();
+    return {PathSegmentType::SELF_TYPE, ""};
+  case TokenType::SUPER:
+    stream.next();
+    return {PathSegmentType::SUPER, ""};
+  case TokenType::CRATE:
+    stream.next();
+    return {PathSegmentType::CRATE, ""};
+  }
+  throw std::runtime_error("Unexpected token in path simple node parsing");
+  return {PathSegmentType::IDENTIFER, ""};
 }
