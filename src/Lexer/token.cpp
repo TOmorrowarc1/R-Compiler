@@ -19,8 +19,9 @@ auto TokenStream::peek() const -> Token {
 }
 
 auto TokenStream::peekNum(int32_t shift) const -> Token {
-  if (index + shift < tokens.size()) {
-    return tokens[index + shift];
+  int32_t target_index = index + shift;
+  if (target_index < tokens.size() && target_index >= 0) {
+    return tokens[target_index];
   }
   return Token{"", TokenType::END_OF_FILE};
 }
