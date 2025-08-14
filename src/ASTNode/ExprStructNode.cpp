@@ -1,7 +1,7 @@
 #include "ExprStructNode.hpp"
 #include "Visitor.hpp"
 
-ExprStructNode::ExprStructNode(std::unique_ptr<PathSimpleNode> &&path,
+ExprStructNode::ExprStructNode(std::unique_ptr<ExprPathNode> &&path,
                                std::vector<ExprStructField> &&fields)
     : ExprBlockOutNode(), path_(std::move(path)), fields_(std::move(fields)) {}
 

@@ -100,53 +100,9 @@ public:
   }
 };
 
-auto parseNudExprNode(TokenStream &stream, int32_t power)
-    -> std::unique_ptr<ExprNode> {
-  // It strikes me that Nud nodes are able to be LL(1) parsed.
-  switch (stream.peek().type) {
-  case TokenType::IDENTIFIER:
-  case TokenType::RAWIDENTIFIER:
-    return std::make_unique<ExprPathNode>(std::move(parseExprPathNode(stream)));
-  case TokenType::CHARLITERAL:
-    return std::make_unique<ExprLiteralCharNode>(
-        std::move(parseExprLiteralCharNode(stream)));
-  case TokenType::STRINGLITERAL:
-  case TokenType::RAWSTRINGLITERAL:
-  case TokenType::CSTRINGLITERAL:
-  case TokenType::RAWCSTRINGLITERAL:
-    return std::make_unique<ExprLiteralStringNode>(
-        std::move(parseExprLiteralStringNode(stream)));
-  case TokenType::INTEGERLITERAL:
-    return std::make_unique<ExprLiteralIntNode>(
-        std::move(parseExprLiteralIntNode(stream)));
-  case TokenType::TRUE:
-  case TokenType::FALSE:
-    return std::make_unique<ExprLiteralBoolNode>(
-        std::move(parseExprLiteralBoolNode(stream)));
-  case TokenType::BREAK:
-    return std::make_unique<ExprBreakNode>(
-        std::move(parseExprBreakNode(stream)));
-  case TokenType::CONTINUE:
-    return std::make_unique<ExprContinueNode>(
-        std::move(parseExprContinueNode(stream)));
-  case TokenType::RETURN:
-    return std::make_unique<ExprReturnNode>(
-        std::move(parseExprReturnNode(stream)));
-  case TokenType::MINUS:
-  case TokenType::NOT:
-    return std::make_unique<ExprOperUnaryNode>(
-        std::move(parseExprOperUnaryNode(stream)));
-  case TokenType::LEFT_PAREN:
-    return std::make_unique<ExprGroupNode>(
-        std::move(parseExprGroupNode(stream)));
-  }
-  throw std::runtime_error("Unexpected token in parseNudExprNode: ");
-  return nullptr;
+auto parseExprNode(TokenStream &stream) -> std::unique_ptr<ExprNode> {
+  return parseExprNode(stream, 0);
 }
-
-auto parseLedExprNode(TokenStream &stream, int32_t power,
-                      std::unique_ptr<ExprNode> &&lhs)
-    -> std::unique_ptr<ExprNode> {}
 
 auto parseExprNode(TokenStream &stream, int32_t power)
     -> std::unique_ptr<ExprNode> {
@@ -162,14 +118,162 @@ auto parseExprNode(TokenStream &stream, int32_t power)
       break;
     }
     stream.next();
-    int32_t right_power = OpPowerRecoder::getInstance().getRight(token.type);
-    result = parseLedExprNode(stream, right_power, std::move(result));
+    result = parseLedExprNode(stream, token, std::move(result));
   }
   return result;
 }
 
-auto parseExprNode(TokenStream &stream) -> std::unique_ptr<ExprNode> {
-  return parseExprNode(stream, 0);
+auto parseNudExprNode(TokenStream &stream, int32_t power)
+    -> std::unique_ptr<ExprNode> {
+  // It strikes me that Nud nodes are able to be LL(1) parsed.
+  switch (stream.peek().type) {
+  case TokenType::IDENTIFIER:
+    return parseExprPathNode(stream);
+  case TokenType::CHARLITERAL:
+    return parseExprLiteralCharNode(stream);
+  case TokenType::STRINGLITERAL:
+  case TokenType::RAWSTRINGLITERAL:
+  case TokenType::CSTRINGLITERAL:
+  case TokenType::RAWCSTRINGLITERAL:
+    return parseExprLiteralStringNode(stream);
+  case TokenType::INTEGERLITERAL:
+    return parseExprLiteralIntNode(stream);
+  case TokenType::TRUE:
+  case TokenType::FALSE:
+    return parseExprLiteralBoolNode(stream);
+  case TokenType::BREAK:
+    return parseExprBreakNode(stream);
+  case TokenType::CONTINUE:
+    return parseExprContinueNode(stream);
+  case TokenType::RETURN:
+    return parseExprReturnNode(stream);
+  case TokenType::MINUS:
+  case TokenType::NOT:
+    return parseExprOperUnaryNode(stream);
+  case TokenType::LEFT_PAREN: {
+    stream.next();
+    std::unique_ptr<ExprNode> expr;
+    std::vector<std::unique_ptr<ExprNode>> elements;
+    if (stream.peek().type == TokenType::RIGHT_PAREN) {
+      stream.next();
+      return std::make_unique<ExprTupleNode>(std::move(elements));
+    }
+    expr = parseExprNode(stream);
+    if (stream.peek().type == TokenType::COMMA) {
+      elements.push_back(std::move(expr));
+      while (stream.peek().type == TokenType::COMMA) {
+        stream.next();
+        if (stream.peek().type == TokenType::RIGHT_PAREN) {
+          break;
+        }
+        elements.push_back(parseExprNode(stream));
+      }
+      if (stream.peek().type != TokenType::RIGHT_PAREN) {
+        throw std::runtime_error("Missing ) after elements.");
+      }
+      stream.next();
+      return std::make_unique<ExprTupleNode>(std::move(elements));
+    } else if (stream.peek().type == TokenType::RIGHT_PAREN) {
+      stream.next();
+      return std::make_unique<ExprGroupNode>(std::move(expr));
+    }
+    throw std::runtime_error("Unexcepted token after expr.");
+    return nullptr;
+  }
+  case TokenType::LEFT_BRACKET:
+    return parseExprArrayNode(stream);
+  }
+  throw std::runtime_error("Unexpected token in parseNudExprNode: ");
+  return nullptr;
+}
+
+auto parseLedExprNode(TokenStream &stream, const Token &token,
+                      std::unique_ptr<ExprNode> &&lhs)
+    -> std::unique_ptr<ExprNode> {
+  switch (token.type) {
+  case TokenType::LEFT_PAREN: {
+    std::vector<std::unique_ptr<ExprNode>> parameters;
+    if (stream.peek().type != TokenType::RIGHT_PAREN) {
+      parameters.push_back(parseExprNode(stream));
+    }
+    while (stream.peek().type == TokenType::COMMA) {
+      stream.next();
+      if (stream.peek().type == TokenType::RIGHT_PAREN) {
+        break;
+      }
+      parameters.push_back(parseExprNode(stream));
+    }
+    if (stream.peek().type != TokenType::RIGHT_PAREN) {
+      throw std::runtime_error("Missing ) after parameters.");
+    }
+    stream.next();
+    return std::make_unique<ExprCallNode>(std::move(lhs),
+                                          std::move(parameters));
+  }
+  case TokenType::LEFT_BRACKET: {
+    auto index = parseExprNode(stream);
+    if (stream.peek().type != TokenType::RIGHT_BRACKET) {
+      throw std::runtime_error("Missing ] after an index.");
+    }
+    stream.next();
+    return std::make_unique<ExprArrayIndexNode>(std::move(lhs),
+                                                std::move(index));
+  }
+  case TokenType::LEFT_BRACE: {
+    std::vector<ExprStructField> fields;
+    if (stream.peek().type != TokenType::RIGHT_BRACE) {
+      fields.push_back(parseStructField(stream));
+    }
+    while (stream.peek().type == TokenType::COMMA) {
+      stream.next();
+      if (stream.peek().type == TokenType::RIGHT_BRACE) {
+        break;
+      }
+      fields.push_back(parseStructField(stream));
+    }
+    if (stream.peek().type != TokenType::RIGHT_BRACE) {
+      throw std::runtime_error("Missing } in struct fields.");
+    }
+    stream.next();
+    return std::make_unique<ExprStructNode>(std::move(lhs), std::move(fields));
+  }
+  case TokenType::DOT: {
+    auto next_token = stream.next();
+    if (next_token.type == TokenType::INTEGERLITERAL) {
+      return std::make_unique<ExprTupleIndexNode>(
+          std::move(lhs), parseExprLiteralIntNode(stream));
+    } else if (next_token.type == TokenType::IDENTIFIER) {
+      std::string ID = next_token.content;
+      if (stream.peek().type == TokenType::LEFT_PAREN) {
+        stream.next();
+        std::vector<std::unique_ptr<ExprNode>> parameters;
+        if (stream.peek().type != TokenType::RIGHT_PAREN) {
+          parameters.push_back(parseExprNode(stream));
+        }
+        while (stream.peek().type == TokenType::COMMA) {
+          stream.next();
+          if (stream.peek().type == TokenType::RIGHT_PAREN) {
+            break;
+          }
+          parameters.push_back(parseExprNode(stream));
+        }
+        if (stream.peek().type != TokenType::RIGHT_PAREN) {
+          throw std::runtime_error("Missing ) in struct fields.");
+        }
+        stream.next();
+        return std::make_unique<ExprMethodNode>(std::move(lhs), ID,
+                                                std::move(parameters));
+      }
+      return std::make_unique<ExprFieldNode>(std::move(lhs), ID);
+    }
+    throw std::runtime_error("Unexpect token type after dot.");
+    return nullptr;
+  }
+  }
+  int32_t right_power = OpPowerRecoder::getInstance().getRight(token.type);
+  auto rhs = parseExprNode(stream, right_power);
+  return std::make_unique<ExprOperBinaryNode>(token.type, std::move(lhs),
+                                              std::move(rhs));
 }
 
 auto parseExprBlockInNode(TokenStream &stream)
@@ -191,6 +295,19 @@ auto parseExprBlockInNode(TokenStream &stream)
   }
   throw std::runtime_error("Unexpected token in parseExprBlockInNode");
   return nullptr;
+}
+
+auto parseStructField(TokenStream &stream) -> ExprStructField {
+  ExprStructField field;
+  if (stream.peek().type != TokenType::IDENTIFIER) {
+    throw std::runtime_error("Fields are without identifier.");
+  }
+  std::string ID = stream.next().content;
+  if (stream.peek().type == TokenType::COLON) {
+    stream.next();
+    field.expr = parseExprNode(stream);
+  }
+  return field;
 }
 
 auto parseExprBlockNode(TokenStream &stream) -> std::unique_ptr<ExprBlockNode> {
@@ -411,7 +528,9 @@ auto parseExprOperUnaryNode(TokenStream &stream)
                                              std::move(parseExprNode(stream)));
 }
 
-auto parseExprPathNode(TokenStream &stream) -> std::unique_ptr<ExprPathNode> {}
+auto parseExprPathNode(TokenStream &stream) -> std::unique_ptr<ExprPathNode> {
+  return std::make_unique<ExprPathNode>(parsePathNode(stream));
+}
 
 auto parseExprGroupNode(TokenStream &stream) -> std::unique_ptr<ExprGroupNode> {
   stream.next();
@@ -477,4 +596,24 @@ auto parseExprContinueNode(TokenStream &stream)
     throw std::runtime_error("The continue expr should not have value.");
   }
   return std::make_unique<ExprContinueNode>();
+}
+
+auto parseExprArrayNode(TokenStream &stream) -> std::unique_ptr<ExprArrayNode> {
+  stream.next();
+  std::vector<std::unique_ptr<ExprNode>> elements;
+  if (stream.peek().type != TokenType::RIGHT_BRACKET) {
+    elements.push_back(parseExprNode(stream));
+    while (stream.peek().type == TokenType::COMMA) {
+      stream.next();
+      if (stream.peek().type == TokenType::RIGHT_BRACKET) {
+        break;
+      }
+      elements.push_back(parseExprNode(stream));
+    }
+  }
+  if (stream.peek().type != TokenType::RIGHT_BRACKET) {
+    throw std::runtime_error("Missing ] at the end of an array.");
+  }
+  stream.next();
+  return std::make_unique<ExprArrayNode>(std::move(elements));
 }

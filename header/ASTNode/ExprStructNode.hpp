@@ -10,11 +10,11 @@ struct ExprStructField {
 
 class ExprStructNode : public ExprBlockOutNode {
 private:
-  std::unique_ptr<PathSimpleNode> path_;
+  std::unique_ptr<ExprPathNode> path_;
   std::vector<ExprStructField> fields_;
 
 public:
-  ExprStructNode(std::unique_ptr<PathSimpleNode> &&path,
+  ExprStructNode(std::unique_ptr<ExprPathNode> &&path,
                  std::vector<ExprStructField> &&fields);
   ~ExprStructNode() = default;
   void accept(Visitor &visitor) override;
