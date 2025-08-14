@@ -24,4 +24,4 @@ jobs:
 
       # 第三步：运行位于 .ci 目录下的测试脚本
       - name: 执行测试脚本
-        run: ./.ci/run-tests.sh
+        run: ./.ci/run_all_tests.sh
