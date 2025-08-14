@@ -9,6 +9,6 @@ private:
 
 public:
   ASTRootNode(std::vector<std::unique_ptr<ItemNode>> &&items);
-  ~ASTRootNode() = default;
+  ~ASTRootNode();
   void accept(Visitor &visitor) override;
 };
