@@ -2,13 +2,109 @@
 #include <regex>
 #include <stdexcept>
 #include <stdint.h>
+#include <string_view>
 
-struct Rule {
+struct PlainRule {
+  std::string prefix;
+  int32_t length;
+  TokenType type;
+};
+
+struct RegexRule {
   std::regex rule;
   TokenType type;
 };
 
-const std::vector<Rule> config_rules = {
+const std::vector<PlainRule> config_plain_rules = {
+    {"continue", 8, TokenType::CONTINUE},
+    {"extern", 6, TokenType::EXTERN},
+    {"return", 6, TokenType::RETURN},
+    {"static", 6, TokenType::STATIC},
+    {"struct", 6, TokenType::STRUCT},
+    {"unsafe", 6, TokenType::UNSAFE},
+    {"break", 5, TokenType::BREAK},
+    {"const", 5, TokenType::CONST},
+    {"crate", 5, TokenType::CRATE},
+    {"false", 5, TokenType::FALSE},
+    {"match", 5, TokenType::MATCH},
+    {"super", 5, TokenType::SUPER},
+    {"trait", 5, TokenType::TRAIT},
+    {"where", 5, TokenType::WHERE},
+    {"while", 5, TokenType::WHILE},
+    {"else", 4, TokenType::ELSE},
+    {"enum", 4, TokenType::ENUM},
+    {"impl", 4, TokenType::IMPL},
+    {"loop", 4, TokenType::LOOP},
+    {"move", 4, TokenType::MOVE},
+    {"self", 4, TokenType::SELF},
+    {"Self", 4, TokenType::SELF_TYPE},
+    {"true", 4, TokenType::TRUE},
+    {"type", 4, TokenType::TYPE},
+    {"for", 3, TokenType::FOR},
+    {"let", 3, TokenType::LET},
+    {"mod", 3, TokenType::MOD},
+    {"mut", 3, TokenType::MUT},
+    {"pub", 3, TokenType::PUB},
+    {"ref", 3, TokenType::REF},
+    {"use", 3, TokenType::USE},
+    {"<<=", 3, TokenType::LEFT_SHIFT_EQUAL},
+    {">>=", 3, TokenType::RIGHT_SHIFT_EQUAL},
+    {"...", 3, TokenType::DOT_DOT_DOT},
+    {"..=", 3, TokenType::DOT_DOT_EQUAL},
+    {"as", 2, TokenType::AS},
+    {"fn", 2, TokenType::FN},
+    {"if", 2, TokenType::IF},
+    {"in", 2, TokenType::IN},
+    {"==", 2, TokenType::EQUAL},
+    {"!=", 2, TokenType::NOT_EQUAL},
+    {"<=", 2, TokenType::LESS_EQUAL},
+    {">=", 2, TokenType::GREATER_EQUAL},
+    {"&&", 2, TokenType::LOGIC_AND},
+    {"||", 2, TokenType::LOGIC_OR},
+    {"+=", 2, TokenType::PLUS_EQUAL},
+    {"-=", 2, TokenType::MINUS_EQUAL},
+    {"*=", 2, TokenType::MUL_EQUAL},
+    {"/=", 2, TokenType::DIV_EQUAL},
+    {"%=", 2, TokenType::MOD_EQUAL},
+    {"^=", 2, TokenType::XOR_EQUAL},
+    {"&=", 2, TokenType::AND_EQUAL},
+    {"|=", 2, TokenType::OR_EQUAL},
+    {"<<", 2, TokenType::LEFT_SHIFT},
+    {">>", 2, TokenType::RIGHT_SHIFT},
+    {"..", 2, TokenType::DOT_DOT},
+    {"::", 2, TokenType::COLON_COLON},
+    {"->", 2, TokenType::ARROW},
+    {"<-", 2, TokenType::LEFT_ARROW},
+    {"=>", 2, TokenType::FAT_ARROW},
+    {"=", 1, TokenType::ASSIGN},
+    {"<", 1, TokenType::LESS_THAN},
+    {">", 1, TokenType::GREATER_THAN},
+    {"!", 1, TokenType::NOT},
+    {"+", 1, TokenType::PLUS},
+    {"-", 1, TokenType::MINUS},
+    {"*", 1, TokenType::MUL},
+    {"/", 1, TokenType::DIV},
+    {"%", 1, TokenType::MOD_CAL},
+    {"^", 1, TokenType::XOR},
+    {"&", 1, TokenType::AND},
+    {"|", 1, TokenType::OR},
+    {"@", 1, TokenType::AT},
+    {".", 1, TokenType::DOT},
+    {",", 1, TokenType::COMMA},
+    {";", 1, TokenType::SEMICOLON},
+    {":", 1, TokenType::COLON},
+    {"#", 1, TokenType::HASH},
+    {"$", 1, TokenType::DOLLAR},
+    {"?", 1, TokenType::QUESTION},
+    {"_", 1, TokenType::UNDERSCORE},
+    {"{", 1, TokenType::LEFT_BRACE},
+    {"}", 1, TokenType::RIGHT_BRACE},
+    {"[", 1, TokenType::LEFT_BRACKET},
+    {"]", 1, TokenType::RIGHT_BRACKET},
+    {"(", 1, TokenType::LEFT_PAREN},
+    {")", 1, TokenType::RIGHT_PAREN},
+};
+const std::vector<RegexRule> config_regex_rules = {
     /*
     The list for Lexer gramma, in which all keywords and punctions were done by
     Gemini 2.5 Pro while others done by hands.
@@ -141,7 +237,10 @@ const std::vector<Rule> config_rules = {
 
 class Matcher {
 private:
-  std::vector<Rule> rules;
+  std::vector<PlainRule> plain_rules;
+  std::vector<RegexRule> regex_rules;
+  auto lexRegex(const std::string &target) const -> Token;
+  auto lexPlain(const std::string &target) const -> Token;
   Matcher();
 
 public:
@@ -150,8 +249,11 @@ public:
 };
 
 Matcher::Matcher() {
-  for (int32_t i = 0; i < config_rules.size(); ++i) {
-    rules.push_back(config_rules[i]);
+  for (int32_t i = 0; i < config_plain_rules.size(); ++i) {
+    plain_rules.push_back(config_plain_rules[i]);
+  }
+  for (int32_t i = 0; i < config_regex_rules.size(); ++i) {
+    regex_rules.push_back(config_regex_rules[i]);
   }
 }
 
@@ -161,19 +263,47 @@ auto Matcher::getInstance() -> Matcher & {
 }
 
 auto Matcher::lexString(const std::string &target) const -> Token {
+  int32_t length = 0;
+  Token plain_result;
+  Token regex_result;
+  plain_result = lexPlain(target);
+  regex_result = lexRegex(target);
+  if (plain_result.content.length() < regex_result.content.length()) {
+    return regex_result;
+  }
+  if (plain_result.content.length() == 0) {
+    throw std::runtime_error("Lexer error: no match rules.");
+  }
+  return plain_result;
+}
+
+auto Matcher::lexPlain(const std::string &target) const -> Token {
+  int32_t max_length = 0;
+  Token result;
+  std::string_view str_view(target);
+  for (auto iter = plain_rules.begin(); iter != plain_rules.end(); ++iter) {
+    /*The first prefix matched is the longest in all plain_prefixes.*/
+    if (str_view.length() >= iter->length &&
+        str_view.substr(0, iter->length) == iter->prefix) {
+      result.content = iter->prefix;
+      result.type = iter->type;
+      break;
+    }
+  }
+  return result;
+}
+
+auto Matcher::lexRegex(const std::string &target) const -> Token {
   int32_t max_length = 0;
   Token result;
   std::smatch match;
-  for (auto iter = rules.begin(); iter != rules.end(); ++iter) {
+  for (auto iter = regex_rules.begin(); iter != regex_rules.end(); ++iter) {
     if (std::regex_search(target, match, iter->rule) &&
         match[0].str().length() > max_length) {
       max_length = match[0].str().length();
       result.content = match[0].str();
       result.type = iter->type;
     }
-  }
-  if (result.content.empty()) {
-    throw std::runtime_error("Lexer error: no match regex.");
   }
   return result;
 }
