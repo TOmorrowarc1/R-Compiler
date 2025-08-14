@@ -144,9 +144,13 @@ auto parseNudExprNode(TokenStream &stream, int32_t power)
   return nullptr;
 }
 
+auto parseLedExprNode(TokenStream &stream, int32_t power,
+                      std::unique_ptr<ExprNode> &&lhs)
+    -> std::unique_ptr<ExprNode> {}
+
 auto parseExprNode(TokenStream &stream, int32_t power)
     -> std::unique_ptr<ExprNode> {
-  std::unique_ptr<ExprBlockOutNode> result;
+  std::unique_ptr<ExprNode> result;
   auto result = std::move(parseNudExprNode(stream, power));
   while (true) {
     auto token = stream.peek();
@@ -159,9 +163,7 @@ auto parseExprNode(TokenStream &stream, int32_t power)
     }
     stream.next();
     int32_t right_power = OpPowerRecoder::getInstance().getRight(token.type);
-    auto rhs = std::move(parseExprNode(stream, right_power));
-    result = std::make_unique<ExprOperBinaryNode>(std::move(result), token,
-                                                  std::move(rhs));
+    result = parseLedExprNode(stream, right_power, std::move(result));
   }
   return result;
 }
@@ -206,12 +208,14 @@ auto parseExprBlockNode(TokenStream &stream) -> std::unique_ptr<ExprBlockNode> {
     bool end_flag = false;
     switch (stream.peek().type) {
     case TokenType::SEMICOLON:
-      statements.push_back(std::move(parseStmtEmptyNode(stream)));
     case TokenType::LET:
-      statements.push_back(std::move(parseStmtLetNode(stream)));
+    case TokenType::MOD:
     case TokenType::FN:
     case TokenType::CONST:
-      statements.push_back(std::move(parseStmtItemNode(stream)));
+    case TokenType::STRUCT:
+    case TokenType::ENUM:
+    case TokenType::IMPL:
+      statements.push_back(std::move(parseStmtNode(stream)));
     default:
       auto expr = std::move(parseExprNode(stream));
       if (is_instance_of<ExprBlockOutNode, ExprNode>(expr) &&
@@ -439,7 +443,8 @@ auto parseExprCallNode(TokenStream &stream) -> std::unique_ptr<ExprCallNode> {
     }
   }
   stream.next();
-  return std::make_unique<ExprCallNode>(std::move(caller), std::move(arguments));
+  return std::make_unique<ExprCallNode>(std::move(caller),
+                                        std::move(arguments));
 }
 
 auto parseExprBreakNode(TokenStream &stream) -> std::unique_ptr<ExprBreakNode> {

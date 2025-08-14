@@ -66,7 +66,7 @@ ConstantItem →
 Trait →
     trait IDENTIFIER ( : TypeParamBounds? )?     
     {
-        AssociatedItem* //这里的常量是什么鬼？
+        AssociatedItem*
     }
 
 Implementation → InherentImpl | TraitImpl
@@ -217,37 +217,35 @@ CompoundAssignmentExpression →
 
 GroupedExpression → ( Expression )
 
-ArrayExpression → [ ArrayElements? ]
+ArrayExpression → [ ArrayElements? ] //prefix[
 
 ArrayElements →
-      Expression ( , Expression )* ,?
+      Expression ( , Expression )* ,? 
     | Expression ; Expression
 
-IndexExpression → Expression [ Expression ]
+IndexExpression → Expression [ Expression ] //infix[
 
-TupleExpression → ( TupleElements? )
+TupleExpression → ( TupleElements? ) //prefix
 
-TupleElements → ( Expression , )+ Expression?
+TupleElements → ( Expression , )+ Expression? //judge after make
 
-TupleIndexingExpression → Expression . TUPLE_INDEX
+TupleIndexingExpression → Expression . TUPLE_INDEX //.infix
 
 StructExpression →
-    SimplePath { ( StructExprFields | StructBase )? }
+    SimplePath { StructExprFields? } //Path once again
 
 StructExprFields →
-    StructExprField ( , StructExprField )* ( , StructBase | ,? )
+    StructExprField ( , StructExprField )* ,?
 
 StructExprField →
         IDENTIFIER
-      | ( IDENTIFIER | TUPLE_INDEX ) : Expression
+      | IDENTIFIER : Expression
 
-StructBase → .. Expression
-
-CallExpression → Expression ( CallParams? )
+CallExpression → Expression ( CallParams? ) //infix
 
 CallParams → Expression ( , Expression )* ,?
 
-MethodCallExpression → Expression . PathExprSegment ( CallParams? )
+MethodCallExpression → Expression . IDENTIFIER ( CallParams? ) 
 
 FieldExpression → Expression . IDENTIFIER
 
@@ -297,7 +295,7 @@ MatchArms →
     ( MatchArm => ( ExpressionWithoutBlock , | ExpressionWithBlock ,? ) )*
     MatchArm => Expression ,?
 
-MatchArm → OuterAttribute* Pattern MatchArmGuard?
+MatchArm → Pattern MatchArmGuard?
 
 MatchArmGuard → if Expression
 
@@ -390,7 +388,7 @@ SliceType → [ Type ]
 
 TraitObjectType → dyn? TypeParamBounds
 
-TraitObjectTypeOneBound → dyn? SimplePath
+TraitObjectTypeOneBound → dyn SimplePath
 
 ImplTraitType → impl TypeParamBounds
 

@@ -47,10 +47,6 @@ auto parseRootNode(TokenStream &stream) -> std::unique_ptr<ASTRootNode>;
 auto parseItemNode(TokenStream &stream) -> std::unique_ptr<ItemNode>;
 
 auto parseStmtNode(TokenStream &stream) -> std::unique_ptr<StmtNode>;
-auto parseStmtItemNode(TokenStream &stream) -> std::unique_ptr<StmtItemNode>;
-auto parseStmtLetNode(TokenStream &stream) -> std::unique_ptr<StmtLetNode>;
-auto parseStmtExprNode(TokenStream &stream) -> std::unique_ptr<StmtExprNode>;
-auto parseStmtEmptyNode(TokenStream &stream) -> std::unique_ptr<StmtEmptyNode>;
 
 auto parseExprNode(TokenStream &stream) -> std::unique_ptr<ExprNode>;
 auto parseExprBlockNode(TokenStream &stream) -> std::unique_ptr<ExprBlockNode>;
@@ -69,4 +65,3 @@ auto parsePathSimpleNode(TokenStream &stream)
     -> std::unique_ptr<PathSimpleNode>;
 auto parsePathQualifiedNode(TokenStream &stream)
     -> std::unique_ptr<PathQualifiedNode>;
-auto parsePathSegment(TokenStream &stream) -> PathSegment;

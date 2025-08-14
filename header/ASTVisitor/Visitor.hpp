@@ -10,6 +10,8 @@ class ItemEnumNode;
 class ItemImplNode;
 class ItemTraitNode;
 
+class ExprArrayNode;
+class ExprArrayIndexNode;
 class ExprBlockNode;
 class ExprBlockConstNode;
 class ExprCallNode;
@@ -28,6 +30,11 @@ class ExprWhileNode;
 class ExprOperBinaryNode;
 class ExprOperUnaryNode;
 class ExprPathNode;
+class ExprFieldNode;
+class ExprMethodNode;
+class ExprStructNode;
+class ExprTupleNode;
+class ExprTupleIndexNode;
 
 class StmtExprNode;
 class StmtEmptyNode;
@@ -70,6 +77,8 @@ public:
   virtual void visit(ItemImplNode &node) = 0;
   virtual void visit(ItemTraitNode &node) = 0;
 
+  virtual void visit(ExprArrayNode &node) = 0;
+  virtual void visit(ExprArrayIndexNode &node) = 0;
   virtual void visit(ExprBlockNode &node) = 0;
   virtual void visit(ExprBlockConstNode &node) = 0;
   virtual void visit(ExprCallNode &node) = 0;
@@ -88,6 +97,11 @@ public:
   virtual void visit(ExprOperBinaryNode &node) = 0;
   virtual void visit(ExprOperUnaryNode &node) = 0;
   virtual void visit(ExprPathNode &node) = 0;
+  virtual void visit(ExprFieldNode &node) = 0;
+  virtual void visit(ExprMethodNode &node) = 0;
+  virtual void visit(ExprStructNode &node) = 0;
+  virtual void visit(ExprTupleNode &node) = 0;
+  virtual void visit(ExprTupleIndexNode &node) = 0;
 
   virtual void visit(StmtExprNode &node) = 0;
   virtual void visit(StmtEmptyNode &node) = 0;
