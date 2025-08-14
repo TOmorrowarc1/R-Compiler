@@ -1,0 +1,27 @@
+name: Phase Unit test
+
+# 触发工作流程的事件
+on:
+  push:
+    branches: [ main, develop ] # 当推送到 main 或 develop 分支时触发
+  pull_request:
+    branches: [ main, develop ] # 当向 main 或 develop 分支发起 Pull Request 时触发
+  workflow_dispatch: # 允许手动触发
+
+# 定义一系列任务
+jobs:
+  # 任务ID，可自定义
+  build-and-test:
+    # 运行此任务的虚拟机环境
+    runs-on: ubuntu-latest
+
+    # 任务执行的步骤
+    steps:
+      # 第一步：检出您的代码库
+      # 这样 Runner 才能访问您的代码和 .ci 目录
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      # 第三步：运行位于 .ci 目录下的测试脚本
+      - name: 执行测试脚本
+        run: ./.ci/run-tests.sh
