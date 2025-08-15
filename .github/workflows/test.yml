@@ -22,6 +22,6 @@ jobs:
       - name: 检出代码
         uses: actions/checkout@v4
 
-      # 第三步：运行位于 .ci 目录下的测试脚本
-      - name: 执行测试脚本
-        run: ./.ci/run_all_tests.sh
+      - name: Run Build and Test Script
+      # 核心步骤：直接执行我们的脚本
+        run: ./.ci/build_and_test.sh
