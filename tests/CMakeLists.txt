@@ -14,6 +14,10 @@ target_include_directories(run_tests PRIVATE ${SOURCES_TEST})
 # gtest_main 会自动生成 main 函数
 target_link_libraries(run_tests PRIVATE gtest_main)
 target_link_libraries(run_tests PRIVATE compiler_lib) 
+# 为文件输入准备路径宏
+target_compile_definitions(run_tests PRIVATE
+    TEST_CASES_DIR="${CMAKE_SOURCE_DIR}/tests/testcases"
+)
 
 # 将测试添加到 CTest
 include(GoogleTest)

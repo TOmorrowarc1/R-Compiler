@@ -107,8 +107,6 @@ const std::vector<PlainRule> config_plain_rules = {
 
 const std::vector<RegexRule> config_regex_rules = {
     {std::regex(R"(^[a-zA-Z][a-zA-Z0-9_]*)"), TokenType::IDENTIFIER},
-    {std::regex(R"(^r#(?!(crate|self|super|Self)\b)[a-zA-Z][a-zA-Z0-9_]*)"),
-     TokenType::RAWIDENTIFIER},
 
     {std::regex(R"(^'([^'\\\n\r\t]|\\x[0-7][0-9a-fA-F]|\\[nrt0'\\])')"),
      TokenType::CHARLITERAL},
@@ -127,10 +125,6 @@ const std::vector<RegexRule> config_regex_rules = {
      TokenType::INTEGERLITERAL},
 
     {std::regex(R"(^\s+)"), TokenType::WHITESPACE},
-
-    {std::regex(
-         R"(^0b[0-1_]*[0-1][0-1_]*[2-9]|0o[0-7_]*[0-7][0-7_]*[8-9]|(0b[0-1_]*[0-1][0-1_]*|0o[0-7_]*[0-7][0-7_]*|0x[0-9a-fA-F_]*[0-9a-fA-F][0-9a-fA-F_]*)\.[^_\.a-zA-Z])"),
-     TokenType::RESERVED},
 };
 
 class Matcher {

@@ -118,7 +118,6 @@ enum class TokenType {
   RIGHT_PAREN,
 
   IDENTIFIER,
-  RAWIDENTIFIER,
 
   CHARLITERAL,
 
@@ -132,10 +131,9 @@ enum class TokenType {
 
   WHITESPACE,
 
-  RESERVED,
-
   END_OF_FILE,
 };
+
 struct Token {
   std::string content;
   TokenType type;

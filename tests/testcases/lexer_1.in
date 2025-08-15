@@ -1,0 +1,21 @@
+as 
+break
+const
+continue
+crate
+else enum extern false fn for if impl in let 
+loop match mod move mut pub ref return self Self 
+static struct super trait true type unsafe use where
+while 
+= == != < <= > >= && || ! + - * / % ^ & | << >> += -= *= /= %= ^= &= 
+|= <<= >>= @ . .. ... ..= , ; : :: -> <- => 
+# $ ? _ { } [ ] ( ) example_identifier
+'a' "hello string" r#"raw string with "quotes""# 
+c"c string literal" 
+cr#"raw c string"# 
+1234567890 
+0b101010 
+0o777 
+0xABCDEF 
+
+0b1012
