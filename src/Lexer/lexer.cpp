@@ -262,9 +262,6 @@ auto lex(const std::string &target) -> std::vector<Token> {
   std::string buffer = commentLex(target);
   while (!buffer.empty()) {
     auto next_token = Matcher::getInstance().lexString(buffer);
-    if (next_token.type == TokenType::RESERVED) {
-      throw std::runtime_error("The token reached some reserved cases.");
-    }
     if (next_token.type != TokenType::WHITESPACE) {
       result.push_back(next_token);
     }
