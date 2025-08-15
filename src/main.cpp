@@ -9,8 +9,8 @@ int main() {
   buffer << std::cin.rdbuf();
   std::string text = buffer.str();
 
-  auto lexer_result = lex(text);
-  for (auto iter = lexer_result.begin(); iter != lexer_result.end(); ++iter) {
+  auto lex_result = lex(text);
+  for (auto iter = lex_result.begin(); iter != lex_result.end(); ++iter) {
     std::cout << iter->content << '\n';
   }
 
