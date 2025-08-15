@@ -24,5 +24,4 @@ jobs:
 
       - name: Run Build and Test Script
       # 核心步骤：直接执行我们的脚本
-        working-directory: ${{ github.workspace }}/R-Compiler
         run: ./.ci/run_all_test.sh
