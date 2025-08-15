@@ -136,8 +136,8 @@ TEST(LexerTest, VaildToken) {
       {"0o777", TokenType::INTEGERLITERAL},
       {"0xABCDEF", TokenType::INTEGERLITERAL},
 
-      // Reserved Token
-      {"0b1012", TokenType::RESERVED},
+      // Reserved Token: Still Integer.
+      {"0b1012", TokenType::INTEGERLITERAL},
 
       {"", TokenType::END_OF_FILE},
   };
