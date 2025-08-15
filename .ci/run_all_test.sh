@@ -2,6 +2,8 @@
 
 set -e
 
+cd ..
+
 echo "--- Configuring CMake ---"
 cmake -B build
 

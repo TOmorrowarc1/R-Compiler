@@ -21,8 +21,9 @@ auto readFileToString(const std::string &filepath) -> std::string {
 }
 
 TEST(LexerTest, VaildToken) {
-  std::string input_path = "";
+  std::string input_path = "testcases/lexer_1.in";
   std::string text = readFileToString(input_path);
   auto lex_result = lex(text);
-  EXPECT_TRUE(lex_result.empty());
+  EXPECT_TRUE(lex_result.size() == 1);
+  EXPECT_EQ(lex_result[0].type, TokenType::END_OF_FILE);
 }

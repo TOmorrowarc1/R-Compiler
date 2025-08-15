@@ -15,6 +15,15 @@ FetchContent_Declare(
 # 使 gtest 可用
 FetchContent_MakeAvailable(googletest)
 
+# 对应命令行中的 -I，不过 target_include_directories更强调针对目标对象的引入。
+set(HEADER_ALL
+  header/Lexer
+  header/ASTNode
+  header/ASTVisitor
+  header/Parser
+  header/utils
+)
+
 set(EXECUTABLE_SOURCES
   src/ASTNode/ASTRootNode.cpp
   src/ASTNode/ExprArrayIndexNode.cpp
@@ -75,20 +84,12 @@ set(EXECUTABLE_SOURCES
 )
 # 将以上文档编译为.so准备用于静态链接。
 add_library(compiler_lib STATIC ${EXECUTABLE_SOURCES})
-
-# 对应命令行中的 -I，不过 target_include_directories更强调针对目标对象的引入。
-set(SOURCES_MAIN
-  header/Lexer
-  header/ASTNode
-  header/ASTVisitor
-  header/Parser
-  header/utils
-)
+target_include_directories(compiler_lib PUBLIC ${HEADER_ALL})
 
 # 创建编译目标：可执行文件code 并链接对应的静态库。
 add_executable(code src/main.cpp)
 target_link_libraries(code PRIVATE compiler_lib)
-target_include_directories(code PUBLIC ${SOURCES_MAIN})
+target_include_directories(code PUBLIC ${HEADER_ALL})
 
 # 开启测试功能
 enable_testing()
