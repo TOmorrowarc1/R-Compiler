@@ -7,6 +7,6 @@ private:
 
 public:
   PathSimpleNode(std::vector<PathSegment> &&segments);
-  ~PathSimpleNode() override = default;
+  ~PathSimpleNode();
   void accept(Visitor &visitor) override;
 };

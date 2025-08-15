@@ -8,6 +8,6 @@ private:
 public:
   ItemModuleNode(const std::string &ID,
                  std::vector<std::unique_ptr<ItemNode>> &&items);
-  ~ItemModuleNode() = default;
+  ~ItemModuleNode();
   void accept(Visitor &visitor) override;
 };

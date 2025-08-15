@@ -1,7 +1,7 @@
 #pragma once
 #include "ExprOperatorNode.hpp"
 
-enum class UnaryOperator { Negate, Not, BitwiseNot };
+enum class UnaryOperator { NEGATE, NOT };
 class ExprOperUnaryNode : public ExprOperatorNode {
 private:
   UnaryOperator op_;
@@ -9,6 +9,6 @@ private:
 
 public:
   ExprOperUnaryNode(UnaryOperator op, std::unique_ptr<ExprNode> &&operand);
-  ~ExprOperUnaryNode() = default;
+  ~ExprOperUnaryNode();
   void accept(Visitor &visitor) override;
 };

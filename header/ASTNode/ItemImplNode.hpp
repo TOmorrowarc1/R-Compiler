@@ -18,6 +18,6 @@ private:
 public:
   ItemImplNode(std::unique_ptr<TypeNode> &&type,
                std::vector<ItemAssociatedItem> &&items);
-  ~ItemImplNode() = default;
+  ~ItemImplNode();
   void accept(Visitor &visitor) override;
 };

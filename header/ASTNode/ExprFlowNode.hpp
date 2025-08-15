@@ -7,7 +7,7 @@ private:
 
 public:
   ExprBreakNode(std::unique_ptr<ExprNode> &&value);
-  ~ExprBreakNode() = default;
+  ~ExprBreakNode();
   void accept(Visitor &visitor) override;
 };
 
@@ -15,7 +15,7 @@ class ExprContinueNode : public ExprBlockOutNode {
 private:
 public:
   ExprContinueNode();
-  ~ExprContinueNode() = default;
+  ~ExprContinueNode();
   void accept(Visitor &visitor) override;
 };
 
@@ -25,6 +25,6 @@ private:
 
 public:
   ExprReturnNode(std::unique_ptr<ExprNode> &&value);
-  ~ExprReturnNode() = default;
+  ~ExprReturnNode();
   void accept(Visitor &visitor) override;
 };

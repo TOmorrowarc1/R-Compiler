@@ -7,6 +7,6 @@ private:
 
 public:
   PatternSliceNode(std::vector<std::unique_ptr<PatternNode>> &&pattern);
-  ~PatternSliceNode() = default;
+  ~PatternSliceNode();
   void accept(Visitor &visitor) override;
 };

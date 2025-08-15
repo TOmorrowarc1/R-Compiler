@@ -11,6 +11,6 @@ private:
 public:
   TypeArrayNode(std::unique_ptr<TypeNode> &&type,
                 std::unique_ptr<ExprNode> &&length);
-  ~TypeArrayNode() = default;
+  ~TypeArrayNode();
   void accept(Visitor &visitor) override;
 };

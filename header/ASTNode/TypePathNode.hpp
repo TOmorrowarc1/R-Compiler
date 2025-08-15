@@ -9,6 +9,6 @@ private:
 
 public:
   TypePathNode(std::unique_ptr<PathNode> &&path);
-  ~TypePathNode() = default;
+  ~TypePathNode();
   void accept(Visitor &visitor) override;
 };

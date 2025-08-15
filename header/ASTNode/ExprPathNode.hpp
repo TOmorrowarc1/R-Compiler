@@ -1,12 +1,13 @@
 #pragma once
 #include "ExprANode.hpp"
 
+class PathNode;
 class ExprPathNode : public ExprNode {
 private:
-  std::string path_;
+  std::unique_ptr<PathNode> path_;
 
 public:
-  ExprPathNode(const std::string &path);
-  ~ExprPathNode() override = default;
+  ExprPathNode(std::unique_ptr<PathNode>&& path);
+  ~ExprPathNode();
   void accept(Visitor &visitor) override;
 };

@@ -5,6 +5,6 @@ class TypeNeverNode : public TypeNode {
 private:
 public:
   TypeNeverNode();
-  ~TypeNeverNode() = default;
+  ~TypeNeverNode();
   void accept(Visitor &visitor) override;
 };

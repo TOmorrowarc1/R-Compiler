@@ -9,12 +9,8 @@ private:
 
 public:
   ExprBlockNode(std::vector<std::unique_ptr<StmtNode>> &&statements,
-                std::unique_ptr<ExprBlockOutNode> &&return_value)
-      : statements_(std::move(statements)),
-        return_value_(std::move(return_value)) {}
-
-  ~ExprBlockNode() = default;
-
+                std::unique_ptr<ExprBlockOutNode> &&return_value);
+  ~ExprBlockNode();
   void accept(Visitor &visitor) override;
 };
 
@@ -24,6 +20,6 @@ private:
 
 public:
   ExprBlockConstNode(std::unique_ptr<ExprBlockNode> &&block_expr);
-  ~ExprBlockConstNode() = default;
+  ~ExprBlockConstNode();
   void accept(Visitor &visitor) override;
 };

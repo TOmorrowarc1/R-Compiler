@@ -10,6 +10,6 @@ private:
 public:
   ExprMethodNode(std::unique_ptr<ExprNode> &&instance, const std::string &ID,
                  std::vector<std::unique_ptr<ExprNode>> &&parameters);
-  ~ExprMethodNode() = default;
+  ~ExprMethodNode();
   void accept(Visitor &visitor) override;
 };

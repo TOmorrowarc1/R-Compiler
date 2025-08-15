@@ -1,5 +1,11 @@
 #include "ParserTotal.hpp"
 
+//By Gemini.
+auto parseStmtEmptyNode(TokenStream &stream) -> std::unique_ptr<StmtEmptyNode>;
+auto parseStmtLetNode(TokenStream &stream) -> std::unique_ptr<StmtLetNode>;
+auto parseStmtItemNode(TokenStream &stream) -> std::unique_ptr<StmtItemNode>;
+auto parseStmtExprNode(TokenStream &stream) -> std::unique_ptr<StmtExprNode>;
+
 auto parseStmtNode(TokenStream &stream) -> std::unique_ptr<StmtNode> {
   switch (stream.peek().type) {
   case TokenType::SEMICOLON:

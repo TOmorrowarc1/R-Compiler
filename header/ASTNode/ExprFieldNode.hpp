@@ -8,6 +8,6 @@ private:
 
 public:
   ExprFieldNode(std::unique_ptr<ExprNode> &&instance, const std::string &ID);
-  ~ExprFieldNode() = default;
+  ~ExprFieldNode();
   void accept(Visitor &visitor) override;
 };

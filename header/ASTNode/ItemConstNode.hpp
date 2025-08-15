@@ -13,6 +13,6 @@ private:
 public:
   ItemConstNode(const std::string &ID, std::unique_ptr<TypeNode> &&type,
                 std::unique_ptr<ExprNode> &&value);
-
+  ~ItemConstNode();
   void accept(Visitor &visitor) override;
 };

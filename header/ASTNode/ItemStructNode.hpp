@@ -15,6 +15,6 @@ private:
 
 public:
   ItemStructNode(const std::string &ID, std::vector<ItemStructField> &&fields);
-  ~ItemStructNode() = default;
+  ~ItemStructNode();
   void accept(Visitor &visitor) override;
 };

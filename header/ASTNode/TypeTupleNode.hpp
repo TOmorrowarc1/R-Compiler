@@ -9,6 +9,6 @@ private:
 
 public:
   TypeTupleNode(std::vector<std::unique_ptr<TypeNode>> &&fields);
-  ~TypeTupleNode() = default;
+  ~TypeTupleNode();
   void accept(Visitor &visitor) override;
 };

@@ -1,5 +1,12 @@
 #include "ParserTotal.hpp"
 
+// By Geimini.
+auto parseTypePathNode(TokenStream &stream) -> std::unique_ptr<TypePathNode>;
+auto parseTypeInferNode(TokenStream &stream) -> std::unique_ptr<TypeInferNode>;
+auto parseTypeNeverNode(TokenStream &stream) -> std::unique_ptr<TypeNeverNode>;
+auto parseTypeLeftParentNode(TokenStream &stream) -> std::unique_ptr<TypeNode>;
+auto parseTypeLeftBracketNode(TokenStream &stream) -> std::unique_ptr<TypeNode>;
+
 auto parseTypePathNode(TokenStream &stream) -> std::unique_ptr<TypePathNode> {
   return std::make_unique<TypePathNode>(std::move(parsePathNode(stream)));
 }
@@ -23,12 +30,16 @@ auto parseTypeLeftParentNode(TokenStream &stream) -> std::unique_ptr<TypeNode> {
   }
   auto type_node = std::move(parseTypeNode(stream));
   if (stream.peek().type == TokenType::COMMA) {
-    stream.next();
-    while (stream.peek().type != TokenType::RIGHT_PAREN) {
-      fields.push_back(std::move(parseTypeNode(stream)));
-      if (stream.next().type != TokenType::COMMA) {
-        throw std::runtime_error("Expect a comma after a type in tuple.");
+    fields.push_back(std::move(type_node));
+    while (stream.peek().type == TokenType::COMMA) {
+      stream.next();
+      if (stream.peek().type == TokenType::RIGHT_PAREN) {
+        break;
       }
+      fields.push_back(std::move(parseTypeNode(stream)));
+    }
+    if (stream.peek().type != TokenType::RIGHT_PAREN) {
+      throw std::runtime_error("Tuple type should end with a ).");
     }
     stream.next();
     return std::make_unique<TypeTupleNode>(std::move(fields));

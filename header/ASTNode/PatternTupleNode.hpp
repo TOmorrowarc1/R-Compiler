@@ -7,6 +7,6 @@ private:
 
 public:
   PatternTupleNode(std::vector<std::unique_ptr<PatternNode>> &&pattern);
-  ~PatternTupleNode() = default;
+  ~PatternTupleNode();
   void accept(Visitor &visitor) override;
 };

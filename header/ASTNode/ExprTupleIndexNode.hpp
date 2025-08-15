@@ -11,6 +11,6 @@ private:
 public:
   ExprTupleIndexNode(std::unique_ptr<ExprNode> &&tuple,
                      std::unique_ptr<ExprLiteralIntNode> &&index);
-  ~ExprTupleIndexNode() = default;
+  ~ExprTupleIndexNode();
   void accept(Visitor &visitor) override;
 };

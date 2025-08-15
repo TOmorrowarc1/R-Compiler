@@ -7,6 +7,6 @@ private:
 
 public:
   TypeParentNode(std::unique_ptr<TypeNode> parentType);
-  ~TypeParentNode() = default;
+  ~TypeParentNode();
   void accept(Visitor &visitor) override;
 };

@@ -11,6 +11,6 @@ private:
   std::vector<PatternStructField> patterns_;
 public:
   PatternStructNode(std::vector<PatternStructField> &&pattern);
-  ~PatternStructNode() = default;
+  ~PatternStructNode();
   void accept(Visitor &visitor) override;
 };

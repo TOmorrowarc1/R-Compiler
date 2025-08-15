@@ -1,6 +1,8 @@
 #include "ExprPathNode.hpp"
+#include "PathANode.hpp"
 #include "Visitor.hpp"
 
-ExprPathNode::ExprPathNode(const std::string &path) : ExprNode(), path_(path) {}
-
+ExprPathNode::ExprPathNode(std::unique_ptr<PathNode> &&path)
+    : ExprNode(), path_(std::move(path)) {}
+ExprPathNode::~ExprPathNode() = default;
 void ExprPathNode::accept(Visitor &visitor) { visitor.visit(*this); }

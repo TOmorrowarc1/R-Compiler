@@ -7,6 +7,6 @@ private:
 
 public:
   ExprTupleNode(std::vector<std::unique_ptr<ExprNode>> &&elements);
-  ~ExprTupleNode() = default;
+  ~ExprTupleNode();
   void accept(Visitor &visitor) override;
 };

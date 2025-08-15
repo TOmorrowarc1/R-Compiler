@@ -14,7 +14,7 @@ private:
 public:
   ExprBlockInNode() : ExprNode() {}
   virtual ~ExprBlockInNode() = default;
-  virtual void accept(Visitor &visitor) override;
+  virtual void accept(Visitor &visitor) override = 0;
 };
 
 class ExprBlockOutNode : public ExprNode {
@@ -22,5 +22,5 @@ private:
 public:
   ExprBlockOutNode() : ExprNode() {}
   virtual ~ExprBlockOutNode() = default;
-  virtual void accept(Visitor &visitor) override;
+  virtual void accept(Visitor &visitor) override = 0;
 };

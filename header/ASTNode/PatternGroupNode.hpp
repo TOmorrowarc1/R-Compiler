@@ -3,10 +3,10 @@
 
 class PatternGroupNode : public PatternOneNode {
 private:
-  std::unique_ptr<PatternNode> expr_;
+  std::unique_ptr<PatternNode> pattern_;
 
 public:
-  PatternGroupNode(std::unique_ptr<PatternNode> &&expr);
-  ~PatternGroupNode() = default;
+  PatternGroupNode(std::unique_ptr<PatternNode> &&pattern);
+  ~PatternGroupNode();
   void accept(Visitor &visitor) override;
 };

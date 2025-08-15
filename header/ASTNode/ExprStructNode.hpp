@@ -1,7 +1,7 @@
 #pragma once
 #include "ExprANode.hpp"
 
-class PathSimpleNode;
+class ExprPathNode;
 
 struct ExprStructField {
   std::string ID;
@@ -16,6 +16,6 @@ private:
 public:
   ExprStructNode(std::unique_ptr<ExprPathNode> &&path,
                  std::vector<ExprStructField> &&fields);
-  ~ExprStructNode() = default;
+  ~ExprStructNode();
   void accept(Visitor &visitor) override;
 };

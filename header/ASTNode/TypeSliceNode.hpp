@@ -9,6 +9,6 @@ private:
 
 public:
   TypeSliceNode(std::unique_ptr<TypeNode> &&type);
-  ~TypeSliceNode() = default;
+  ~TypeSliceNode();
   void accept(Visitor &visitor) override;
 };

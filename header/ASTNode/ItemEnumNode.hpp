@@ -22,6 +22,6 @@ private:
 
 public:
   ItemEnumNode(const std::string &ID, std::vector<ItemEnumVariant> &&variants);
-  ~ItemEnumNode() = default;
+  ~ItemEnumNode();
   void accept(Visitor &visitor) override;
 };

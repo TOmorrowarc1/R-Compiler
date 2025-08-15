@@ -5,7 +5,7 @@ class ExprLiteralNode : public ExprBlockOutNode {
 private:
 public:
   ExprLiteralNode() : ExprBlockOutNode(){};
-  ~ExprLiteralNode() = default;
+  virtual ~ExprLiteralNode() = default;
   virtual void accept(Visitor &visitor) override = 0;
 };
 
@@ -15,7 +15,7 @@ private:
 
 public:
   ExprLiteralIntNode(int32_t value);
-  ~ExprLiteralIntNode() = default;
+  ~ExprLiteralIntNode();
   void accept(Visitor &visitor) override;
 };
 
@@ -25,7 +25,7 @@ private:
 
 public:
   ExprLiteralBoolNode(bool value);
-  ~ExprLiteralBoolNode() = default;
+  ~ExprLiteralBoolNode();
   void accept(Visitor &visitor) override;
 };
 
@@ -35,7 +35,7 @@ private:
 
 public:
   ExprLiteralCharNode(uint32_t value);
-  ~ExprLiteralCharNode() = default;
+  ~ExprLiteralCharNode();
   void accept(Visitor &visitor) override;
 };
 
@@ -45,6 +45,6 @@ private:
 
 public:
   ExprLiteralStringNode(const std::string &value);
-  ~ExprLiteralStringNode() = default;
+  ~ExprLiteralStringNode();
   void accept(Visitor &visitor) override;
 };

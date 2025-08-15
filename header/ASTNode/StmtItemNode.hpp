@@ -7,6 +7,6 @@ private:
   std::unique_ptr<ItemNode> item_;
 public:
   StmtItemNode(std::unique_ptr<ItemNode> item);
-  ~StmtItemNode() = default;
+  ~StmtItemNode();
   void accept(Visitor &visitor) override ;
 };

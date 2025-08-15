@@ -10,6 +10,6 @@ private:
 
 public:
   PatternLiteralNode(std::unique_ptr<ExprLiteralNode> &&expr, bool minus);
-  ~PatternLiteralNode() = default;
+  ~PatternLiteralNode();
   void accept(Visitor &visitor) override;
 };

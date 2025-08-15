@@ -6,6 +6,6 @@ private:
   std::unique_ptr<ExprNode> expr_;
 public:
   ExprGroupNode(std::unique_ptr<ExprNode> &&expr);
-  ~ExprGroupNode() = default;
+  ~ExprGroupNode();
   void accept(Visitor &visitor) override;
 };

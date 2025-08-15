@@ -1,5 +1,15 @@
 #include "ParserTotal.hpp"
 
+//Declarations by Gemini.
+auto parsePatternLiteralNode(TokenStream &stream) -> std::unique_ptr<PatternLiteralNode>;
+auto parsePatternIDNode(TokenStream &stream) -> std::unique_ptr<PatternIDNode>;
+auto parsePatternPathBeginNode(TokenStream &stream) -> std::unique_ptr<PatternOneNode>; // 注意返回值是基类指针
+auto parsePatternLeftParentBeginNode(TokenStream &stream) -> std::unique_ptr<PatternOneNode>; // 注意返回值是基类指针
+auto parsePatternSliceNode(TokenStream &stream) -> std::unique_ptr<PatternSliceNode>;
+auto parsePatternWildcardNode(TokenStream &stream) -> std::unique_ptr<PatternWildNode>;
+
+auto parsePatternStructField(TokenStream &stream) -> PatternStructField;
+
 auto parsePatternNode(TokenStream &stream) -> std::unique_ptr<PatternNode> {
   bool one_flag = true;
   if (stream.peek().type == TokenType::OR) {
@@ -65,12 +75,12 @@ auto parsePatternLiteralNode(TokenStream &stream)
 }
 
 auto parsePatternIDNode(TokenStream &stream) -> std::unique_ptr<PatternIDNode> {
-  std::unique_ptr<PatternNode> pattern;
+  std::unique_ptr<PatternOneNode> pattern;
   std::string name = stream.next().content;
   if (stream.peek().type == TokenType::AT) {
-    pattern = parsePatternNode(stream);
+    pattern = parsePatternOneNode(stream);
   }
-  return std::make_unique<PatternIDNode>(std::move(pattern), name);
+  return std::make_unique<PatternIDNode>(name, std::move(pattern));
 }
 
 auto parsePatternPathBeginNode(TokenStream &stream)
@@ -115,7 +125,7 @@ auto parsePatternLeftParentBeginNode(TokenStream &stream)
   stream.next();
   std::vector<std::unique_ptr<PatternNode>> patterns;
   if (stream.peek().type == TokenType::RIGHT_PAREN) {
-    return std::make_unique<PatternTupleNode>(patterns);
+    return std::make_unique<PatternTupleNode>(std::move(patterns));
   }
   auto pattern = parsePatternNode(stream);
   if (stream.peek().type == TokenType::COMMA) {

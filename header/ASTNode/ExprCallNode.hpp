@@ -8,6 +8,6 @@ private:
 public:
   ExprCallNode(std::unique_ptr<ExprNode> &&caller,
                std::vector<std::unique_ptr<ExprNode>> &&arguments);
-  ~ExprCallNode() = default;
+  ~ExprCallNode();
   void accept(Visitor &visitor) override;
 };

@@ -9,6 +9,6 @@ private:
 public:
   ExprArrayNode(std::vector<std::unique_ptr<ExprNode>> &&elements,
                 std::unique_ptr<ExprNode> &&length);
-  ~ExprArrayNode() = default;
+  ~ExprArrayNode();
   void accept(Visitor &visitor) override;
 };

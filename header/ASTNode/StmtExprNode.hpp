@@ -8,6 +8,6 @@ private:
   std::unique_ptr<ExprNode> expr_;
 public:
   StmtExprNode(std::unique_ptr<ExprNode> expr);
-  ~StmtExprNode() = default;
+  ~StmtExprNode();
   void accept(Visitor &visitor) override;
 };

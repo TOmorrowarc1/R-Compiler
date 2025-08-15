@@ -14,13 +14,12 @@ enum class BinaryOperator {
 
   LOGIC_AND,
   LOGIC_OR,
-  NOT,
 
   PLUS,
   MINUS,
   MUL,
   DIV,
-  MOD_CAL,
+  MOD,
   XOR,
   AND,
   OR,
@@ -48,6 +47,6 @@ private:
 public:
   ExprOperBinaryNode(BinaryOperator op, std::unique_ptr<ExprNode> &&lhs,
                      std::unique_ptr<ExprNode> &&rhs);
-  ~ExprOperBinaryNode() = default;
+  ~ExprOperBinaryNode();
   void accept(Visitor &visitor) override;
 };

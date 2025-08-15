@@ -5,6 +5,6 @@ class PatternWildNode : public PatternOneNode {
 private:
 public:
   PatternWildNode();
-  ~PatternWildNode() = default;
+  ~PatternWildNode();
   void accept(Visitor &visitor) override;
 };

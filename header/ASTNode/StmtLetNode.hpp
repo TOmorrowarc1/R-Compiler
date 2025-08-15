@@ -18,6 +18,6 @@ public:
               std::unique_ptr<TypeNode> &&type,
               std::unique_ptr<ExprNode> &&init_value,
               std::unique_ptr<ExprBlockNode> &&else_body);
-  ~StmtLetNode() = default;
+  ~StmtLetNode();
   void accept(Visitor &visitor) override;
 };

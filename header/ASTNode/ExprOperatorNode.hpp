@@ -5,6 +5,6 @@ class ExprOperatorNode : public ExprBlockOutNode {
 private:
 public:
   ExprOperatorNode() : ExprBlockOutNode(){};
-  ~ExprOperatorNode() = default;
+  virtual ~ExprOperatorNode() = default;
   virtual void accept(Visitor &visitor) override = 0;
 };

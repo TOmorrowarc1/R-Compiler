@@ -5,6 +5,6 @@ class TypeInferNode : public TypeNode {
 private:
 public:
   TypeInferNode();
-  ~TypeInferNode() = default;
+  ~TypeInferNode();
   void accept(Visitor &visitor) override;
 };

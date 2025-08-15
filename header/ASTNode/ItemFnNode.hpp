@@ -22,6 +22,6 @@ public:
   ItemFnNode(const std::string &ID, std::unique_ptr<TypeNode> &&returnType,
              std::vector<ItemFnPara> &&parameters,
              std::unique_ptr<ExprBlockNode> &&body);
-  ~ItemFnNode() = default;
+  ~ItemFnNode();
   void accept(Visitor &visitor) override;
 };

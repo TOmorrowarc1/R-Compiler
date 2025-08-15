@@ -44,6 +44,7 @@ set(EXECUTABLE
   src/ASTNode/PatternStructNode.cpp
   src/ASTNode/PatternTupleNode.cpp
   src/ASTNode/PatternWildNode.cpp
+  src/ASTNode/StmtEmptyNode.cpp
   src/ASTNode/StmtExprNode.cpp
   src/ASTNode/StmtItemNode.cpp
   src/ASTNode/StmtLetNode.cpp

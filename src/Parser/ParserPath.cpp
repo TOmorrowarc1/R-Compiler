@@ -1,5 +1,10 @@
 #include "ParserTotal.hpp"
 
+auto parsePathNode(TokenStream &stream) -> std::unique_ptr<PathNode>;
+auto parsePathSimpleNode(TokenStream &stream) -> std::unique_ptr<PathSimpleNode>;
+auto parsePathQualifiedNode(TokenStream &stream) -> std::unique_ptr<PathQualifiedNode>;
+auto parsePathSegment(TokenStream &stream) -> PathSegment;
+
 auto parsePathNode(TokenStream &stream) -> std::unique_ptr<PathNode> {
   if (stream.peek().type == TokenType::LESS_THAN) {
     return parsePathQualifiedNode(stream);
@@ -19,7 +24,7 @@ auto parsePathSimpleNode(TokenStream &stream)
     segments.push_back({PathSegmentType::CRATE, ""});
   }
   segments.push_back(parsePathSegment(stream));
-  while (stream.peek().type != TokenType::COLON_COLON) {
+  while (stream.peek().type == TokenType::COLON_COLON) {
     stream.next();
     segments.push_back(parsePathSegment(stream));
   }

@@ -14,6 +14,6 @@ public:
   PathQualifiedNode(std::vector<PathSegment> &&segments,
                     std::unique_ptr<PathSimpleNode> &&parent,
                     std::unique_ptr<TypeNode> &&type);
-  ~PathQualifiedNode() override = default;
+  ~PathQualifiedNode();
   void accept(Visitor &visitor) override;
 };
