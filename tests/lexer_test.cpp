@@ -147,6 +147,86 @@ TEST(LexerTest, VaildToken) {
   for (int32_t i = 0; i < stream.size(); ++i) {
     EXPECT_EQ(lex_result[i].content, stream[i].content);
     EXPECT_EQ(lex_result[i].type, stream[i].type);
-    std::cout << lex_result[i].content << '\n';
+  }
+}
+
+TEST(LexerTest, COMMENT) {
+  std::string input_path = test_cases_dir + "/lexer_2.in";
+  std::string text = readFileToString(input_path);
+  auto lex_result = lex(text);
+
+  std::vector<Token> stream = {
+      {"let", TokenType::LET},
+      {"result", TokenType::IDENTIFIER},
+      {"=", TokenType::ASSIGN},
+      {"100", TokenType::INTEGERLITERAL},
+      {";", TokenType::SEMICOLON},
+      {"let", TokenType::LET},
+      {"code", TokenType::IDENTIFIER},
+      {"=", TokenType::ASSIGN},
+      {"\"fn main() { /* not a comment */ }\"", TokenType::STRINGLITERAL},
+      {";", TokenType::SEMICOLON},
+      {"0x1e1f", TokenType::INTEGERLITERAL},
+      {"", TokenType::END_OF_FILE},
+  };
+
+  EXPECT_TRUE(lex_result.size() == stream.size());
+
+  for (int32_t i = 0; i < stream.size(); ++i) {
+    EXPECT_EQ(lex_result[i].content, stream[i].content);
+    EXPECT_EQ(lex_result[i].type, stream[i].type);
+  }
+}
+
+TEST(LexerTest, STRING) {
+  std::string input_path = test_cases_dir + "/lexer_3.in";
+  std::string text = readFileToString(input_path);
+  auto lex_result = lex(text);
+
+  std::vector<Token> stream = {
+      {"let", TokenType::LET},
+      {"multi_line_str", TokenType::IDENTIFIER},
+      {"=", TokenType::ASSIGN},
+      {"\"line 1\\\n                          line 2\"",
+       TokenType::STRINGLITERAL},
+      {";", TokenType::SEMICOLON},
+
+      {"let", TokenType::LET},
+      {"whiletrue", TokenType::IDENTIFIER},
+      {"=", TokenType::ASSIGN},
+      {"true", TokenType::TRUE},
+      {";", TokenType::SEMICOLON},
+      {"let", TokenType::LET},
+      {"for_loop", TokenType::IDENTIFIER},
+      {"=", TokenType::ASSIGN},
+      {"0", TokenType::INTEGERLITERAL},
+      {";", TokenType::SEMICOLON},
+      {"let", TokenType::LET},
+      {"raw_string", TokenType::IDENTIFIER},
+      {"=", TokenType::ASSIGN},
+
+      {"r#\"\n    fn main() {\n        let message = \"Hello, #Rust!\";\n    "
+       "}\n\"#",
+       TokenType::RAWSTRINGLITERAL},
+      {";", TokenType::SEMICOLON},
+
+      {"", TokenType::END_OF_FILE},
+  };
+
+  EXPECT_TRUE(lex_result.size() == stream.size());
+
+  for (int32_t i = 0; i < stream.size(); ++i) {
+    EXPECT_EQ(lex_result[i].content, stream[i].content);
+    EXPECT_EQ(lex_result[i].type, stream[i].type);
+  }
+}
+
+TEST(LexerTest, COMMENT_ERROR) {
+  std::string input_path = test_cases_dir + "/lexer_4.in";
+  std::string text = readFileToString(input_path);
+  try {
+    auto lex_result = lex(text);
+  } catch (std::runtime_error err) {
+    std::cout << err.what() << '\n';
   }
 }

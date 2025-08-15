@@ -113,7 +113,7 @@ const std::vector<RegexRule> config_regex_rules = {
 
     {std::regex(R"(^"([^"\\\r]|\\x[0-7][0-9a-fA-F]|\\[nrt0"\\]|\\\n)*")"),
      TokenType::STRINGLITERAL},
-    {std::regex(R"(^r(#*)\".*?\"\1)"), TokenType::RAWSTRINGLITERAL},
+    {std::regex(R"(^r(#*)\"[^\r]*?\"\1)"), TokenType::RAWSTRINGLITERAL},
 
     {std::regex(
          R"(^c"([^"\\\r\x00]|\\x(?!00)[0-7][0-9a-fA-F]|\\[nrt"\\]|\\\n)*")"),
@@ -253,6 +253,21 @@ auto commentLex(const std::string &target) -> std::string {
       }
       break;
     };
+  }
+  if (status != CtxStatus::CODE) {
+    std::string error;
+    switch (status) {
+    case CtxStatus::BLOCKCOMMENT:
+      error = "A block comment has not closed";
+      break;
+    case CtxStatus::LINECOMMENT:
+      error = "A line comment has not closed";
+      break;
+    case CtxStatus::STRING:
+      error = "A string has not ended.";
+      break;
+    }
+    throw std::runtime_error(error);
   }
   return result;
 }

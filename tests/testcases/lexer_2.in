@@ -1,0 +1,15 @@
+let /*
+    This is an outer block comment.
+    let inside_comment = "this should be ignored";
+    // Also a line comment inside should be ignored.
+
+    /* This is a nested block comment. */
+
+    The lexer should resume after this.
+*/ result = 100;
+
+/* let "a" /* =100*//* =1000/* =10000
+*/=100000*/* = 99 */
+
+let code = "fn main() { /* not a comment */ }"; // but this is a "comment"
+0x1e1f

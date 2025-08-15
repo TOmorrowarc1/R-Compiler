@@ -1,0 +1,9 @@
+let multi_line_str = "line 1\
+                          line 2";
+let whiletrue = true;
+let for_loop = 0;
+let raw_string = r#"
+    fn main() {
+        let message = "Hello, #Rust!";
+    }
+"#;
