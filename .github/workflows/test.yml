@@ -19,9 +19,9 @@ jobs:
     steps:
       # 第一步：检出您的代码库
       # 这样 Runner 才能访问您的代码和 .ci 目录
-      - name: 检出代码
+      - name: Fetch Code
         uses: actions/checkout@v4
 
       - name: Run Build and Test Script
       # 核心步骤：直接执行我们的脚本
-        run: ./.ci/build_and_test.sh
+        run: ./.ci/run_all_test.sh
