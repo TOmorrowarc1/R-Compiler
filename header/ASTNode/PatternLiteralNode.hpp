@@ -3,7 +3,7 @@
 
 class ExprLiteralNode;
 
-class PatternLiteralNode : public PatternOneNode {
+class PatternLiteralNode : public PatternNode {
 private:
   std::unique_ptr<ExprLiteralNode> expr_;
   bool minus_;

@@ -1,37 +1,19 @@
 #include "ParserTotal.hpp"
 
-//Declarations by Gemini.
-auto parsePatternLiteralNode(TokenStream &stream) -> std::unique_ptr<PatternLiteralNode>;
+// Declarations by Gemini.
+auto parsePatternLiteralNode(TokenStream &stream)
+    -> std::unique_ptr<PatternLiteralNode>;
 auto parsePatternIDNode(TokenStream &stream) -> std::unique_ptr<PatternIDNode>;
-auto parsePatternPathBeginNode(TokenStream &stream) -> std::unique_ptr<PatternOneNode>; // 注意返回值是基类指针
-auto parsePatternLeftParentBeginNode(TokenStream &stream) -> std::unique_ptr<PatternOneNode>; // 注意返回值是基类指针
-auto parsePatternSliceNode(TokenStream &stream) -> std::unique_ptr<PatternSliceNode>;
-auto parsePatternWildcardNode(TokenStream &stream) -> std::unique_ptr<PatternWildNode>;
+auto parsePatternPathBeginNode(TokenStream &stream)
+    -> std::unique_ptr<PatternNode>; // 注意返回值是基类指针
+auto parsePatternTupleNode(TokenStream &stream)
+    -> std::unique_ptr<PatternTupleNode>;
+auto parsePatternWildcardNode(TokenStream &stream)
+    -> std::unique_ptr<PatternWildNode>;
 
 auto parsePatternStructField(TokenStream &stream) -> PatternStructField;
 
 auto parsePatternNode(TokenStream &stream) -> std::unique_ptr<PatternNode> {
-  bool one_flag = true;
-  if (stream.peek().type == TokenType::OR) {
-    one_flag = false;
-    stream.next();
-  }
-  auto pattern = std::move(parsePatternOneNode(stream));
-  one_flag = one_flag && stream.peek().type != TokenType::OR;
-  if (!one_flag) {
-    return pattern;
-  }
-  std::vector<std::unique_ptr<PatternOneNode>> patterns;
-  patterns.push_back(std::move(pattern));
-  while (stream.peek().type == TokenType::OR) {
-    stream.next();
-    patterns.push_back(std::move(parsePatternOneNode(stream)));
-  }
-  return std::make_unique<PatternMultNode>(std::move(patterns));
-}
-
-auto parsePatternOneNode(TokenStream &stream)
-    -> std::unique_ptr<PatternOneNode> {
   switch (stream.peek().type) {
   case TokenType::MINUS:
   case TokenType::CHARLITERAL:
@@ -44,13 +26,9 @@ auto parsePatternOneNode(TokenStream &stream)
   case TokenType::FALSE:
     return parsePatternLiteralNode(stream);
   case TokenType::LEFT_PAREN:
-    return parsePatternLeftParentBeginNode(stream);
-  case TokenType::LEFT_BRACKET:
-    return parsePatternSliceNode(stream);
+    return parsePatternTupleNode(stream);
   case TokenType::UNDERSCORE:
     return parsePatternWildcardNode(stream);
-  case TokenType::COLON_COLON:
-    return parsePatternPathBeginNode(stream);
   case TokenType::IDENTIFIER:
     if (stream.peekNum(1).type == TokenType::COLON_COLON) {
       return parsePatternPathBeginNode(stream);
@@ -75,16 +53,16 @@ auto parsePatternLiteralNode(TokenStream &stream)
 }
 
 auto parsePatternIDNode(TokenStream &stream) -> std::unique_ptr<PatternIDNode> {
-  std::unique_ptr<PatternOneNode> pattern;
+  std::unique_ptr<PatternNode> pattern;
   std::string name = stream.next().content;
   if (stream.peek().type == TokenType::AT) {
-    pattern = parsePatternOneNode(stream);
+    pattern = parsePatternNode(stream);
   }
   return std::make_unique<PatternIDNode>(name, std::move(pattern));
 }
 
 auto parsePatternPathBeginNode(TokenStream &stream)
-    -> std::unique_ptr<PatternOneNode> {
+    -> std::unique_ptr<PatternNode> {
   auto path = parsePathNode(stream);
   if (stream.peek().type == TokenType::LEFT_BRACKET) {
     stream.next();
@@ -120,39 +98,13 @@ auto parsePatternStructField(TokenStream &stream) -> PatternStructField {
   return {identifer, std::move(pattern)};
 }
 
-auto parsePatternLeftParentBeginNode(TokenStream &stream)
-    -> std::unique_ptr<PatternOneNode> {
+auto parsePatternTupleNode(TokenStream &stream)
+    -> std::unique_ptr<PatternTupleNode> {
   stream.next();
   std::vector<std::unique_ptr<PatternNode>> patterns;
   if (stream.peek().type == TokenType::RIGHT_PAREN) {
     return std::make_unique<PatternTupleNode>(std::move(patterns));
   }
-  auto pattern = parsePatternNode(stream);
-  if (stream.peek().type == TokenType::COMMA) {
-    patterns.push_back(std::move(pattern));
-    while (stream.peek().type == TokenType::COMMA) {
-      stream.next();
-      if (stream.peek().type == TokenType::RIGHT_BRACKET) {
-        break;
-      }
-      patterns.push_back(parsePatternNode(stream));
-    }
-    if (stream.peek().type != TokenType::RIGHT_BRACKET) {
-      throw std::runtime_error("Expect right bracket after slice end.");
-    }
-    stream.next();
-    return std::make_unique<PatternTupleNode>(std::move(patterns));
-  } else if (stream.peek().type == TokenType::RIGHT_PAREN) {
-    return std::make_unique<PatternGroupNode>(std::move(pattern));
-  }
-  throw std::runtime_error("Unexpect sign follows the left parent.");
-  return nullptr;
-}
-
-auto parsePatternSliceNode(TokenStream &stream)
-    -> std::unique_ptr<PatternSliceNode> {
-  stream.next();
-  std::vector<std::unique_ptr<PatternNode>> patterns;
   patterns.push_back(parsePatternNode(stream));
   while (stream.peek().type == TokenType::COMMA) {
     stream.next();
@@ -165,7 +117,7 @@ auto parsePatternSliceNode(TokenStream &stream)
     throw std::runtime_error("Expect right bracket after slice end.");
   }
   stream.next();
-  return std::make_unique<PatternSliceNode>(std::move(patterns));
+  return std::make_unique<PatternTupleNode>(std::move(patterns));
 }
 
 auto parsePatternWildcardNode(TokenStream &stream)

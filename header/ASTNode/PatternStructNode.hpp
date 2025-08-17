@@ -6,9 +6,10 @@ struct PatternStructField {
   std::unique_ptr<PatternNode> pattern_;
 };
 
-class PatternStructNode : public PatternOneNode {
+class PatternStructNode : public PatternNode {
 private:
   std::vector<PatternStructField> patterns_;
+
 public:
   PatternStructNode(std::vector<PatternStructField> &&pattern);
   ~PatternStructNode();

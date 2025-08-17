@@ -23,15 +23,12 @@
 #include "ItemEnumNode.hpp"
 #include "ItemFnNode.hpp"
 #include "ItemImplNode.hpp"
-#include "ItemModuleNode.hpp"
 #include "ItemStructNode.hpp"
 #include "Parser.hpp"
 #include "PathNode.hpp"
-#include "PatternGroupNode.hpp"
 #include "PatternIDNode.hpp"
 #include "PatternLiteralNode.hpp"
 #include "PatternPathNode.hpp"
-#include "PatternSliceNode.hpp"
 #include "PatternStructNode.hpp"
 #include "PatternTupleNode.hpp"
 #include "PatternWildNode.hpp"
@@ -60,8 +57,6 @@ auto parseExprLiteralNode(TokenStream &stream)
 auto parseExprPathNode(TokenStream &stream) -> std::unique_ptr<ExprPathNode>;
 
 auto parsePatternNode(TokenStream &stream) -> std::unique_ptr<PatternNode>;
-auto parsePatternOneNode(TokenStream &stream)
-    -> std::unique_ptr<PatternOneNode>;
 
 auto parseTypeNode(TokenStream &stream) -> std::unique_ptr<TypeNode>;
 

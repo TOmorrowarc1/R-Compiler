@@ -1,7 +1,7 @@
 #pragma once
 #include "PatternANode.hpp"
 
-class PatternTupleNode : public PatternOneNode {
+class PatternTupleNode : public PatternNode {
 private:
   std::vector<std::unique_ptr<PatternNode>> patterns_;
 

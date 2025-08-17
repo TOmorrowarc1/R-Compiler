@@ -3,7 +3,7 @@
 
 class PathNode;
 
-class PatternPathNode : public PatternOneNode {
+class PatternPathNode : public PatternNode {
 private:
   std::unique_ptr<PathNode> path_;
 

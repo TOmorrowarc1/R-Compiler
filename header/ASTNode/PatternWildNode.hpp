@@ -1,7 +1,7 @@
 #pragma once
 #include "PatternANode.hpp"
 
-class PatternWildNode : public PatternOneNode {
+class PatternWildNode : public PatternNode {
 private:
 public:
   PatternWildNode();
