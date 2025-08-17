@@ -114,7 +114,7 @@ LiteralExpression →
     | true
     | false
 
-PathExpression → SimplePath
+PathExpression → Path
 
 BlockExpression →
     {
@@ -192,7 +192,7 @@ ArrayElements →
 IndexExpression → Expression [ Expression ]
 
 StructExpression →
-    SimplePath { StructExprFields? }
+    Path { StructExprFields? }
 
 StructExprFields →
     StructExprField ( , StructExprField )* ,?
@@ -277,7 +277,7 @@ IdentifierPattern → IDENTIFIER ( @ Pattern )?
 WildcardPattern → _
 
 StructPattern →
-    SimplePath {
+    Path {
         StructPatternElements?
     }
 
@@ -299,7 +299,7 @@ TuplePatternItems →
 
 
 
-PathPattern → SimplePath
+PathPattern → Path
 
 
 TYPE Syntax
@@ -319,10 +319,7 @@ InferredType → _
 
 
 PATH Syntax
-Path -> SimplePath | QualifiedPath
-
-SimplePath →
-    PathExprSegment ( :: PathExprSegment )?
+Path → PathExprSegment ( :: PathExprSegment )?
 
 PathExprSegment →
     IDENTIFIER | Self | self
