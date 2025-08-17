@@ -4,7 +4,6 @@ class ASTRootNode;
 
 class ItemConstNode;
 class ItemFnNode;
-class ItemModuleNode;
 class ItemStructNode;
 class ItemEnumNode;
 class ItemImplNode;
@@ -41,23 +40,18 @@ class StmtEmptyNode;
 class StmtItemNode;
 class StmtLetNode;
 
-class PatternMultNode;
 class PatternLiteralNode;
 class PatternStructNode;
-class PatternSliceNode;
 class PatternTupleNode;
 class PatternWildNode;
 class PatternPathNode;
-class PatternGroupNode;
 class PatternIDNode;
 
 class TypeTupleNode;
 class TypeArrayNode;
 class TypeSliceNode;
 class TypeInferNode;
-class TypeNeverNode;
 class TypePathNode;
-class TypeParentNode;
 
 class PathNode;
 
@@ -70,7 +64,6 @@ public:
 
   virtual void visit(ItemConstNode &node) = 0;
   virtual void visit(ItemFnNode &node) = 0;
-  virtual void visit(ItemModuleNode &node) = 0;
   virtual void visit(ItemStructNode &node) = 0;
   virtual void visit(ItemEnumNode &node) = 0;
   virtual void visit(ItemImplNode &node) = 0;
@@ -107,23 +100,17 @@ public:
   virtual void visit(StmtItemNode &node) = 0;
   virtual void visit(StmtLetNode &node) = 0;
 
-  virtual void visit(PatternMultNode &node) = 0;
   virtual void visit(PatternLiteralNode &node) = 0;
   virtual void visit(PatternStructNode &node) = 0;
-  virtual void visit(PatternSliceNode &node) = 0;
   virtual void visit(PatternTupleNode &node) = 0;
   virtual void visit(PatternWildNode &node) = 0;
   virtual void visit(PatternPathNode &node) = 0;
-  virtual void visit(PatternGroupNode &node) = 0;
   virtual void visit(PatternIDNode &node) = 0;
 
-  virtual void visit(TypeTupleNode &node) = 0;
   virtual void visit(TypeArrayNode &node) = 0;
   virtual void visit(TypeSliceNode &node) = 0;
   virtual void visit(TypeInferNode &node) = 0;
-  virtual void visit(TypeNeverNode &node) = 0;
   virtual void visit(TypePathNode &node) = 0;
-  virtual void visit(TypeParentNode &node) = 0;
 
   virtual void visit(PathNode &node) = 0;
 };

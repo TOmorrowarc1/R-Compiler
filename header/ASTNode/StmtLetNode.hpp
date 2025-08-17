@@ -1,23 +1,20 @@
 #pragma once
 #include "StmtANode.hpp"
 
-class PatternOneNode;
+class PatternNode;
 class TypeNode;
 class ExprNode;
-class ExprBlockNode;
 
 class StmtLetNode : public StmtNode {
 private:
-  std::unique_ptr<PatternOneNode> pattern_;
+  std::unique_ptr<PatternNode> pattern_;
   std::unique_ptr<TypeNode> type_;
   std::unique_ptr<ExprNode> init_value_;
-  std::unique_ptr<ExprBlockNode> else_body_;
 
 public:
-  StmtLetNode(std::unique_ptr<PatternOneNode> &&pattern,
+  StmtLetNode(std::unique_ptr<PatternNode> &&pattern,
               std::unique_ptr<TypeNode> &&type,
-              std::unique_ptr<ExprNode> &&init_value,
-              std::unique_ptr<ExprBlockNode> &&else_body);
+              std::unique_ptr<ExprNode> &&init_value);
   ~StmtLetNode();
   void accept(Visitor &visitor) override;
 };

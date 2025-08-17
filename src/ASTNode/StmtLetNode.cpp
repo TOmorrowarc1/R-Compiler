@@ -4,11 +4,10 @@
 #include "TypeANode.hpp"
 #include "Visitor.hpp"
 
-StmtLetNode::StmtLetNode(std::unique_ptr<PatternOneNode> &&pattern,
+StmtLetNode::StmtLetNode(std::unique_ptr<PatternNode> &&pattern,
                          std::unique_ptr<TypeNode> &&type,
-                         std::unique_ptr<ExprNode> &&init_value,
-                         std::unique_ptr<ExprBlockNode> &&else_body)
+                         std::unique_ptr<ExprNode> &&init_value)
     : StmtNode(), pattern_(std::move(pattern)), type_(std::move(type)),
-      init_value_(std::move(init_value)), else_body_(std::move(else_body)) {}
+      init_value_(std::move(init_value)) {}
 StmtLetNode::~StmtLetNode() = default;
 void StmtLetNode::accept(Visitor &visitor) { visitor.visit(*this); }
