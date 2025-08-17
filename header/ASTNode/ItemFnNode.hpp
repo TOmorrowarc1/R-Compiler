@@ -3,10 +3,10 @@
 
 class TypeNode;
 class ExprBlockNode;
-class PatternOneNode;
+class PatternNode;
 
 struct ItemFnPara {
-  std::unique_ptr<PatternOneNode> pattern;
+  std::unique_ptr<PatternNode> pattern;
   std::unique_ptr<TypeNode> type;
 };
 
