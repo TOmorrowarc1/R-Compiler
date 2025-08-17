@@ -3,8 +3,6 @@
 // By Geimini.
 auto parseTypePathNode(TokenStream &stream) -> std::unique_ptr<TypePathNode>;
 auto parseTypeInferNode(TokenStream &stream) -> std::unique_ptr<TypeInferNode>;
-auto parseTypeNeverNode(TokenStream &stream) -> std::unique_ptr<TypeNeverNode>;
-auto parseTypeLeftParentNode(TokenStream &stream) -> std::unique_ptr<TypeNode>;
 auto parseTypeLeftBracketNode(TokenStream &stream) -> std::unique_ptr<TypeNode>;
 
 auto parseTypePathNode(TokenStream &stream) -> std::unique_ptr<TypePathNode> {
@@ -14,37 +12,6 @@ auto parseTypePathNode(TokenStream &stream) -> std::unique_ptr<TypePathNode> {
 auto parseTypeInferNode(TokenStream &stream) -> std::unique_ptr<TypeInferNode> {
   stream.next();
   return std::make_unique<TypeInferNode>();
-}
-
-auto parseTypeNeverNode(TokenStream &stream) -> std::unique_ptr<TypeNeverNode> {
-  stream.next();
-  return std::make_unique<TypeNeverNode>();
-}
-
-auto parseTypeLeftParentNode(TokenStream &stream) -> std::unique_ptr<TypeNode> {
-  stream.next();
-  std::vector<std::unique_ptr<TypeNode>> fields;
-  if (stream.peek().type == TokenType::RIGHT_PAREN) {
-    stream.next();
-    return std::make_unique<TypeTupleNode>(std::move(fields));
-  }
-  auto type_node = std::move(parseTypeNode(stream));
-  if (stream.peek().type == TokenType::COMMA) {
-    fields.push_back(std::move(type_node));
-    while (stream.peek().type == TokenType::COMMA) {
-      stream.next();
-      if (stream.peek().type == TokenType::RIGHT_PAREN) {
-        break;
-      }
-      fields.push_back(std::move(parseTypeNode(stream)));
-    }
-    if (stream.peek().type != TokenType::RIGHT_PAREN) {
-      throw std::runtime_error("Tuple type should end with a ).");
-    }
-    stream.next();
-    return std::make_unique<TypeTupleNode>(std::move(fields));
-  }
-  return std::make_unique<TypeParentNode>(std::move(type_node));
 }
 
 auto parseTypeLeftBracketNode(TokenStream &stream)
@@ -71,14 +38,9 @@ auto parseTypeLeftBracketNode(TokenStream &stream)
 auto parseTypeNode(TokenStream &stream) -> std::unique_ptr<TypeNode> {
   switch (stream.peek().type) {
   case TokenType::IDENTIFIER:
-  case TokenType::COLON_COLON:
     return parseTypePathNode(stream);
-  case TokenType::LEFT_PAREN:
-    return parseTypeLeftParentNode(stream);
   case TokenType::UNDERSCORE:
     return parseTypeInferNode(stream);
-  case TokenType::NOT:
-    return parseTypeNeverNode(stream);
   case TokenType::LEFT_BRACKET:
     return parseTypeLeftBracketNode(stream);
   }

@@ -1,5 +1,5 @@
 #include "TypePathNode.hpp"
-#include "PathANode.hpp"
+#include "PathNode.hpp"
 #include "Visitor.hpp"
 
 TypePathNode::TypePathNode(std::unique_ptr<PathNode> &&path)

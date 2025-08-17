@@ -59,8 +59,7 @@ class TypeNeverNode;
 class TypePathNode;
 class TypeParentNode;
 
-class PathSimpleNode;
-class PathQualifiedNode;
+class PathNode;
 
 class Visitor {
 public:
@@ -126,6 +125,5 @@ public:
   virtual void visit(TypePathNode &node) = 0;
   virtual void visit(TypeParentNode &node) = 0;
 
-  virtual void visit(PathSimpleNode &node) = 0;
-  virtual void visit(PathQualifiedNode &node) = 0;
+  virtual void visit(PathNode &node) = 0;
 };

@@ -26,8 +26,7 @@
 #include "ItemModuleNode.hpp"
 #include "ItemStructNode.hpp"
 #include "Parser.hpp"
-#include "PathQualifiedNode.hpp"
-#include "PathSimpleNode.hpp"
+#include "PathNode.hpp"
 #include "PatternGroupNode.hpp"
 #include "PatternIDNode.hpp"
 #include "PatternLiteralNode.hpp"
@@ -42,11 +41,8 @@
 #include "StmtLetNode.hpp"
 #include "TypeArrayNode.hpp"
 #include "TypeInferNode.hpp"
-#include "TypeNeverNode.hpp"
-#include "TypeParentNode.hpp"
 #include "TypePathNode.hpp"
 #include "TypeSliceNode.hpp"
-#include "TypeTupleNode.hpp"
 #include "token.hpp"
 #include <stdexcept>
 
@@ -70,7 +66,3 @@ auto parsePatternOneNode(TokenStream &stream)
 auto parseTypeNode(TokenStream &stream) -> std::unique_ptr<TypeNode>;
 
 auto parsePathNode(TokenStream &stream) -> std::unique_ptr<PathNode>;
-auto parsePathSimpleNode(TokenStream &stream)
-    -> std::unique_ptr<PathSimpleNode>;
-auto parsePathQualifiedNode(TokenStream &stream)
-    -> std::unique_ptr<PathQualifiedNode>;
