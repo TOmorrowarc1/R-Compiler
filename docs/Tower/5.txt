@@ -297,8 +297,6 @@ TuplePatternItems →
       Pattern ,
     | Pattern ( , Pattern )+ ,?
 
-
-
 PathPattern → Path
 
 
@@ -312,8 +310,6 @@ Type →
 ArrayType → [ Type ; Expression ]
 
 SliceType → [ Type ]
-
-ReferenceType → & mut? Type
 
 InferredType → _
 
