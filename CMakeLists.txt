@@ -48,16 +48,11 @@ set(EXECUTABLE_SOURCES
   src/ASTNode/ItemEnumNode.cpp
   src/ASTNode/ItemFnNode.cpp
   src/ASTNode/ItemImplNode.cpp
-  src/ASTNode/ItemModuleNode.cpp
   src/ASTNode/ItemStructNode.cpp
-  src/ASTNode/PathQualifiedNode.cpp
-  src/ASTNode/PathSimpleNode.cpp
-  src/ASTNode/PatternGroupNode.cpp
+  src/ASTNode/PathNode.cpp
   src/ASTNode/PatternIDNode.cpp
   src/ASTNode/PatternLiteralNode.cpp
-  src/ASTNode/PatternMultNode.cpp
   src/ASTNode/PatternPathNode.cpp
-  src/ASTNode/PatternSliceNode.cpp
   src/ASTNode/PatternStructNode.cpp
   src/ASTNode/PatternTupleNode.cpp
   src/ASTNode/PatternWildNode.cpp
@@ -67,11 +62,7 @@ set(EXECUTABLE_SOURCES
   src/ASTNode/StmtLetNode.cpp
   src/ASTNode/TypeArrayNode.cpp
   src/ASTNode/TypeInferNode.cpp
-  src/ASTNode/TypeNeverNode.cpp
-  src/ASTNode/TypeParentNode.cpp
   src/ASTNode/TypePathNode.cpp
-  src/ASTNode/TypeSliceNode.cpp
-  src/ASTNode/TypeTupleNode.cpp
   src/Lexer/lexer.cpp
   src/Lexer/token.cpp
   src/Parser/Parser.cpp

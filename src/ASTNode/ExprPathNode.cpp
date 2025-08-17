@@ -1,5 +1,5 @@
 #include "ExprPathNode.hpp"
-#include "PathANode.hpp"
+#include "PathNode.hpp"
 #include "Visitor.hpp"
 
 ExprPathNode::ExprPathNode(std::unique_ptr<PathNode> &&path)
