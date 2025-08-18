@@ -6,12 +6,17 @@
 
 class SymbolInfo;
 class SymbolTypeInfo;
+class SymbolFunctionInfo;
 
 class Scope {
 private:
   std::shared_ptr<Scope> parent_;
   std::unordered_map<std::string, std::shared_ptr<SymbolInfo>> symbols_;
   std::unordered_map<std::string, std::shared_ptr<SymbolTypeInfo>> types_;
+  std::unordered_map<
+      std::string,
+      std::unordered_map<std::string, std::shared_ptr<SymbolFunctionInfo>>>
+      impl_symbols_map_;
 
 public:
   Scope(std::shared_ptr<Scope> parent);

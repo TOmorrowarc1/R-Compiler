@@ -10,7 +10,7 @@ SymbolCollector::~SymbolCollector() = default;
 void SymbolCollector::visit(ASTRootNode &node) {
   for (auto &item : node.items_) {
     item->accept(*this);
-  }
+  } 
 }
 
 void SymbolCollector::visit(ItemConstNode &node) {}
