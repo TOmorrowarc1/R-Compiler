@@ -53,7 +53,6 @@ set(EXECUTABLE_SOURCES
   src/ASTNode/PatternIDNode.cpp
   src/ASTNode/PatternLiteralNode.cpp
   src/ASTNode/PatternPathNode.cpp
-  src/ASTNode/PatternStructNode.cpp
   src/ASTNode/PatternTupleNode.cpp
   src/ASTNode/PatternWildNode.cpp
   src/ASTNode/StmtEmptyNode.cpp

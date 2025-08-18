@@ -274,8 +274,7 @@ Pattern →
       LiteralPattern
     | IdentifierPattern
     | WildcardPattern
-    | StructPattern
-    | TuplePattern
+    | TupleStructPattern
     | PathPattern
 
 LiteralPattern → -? LiteralExpression
@@ -284,26 +283,9 @@ IdentifierPattern → IDENTIFIER ( @ Pattern )?
 
 WildcardPattern → _
 
-StructPattern →
-    Path {
-        StructPatternElements?
-    }
+TupleStructPattern → Path ( TupleStructItems? )
 
-StructPatternElements →
-    StructPatternFields ,?
-
-StructPatternFields →
-    StructPatternField ( , StructPatternField )*
-
-StructPatternField →
-    IDENTIFIER : Pattern
-    | IDENTIFIER
-
-TuplePattern → ( TuplePatternItems? )
-
-TuplePatternItems →
-      Pattern ,
-    | Pattern ( , Pattern )+ ,?
+TupleStructItems → Pattern ( , Pattern )* ,?
 
 PathPattern → Path //Limitations?
 

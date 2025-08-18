@@ -29,7 +29,6 @@
 #include "PatternIDNode.hpp"
 #include "PatternLiteralNode.hpp"
 #include "PatternPathNode.hpp"
-#include "PatternStructNode.hpp"
 #include "PatternTupleNode.hpp"
 #include "PatternWildNode.hpp"
 #include "StmtEmptyNode.hpp"
