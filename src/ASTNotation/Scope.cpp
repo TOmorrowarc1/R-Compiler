@@ -1,6 +1,5 @@
 #include "Scope.hpp"
 #include "Symbol.hpp"
-#include "TypeDef.hpp"
 
 Scope::Scope(std::shared_ptr<Scope> parent) : parent_(std::move(parent)) {}
 
@@ -29,8 +28,8 @@ auto Scope::getSymbol(const std::string &name) const
   return nullptr;
 }
 
-auto Scope::addType(const std::string &name, std::shared_ptr<TypeDef> type)
-    -> bool {
+auto Scope::addType(const std::string &name,
+                    std::shared_ptr<SymbolTypeInfo> type) -> bool {
   if (types_.find(name) != types_.end()) {
     return false;
   }
@@ -38,7 +37,8 @@ auto Scope::addType(const std::string &name, std::shared_ptr<TypeDef> type)
   return true;
 }
 
-auto Scope::getType(const std::string &name) const -> std::shared_ptr<TypeDef> {
+auto Scope::getType(const std::string &name) const
+    -> std::shared_ptr<SymbolTypeInfo> {
   auto it = types_.find(name);
   if (it != types_.end()) {
     return it->second;

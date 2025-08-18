@@ -10,8 +10,11 @@ TypeDef::TypeDef(const std::string &name,
     members_.emplace(std::move(member_names[i]), std::move(member_types[i]));
   }
 }
+
 TypeDef::~TypeDef() = default;
+
 auto TypeDef::getName() const -> const std::string & { return name_; }
+
 auto TypeDef::getMember(const std::string &name) const
     -> std::shared_ptr<TypeKind> {
   auto it = members_.find(name);
@@ -20,6 +23,7 @@ auto TypeDef::getMember(const std::string &name) const
   }
   return nullptr;
 }
+
 auto TypeDef::getMethod(const std::string &name) const
     -> std::shared_ptr<SymbolFunctionInfo> {
   auto it = methods_.find(name);
@@ -28,6 +32,7 @@ auto TypeDef::getMethod(const std::string &name) const
   }
   return nullptr;
 }
+
 auto TypeDef::addMethod(std::shared_ptr<SymbolFunctionInfo> method) -> bool {
   if (method && !method->getName().empty()) {
     methods_[method->getName()] = std::move(method);
@@ -35,6 +40,7 @@ auto TypeDef::addMethod(std::shared_ptr<SymbolFunctionInfo> method) -> bool {
   }
   return false;
 }
+
 auto TypeDef::getAssociatedFunction(const std::string &name) const
     -> std::shared_ptr<SymbolFunctionInfo> {
   auto it = associated_functions_.find(name);
@@ -43,6 +49,7 @@ auto TypeDef::getAssociatedFunction(const std::string &name) const
   }
   return nullptr;
 }
+
 auto TypeDef::addAssociatedFunction(
     std::shared_ptr<SymbolFunctionInfo> function) -> bool {
   if (function && !function->getName().empty()) {
