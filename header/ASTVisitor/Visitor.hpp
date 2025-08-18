@@ -1,3 +1,4 @@
+#pragma once
 #include <stdint.h>
 
 class ASTRootNode;
@@ -59,7 +60,7 @@ class PathNode;
 class Visitor {
 public:
   Visitor() = default;
-  virtual ~Visitor() = default;
+  virtual ~Visitor() = 0;
 
   virtual void visit(ASTRootNode &node) = 0;
 
