@@ -31,6 +31,7 @@ class ExprOperUnaryNode;
 class ExprPathNode;
 class ExprFieldNode;
 class ExprMethodNode;
+class ExprMatchNode;
 class ExprStructNode;
 class ExprTupleNode;
 class ExprTupleIndexNode;
@@ -91,6 +92,7 @@ public:
   virtual void visit(ExprPathNode &node) = 0;
   virtual void visit(ExprFieldNode &node) = 0;
   virtual void visit(ExprMethodNode &node) = 0;
+  virtual void visit(ExprMatchNode &node) = 0;
   virtual void visit(ExprStructNode &node) = 0;
   virtual void visit(ExprTupleNode &node) = 0;
   virtual void visit(ExprTupleIndexNode &node) = 0;

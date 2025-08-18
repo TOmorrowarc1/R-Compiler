@@ -117,6 +117,7 @@ auto parseExprBlockConstNode(TokenStream &stream)
 auto parseExprLoopNode(TokenStream &stream) -> std::unique_ptr<ExprLoopNode>;
 auto parseExprWhileNode(TokenStream &stream) -> std::unique_ptr<ExprWhileNode>;
 auto parseExprIfNode(TokenStream &stream) -> std::unique_ptr<ExprIfNode>;
+auto parseExprMatchNode(TokenStream &stream) -> std::unique_ptr<ExprMatchNode>;
 
 auto parseExprLiteralNode(TokenStream &stream)
     -> std::unique_ptr<ExprLiteralNode>;
@@ -144,6 +145,7 @@ auto parseExprArrayNode(TokenStream &stream) -> std::unique_ptr<ExprArrayNode>;
 auto parseStructField(TokenStream &stream) -> ExprStructField;
 auto tokenToBinaryOp(TokenType type) -> BinaryOperator;
 auto tokenToUnaryOp(TokenType type) -> UnaryOperator;
+auto parseExprMatchArm(TokenStream &stream) -> ExprMatchArm;
 
 auto parseExprNode(TokenStream &stream) -> std::unique_ptr<ExprNode> {
   return parseExprNode(stream, 0);
@@ -194,6 +196,8 @@ auto parseNudExprNode(TokenStream &stream, int32_t power)
   case TokenType::MINUS:
   case TokenType::NOT:
     return parseExprOperUnaryNode(stream);
+  case TokenType::MATCH:
+    return parseExprMatchNode(stream);
   case TokenType::LEFT_PAREN: {
     stream.next();
     std::unique_ptr<ExprNode> expr;
@@ -517,6 +521,44 @@ auto parseExprIfNode(TokenStream &stream) -> std::unique_ptr<ExprIfNode> {
   }
   return std::make_unique<ExprIfNode>(
       std::move(condition), std::move(then_block), std::move(else_block));
+}
+
+auto parseExprMatchNode(TokenStream &stream) -> std::unique_ptr<ExprMatchNode> {
+  stream.next();
+  auto subject = parseExprNode(stream);
+  std::vector<ExprMatchArm> arms;
+  if (stream.next().type != TokenType::LEFT_BRACE) {
+    throw std::runtime_error("the match expr missed left brace.");
+  }
+  while (stream.peek().type != TokenType::RIGHT_BRACE) {
+    if (stream.peek().type == TokenType::END_OF_FILE) {
+      throw std::runtime_error("the match expr missed right brace.");
+    }
+    arms.push_back(parseExprMatchArm(stream));
+  }
+  stream.next();
+  return std::make_unique<ExprMatchNode>(std::move(subject), std::move(arms));
+}
+
+auto parseExprMatchArm(TokenStream &stream) -> ExprMatchArm {
+  ExprMatchArm arm;
+  arm.pattern = parsePatternNode(stream);
+  if (stream.peek().type == TokenType::IF) {
+    stream.next();
+    arm.guard = std::move(parseExprNode(stream));
+  }
+  if (stream.peek().type != TokenType::ARROW) {
+    throw std::runtime_error("The match arm missed =>.");
+  }
+  stream.next();
+  arm.body = parseExprNode(stream);
+  if (stream.peek().type == TokenType::COMMA) {
+    stream.next();
+  } else if (stream.peek().type != TokenType::RIGHT_BRACE &&
+             is_instance_of<ExprBlockOutNode, ExprNode>(arm.body)) {
+    throw std::runtime_error("The exprwithoutblock lacks comma followed.");
+  }
+  return arm;
 }
 
 auto parseExprLiteralNode(TokenStream &stream)
