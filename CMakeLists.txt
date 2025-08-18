@@ -20,6 +20,7 @@ set(HEADER_ALL
   header/Lexer
   header/ASTNode
   header/ASTVisitor
+  header/ASTAnnotation
   header/Parser
   header/utils
 )

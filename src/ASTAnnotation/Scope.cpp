@@ -48,3 +48,30 @@ auto Scope::getType(const std::string &name) const
   }
   return nullptr;
 }
+
+auto Scope::addImplSymbol(const std::string &impl_name,
+                          const std::string &func_name,
+                          std::shared_ptr<SymbolFunctionInfo> func) -> bool {
+  auto &func_map = impl_symbols_map_[impl_name];
+  if (func_map.find(func_name) != func_map.end()) {
+    return false;
+  }
+  func_map[func_name] = std::move(func);
+  return true;
+}
+
+auto Scope::getImplSymbol(const std::string &impl_name,
+                          const std::string &func_name)
+    -> std::shared_ptr<SymbolFunctionInfo> {
+  auto it = impl_symbols_map_.find(impl_name);
+  if (it != impl_symbols_map_.end()) {
+    auto func_it = it->second.find(func_name);
+    if (func_it != it->second.end()) {
+      return func_it->second;
+    }
+  }
+  if (parent_) {
+    return parent_->getImplSymbol(impl_name, func_name);
+  }
+  return nullptr;
+}

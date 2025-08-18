@@ -28,4 +28,8 @@ public:
       -> bool;
   auto getType(const std::string &name) const
       -> std::shared_ptr<SymbolTypeInfo>;
+  auto addImplSymbol(const std::string &impl_name, const std::string &func_name,
+                     std::shared_ptr<SymbolFunctionInfo> func) -> bool;
+  auto getImplSymbol(const std::string &impl_name, const std::string &func_name)
+      -> std::shared_ptr<SymbolFunctionInfo>;
 };
