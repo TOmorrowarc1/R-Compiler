@@ -16,3 +16,14 @@ template <typename Derived, typename Base>
 auto is_instance_of(const std::unique_ptr<Base> &base_ptr) -> bool {
   return dynamic_cast<Derived *>(base_ptr.get()) != nullptr;
 }
+
+template <typename Derived, typename Base>
+auto dynamic_shared_ptr_cast(const std::shared_ptr<Base> &base_ptr)
+    -> std::shared_ptr<Derived> {
+  return std::dynamic_pointer_cast<Derived>(base_ptr);
+}
+
+template <typename Derived, typename Base>
+auto is_instance(const std::shared_ptr<Base> &base_ptr) -> bool {
+  return std::dynamic_pointer_cast<Derived>(base_ptr) != nullptr;
+}
