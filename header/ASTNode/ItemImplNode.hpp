@@ -11,11 +11,10 @@ struct ItemAssociatedItem {
 };
 
 class ItemImplNode : public ItemNode {
-private:
+public:
   std::unique_ptr<TypeNode> type_;
   std::vector<ItemAssociatedItem> items_;
 
-public:
   ItemImplNode(std::unique_ptr<TypeNode> &&type,
                std::vector<ItemAssociatedItem> &&items);
   ~ItemImplNode();

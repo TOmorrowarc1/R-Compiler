@@ -2,9 +2,9 @@
 #include "ExprANode.hpp"
 
 class ExprGroupNode : public ExprBlockOutNode {
-private:
-  std::unique_ptr<ExprNode> expr_;
 public:
+  std::unique_ptr<ExprNode> expr_;
+
   ExprGroupNode(std::unique_ptr<ExprNode> &&expr);
   ~ExprGroupNode();
   void accept(Visitor &visitor) override;

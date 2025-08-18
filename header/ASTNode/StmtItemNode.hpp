@@ -3,10 +3,10 @@
 
 class ItemNode;
 class StmtItemNode : public StmtNode {
-private:
-  std::unique_ptr<ItemNode> item_;
 public:
+  std::unique_ptr<ItemNode> item_;
+
   StmtItemNode(std::unique_ptr<ItemNode> item);
   ~StmtItemNode();
-  void accept(Visitor &visitor) override ;
+  void accept(Visitor &visitor) override;
 };

@@ -9,11 +9,10 @@ struct ExprStructField {
 };
 
 class ExprStructNode : public ExprBlockOutNode {
-private:
+public:
   std::unique_ptr<ExprPathNode> path_;
   std::vector<ExprStructField> fields_;
 
-public:
   ExprStructNode(std::unique_ptr<ExprPathNode> &&path,
                  std::vector<ExprStructField> &&fields);
   ~ExprStructNode();

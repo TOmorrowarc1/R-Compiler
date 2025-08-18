@@ -11,14 +11,13 @@ struct ItemFnPara {
 };
 
 class ItemFnNode : public ItemNode {
-private:
+public:
   std::string ID_;
   std::vector<ItemFnPara> parameters_;
   std::unique_ptr<TypeNode> returnType_;
   std::unique_ptr<ExprBlockNode> body_;
   bool const_flag;
 
-public:
   ItemFnNode(const std::string &ID, std::unique_ptr<TypeNode> &&returnType,
              std::vector<ItemFnPara> &&parameters,
              std::unique_ptr<ExprBlockNode> &&body);

@@ -2,7 +2,6 @@
 #include "ExprANode.hpp"
 
 class ExprOperatorNode : public ExprBlockOutNode {
-private:
 public:
   ExprOperatorNode() : ExprBlockOutNode(){};
   virtual ~ExprOperatorNode() = default;

@@ -39,12 +39,11 @@ enum class BinaryOperator {
 };
 
 class ExprOperBinaryNode : public ExprOperatorNode {
-private:
+public:
   BinaryOperator op_;
   std::unique_ptr<ExprNode> lhs_;
   std::unique_ptr<ExprNode> rhs_;
 
-public:
   ExprOperBinaryNode(BinaryOperator op, std::unique_ptr<ExprNode> &&lhs,
                      std::unique_ptr<ExprNode> &&rhs);
   ~ExprOperBinaryNode();

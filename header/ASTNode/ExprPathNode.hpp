@@ -3,11 +3,10 @@
 
 class PathNode;
 class ExprPathNode : public ExprNode {
-private:
+public:
   std::unique_ptr<PathNode> path_;
 
-public:
-  ExprPathNode(std::unique_ptr<PathNode>&& path);
+  ExprPathNode(std::unique_ptr<PathNode> &&path);
   ~ExprPathNode();
   void accept(Visitor &visitor) override;
 };

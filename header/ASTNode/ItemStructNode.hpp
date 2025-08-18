@@ -9,11 +9,10 @@ struct ItemStructField {
 };
 
 class ItemStructNode : public ItemNode {
-private:
+public:
   std::string ID_;
   std::vector<ItemStructField> fields_;
 
-public:
   ItemStructNode(const std::string &ID, std::vector<ItemStructField> &&fields);
   ~ItemStructNode();
   void accept(Visitor &visitor) override;

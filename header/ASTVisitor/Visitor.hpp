@@ -36,6 +36,7 @@ class ExprMatchNode;
 class ExprStructNode;
 class ExprTupleNode;
 class ExprTupleIndexNode;
+class ExprUnderScoreNode;
 
 class StmtExprNode;
 class StmtEmptyNode;
@@ -97,6 +98,7 @@ public:
   virtual void visit(ExprStructNode &node) = 0;
   virtual void visit(ExprTupleNode &node) = 0;
   virtual void visit(ExprTupleIndexNode &node) = 0;
+  virtual void visit(ExprUnderScoreNode &node) = 0;
 
   virtual void visit(StmtExprNode &node) = 0;
   virtual void visit(StmtEmptyNode &node) = 0;

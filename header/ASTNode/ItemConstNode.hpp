@@ -5,12 +5,11 @@ class TypeNode;
 class ExprNode;
 
 class ItemConstNode : public ItemNode {
-private:
+public:
   std::string ID_;
   std::unique_ptr<TypeNode> type_;
   std::unique_ptr<ExprNode> value_;
 
-public:
   ItemConstNode(const std::string &ID, std::unique_ptr<TypeNode> &&type,
                 std::unique_ptr<ExprNode> &&value);
   ~ItemConstNode();

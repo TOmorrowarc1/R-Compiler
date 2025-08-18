@@ -11,11 +11,10 @@ struct ExprMatchArm {
 };
 
 class ExprMatchNode : public ExprBlockInNode {
-private:
+public:
   std::unique_ptr<ExprNode> subject_;
   std::vector<ExprMatchArm> arms_;
 
-public:
   ExprMatchNode(std::unique_ptr<ExprNode> &&subject,
                 std::vector<ExprMatchArm> &&arms);
   ~ExprMatchNode();

@@ -2,7 +2,6 @@
 #include "ASTNode.hpp"
 
 class PatternNode : public ASTNode {
-private:
 public:
   PatternNode() : ASTNode(){};
   virtual ~PatternNode() = default;

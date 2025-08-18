@@ -7,7 +7,6 @@
 class Visitor;
 
 class ASTNode {
-private:
 public:
   ASTNode() = default;
   ~ASTNode() = default;

@@ -4,11 +4,11 @@
 class ExprBlockNode;
 
 class ExprIfNode : public ExprBlockInNode {
-private:
+public:
   std::unique_ptr<ExprNode> condition_;
   std::unique_ptr<ExprBlockNode> then_block_;
   std::unique_ptr<ExprBlockNode> else_block_;
-public:
+
   ExprIfNode(std::unique_ptr<ExprNode> &&condition,
              std::unique_ptr<ExprBlockNode> &&then_block,
              std::unique_ptr<ExprBlockNode> &&else_block);

@@ -7,7 +7,11 @@ SymbolCollector::SymbolCollector(std::shared_ptr<Scope> initial_scope)
     : current_scope_(std::move(initial_scope)) {}
 SymbolCollector::~SymbolCollector() = default;
 
-void SymbolCollector::visit(ASTRootNode &node) {}
+void SymbolCollector::visit(ASTRootNode &node) {
+  for (auto &item : node.items_) {
+    item->accept(*this);
+  }
+}
 
 void SymbolCollector::visit(ItemConstNode &node) {}
 void SymbolCollector::visit(ItemFnNode &node) {}

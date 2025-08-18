@@ -9,10 +9,9 @@ struct PathSegment {
 };
 
 class PathNode : public ASTNode {
-private:
+public:
   std::vector<PathSegment> segments_;
 
-public:
   PathNode(std::vector<PathSegment> &&segments);
   ~PathNode();
   void accept(Visitor &visitor) override;

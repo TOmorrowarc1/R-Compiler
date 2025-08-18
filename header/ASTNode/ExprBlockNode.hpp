@@ -2,12 +2,12 @@
 #include "ExprANode.hpp"
 
 class StmtNode;
+
 class ExprBlockNode : public ExprBlockInNode {
-private:
+public:
   std::vector<std::unique_ptr<StmtNode>> statements_;
   std::unique_ptr<ExprBlockOutNode> return_value_;
 
-public:
   ExprBlockNode(std::vector<std::unique_ptr<StmtNode>> &&statements,
                 std::unique_ptr<ExprBlockOutNode> &&return_value);
   ~ExprBlockNode();

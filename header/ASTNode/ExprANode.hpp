@@ -2,7 +2,6 @@
 #include "ASTNode.hpp"
 
 class ExprNode : public ASTNode {
-private:
 public:
   ExprNode() : ASTNode() {}
   virtual ~ExprNode() = default;
@@ -10,7 +9,6 @@ public:
 };
 
 class ExprBlockInNode : public ExprNode {
-private:
 public:
   ExprBlockInNode() : ExprNode() {}
   virtual ~ExprBlockInNode() = default;
@@ -18,7 +16,6 @@ public:
 };
 
 class ExprBlockOutNode : public ExprNode {
-private:
 public:
   ExprBlockOutNode() : ExprNode() {}
   virtual ~ExprBlockOutNode() = default;

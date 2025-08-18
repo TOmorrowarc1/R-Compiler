@@ -4,9 +4,9 @@
 class ExprNode;
 
 class StmtExprNode : public StmtNode {
-private:
-  std::unique_ptr<ExprNode> expr_;
 public:
+  std::unique_ptr<ExprNode> expr_;
+
   StmtExprNode(std::unique_ptr<ExprNode> expr);
   ~StmtExprNode();
   void accept(Visitor &visitor) override;

@@ -2,7 +2,6 @@
 #include "ExprANode.hpp"
 
 class ExprLiteralNode : public ExprBlockOutNode {
-private:
 public:
   ExprLiteralNode() : ExprBlockOutNode(){};
   virtual ~ExprLiteralNode() = default;
@@ -10,11 +9,10 @@ public:
 };
 
 class ExprLiteralIntNode : public ExprLiteralNode {
-private:
+public:
   int32_t value_;
   bool signed_;
 
-public:
   ExprLiteralIntNode(int32_t value, bool signed_);
   ~ExprLiteralIntNode();
   void accept(Visitor &visitor) override;
