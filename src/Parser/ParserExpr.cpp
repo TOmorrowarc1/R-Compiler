@@ -586,22 +586,57 @@ auto parseExprLiteralNode(TokenStream &stream)
 
 auto parseExprLiteralIntNode(TokenStream &stream)
     -> std::unique_ptr<ExprLiteralIntNode> {
-  int32_t base = 0;
-  size_t pos = 0;
+  size_t end_pos = std::string::npos;
   std::string str = stream.next().content;
-  if (str.length() > 2) {
-    if (str[0] == '0' && (str[1] == 'x' || str[1] == 'X')) {
-      base = 16;
-      pos = 2;
-    } else if (str[0] == '0' && (str[1] == 'o' || str[1] == 'O')) {
-      base = 8;
-      pos = 2;
-    } else if (str[0] == '0' && (str[1] == 'b' || str[1] == 'B')) {
-      base = 2;
-      pos = 2;
+  bool sign = false;
+  for (size_t i = 0; i < str.length() && end_pos == std::string::npos; ++i) {
+    char c = str[i];
+    if (std::isalpha(c)) {
+      str[i] = std::tolower(c);
+      if (str[i] != 'b' && str[i] != 'o' && str[i] != 'x') {
+        end_pos = i;
+        switch (c) {
+        case 'i':
+          sign = true;
+          break;
+        case 'u':
+          sign = false;
+          break;
+        default:
+          throw std::runtime_error("Unknown suffix in integer literal.");
+        }
+      }
     }
   }
-  int32_t value = std::stoi(str.substr(pos), &pos, base);
+  std::string_view numberic_part = std::string_view(str).substr(0, end_pos);
+  std::string cleaned_literal;
+  cleaned_literal.reserve(numberic_part.length());
+  for (char c : cleaned_literal) {
+    if (c != '_') {
+      cleaned_literal += c;
+    }
+  }
+  if (cleaned_literal.empty()) {
+    throw std::invalid_argument("Literal contains no digits after cleaning.");
+  }
+  int32_t base;
+  size_t pos;
+  if (cleaned_literal.length() > 2) {
+    if (cleaned_literal[0] == '0' && cleaned_literal[1] == 'x') {
+      base = 16;
+      pos = 2;
+    } else if (cleaned_literal[0] == '0' && cleaned_literal[1] == 'o') {
+      base = 8;
+      pos = 2;
+    } else if (cleaned_literal[0] == '0' && cleaned_literal[1] == 'b') {
+      base = 2;
+      pos = 2;
+    } else {
+      base = 10;
+      pos = 0;
+    }
+  }
+  int32_t value = std::stoi(cleaned_literal.substr(pos), &pos, base);
   return std::make_unique<ExprLiteralIntNode>(value);
 }
 

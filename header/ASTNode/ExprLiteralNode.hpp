@@ -12,9 +12,10 @@ public:
 class ExprLiteralIntNode : public ExprLiteralNode {
 private:
   int32_t value_;
+  bool signed_;
 
 public:
-  ExprLiteralIntNode(int32_t value);
+  ExprLiteralIntNode(int32_t value, bool signed_);
   ~ExprLiteralIntNode();
   void accept(Visitor &visitor) override;
 };
