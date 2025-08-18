@@ -637,7 +637,7 @@ auto parseExprLiteralIntNode(TokenStream &stream)
     }
   }
   int32_t value = std::stoi(cleaned_literal.substr(pos), &pos, base);
-  return std::make_unique<ExprLiteralIntNode>(value);
+  return std::make_unique<ExprLiteralIntNode>(value, sign);
 }
 
 auto parseExprLiteralBoolNode(TokenStream &stream)

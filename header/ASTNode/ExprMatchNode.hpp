@@ -1,8 +1,8 @@
 #pragma once
 #include "ExprANode.hpp"
-#include "Visitor.hpp"
 
 class PatternNode;
+class Visitor;
 
 struct ExprMatchArm {
   std::unique_ptr<PatternNode> pattern;
