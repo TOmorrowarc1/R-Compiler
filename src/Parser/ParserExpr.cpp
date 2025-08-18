@@ -527,6 +527,9 @@ auto parseExprMatchNode(TokenStream &stream) -> std::unique_ptr<ExprMatchNode> {
   stream.next();
   auto subject = parseExprNode(stream);
   std::vector<ExprMatchArm> arms;
+  if (is_instance_of<ExprStructNode, ExprNode>(subject)) {
+    throw std::runtime_error("The subject of match expr is not a scrutinee.");
+  }
   if (stream.next().type != TokenType::LEFT_BRACE) {
     throw std::runtime_error("the match expr missed left brace.");
   }
