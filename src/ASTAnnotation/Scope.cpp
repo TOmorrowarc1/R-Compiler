@@ -1,14 +1,14 @@
 #include "Scope.hpp"
 #include "Symbol.hpp"
 
-Scope::Scope(std::shared_ptr<Scope> parent) : parent_(std::move(parent)) {}
+Scope::Scope(Scope *parent) : parent_(), index_now(0) {}
 
 Scope::~Scope() = default;
 
-auto Scope::getParent() const -> std::shared_ptr<Scope> { return parent_; }
+auto Scope::getParent() const -> Scope * { return parent_; }
 
 auto Scope::addSymbol(const std::string &name,
-                      std::shared_ptr<SymbolInfo>&& symbol) -> bool {
+                      std::shared_ptr<SymbolInfo> &&symbol) -> bool {
   if (symbols_.find(name) != symbols_.end()) {
     return false;
   }
@@ -29,7 +29,7 @@ auto Scope::getSymbol(const std::string &name) const
 }
 
 auto Scope::addType(const std::string &name,
-                    std::shared_ptr<SymbolTypeInfo>&& type) -> bool {
+                    std::shared_ptr<SymbolTypeInfo> &&type) -> bool {
   if (types_.find(name) != types_.end()) {
     return false;
   }
@@ -49,29 +49,17 @@ auto Scope::getType(const std::string &name) const
   return nullptr;
 }
 
-auto Scope::addImplSymbol(const std::string &impl_name,
-                          const std::string &func_name,
-                          std::shared_ptr<SymbolFunctionInfo>&& func) -> bool {
-  auto &func_map = impl_symbols_map_[impl_name];
-  if (func_map.find(func_name) != func_map.end()) {
+auto Scope::addChildScope(std::unique_ptr<Scope> &&child) -> bool {
+  if (!child) {
     return false;
   }
-  func_map[func_name] = std::move(func);
+  children_.push_back(std::move(child));
   return true;
 }
 
-auto Scope::getImplSymbol(const std::string &impl_name,
-                          const std::string &func_name)
-    -> std::shared_ptr<SymbolFunctionInfo> {
-  auto it = impl_symbols_map_.find(impl_name);
-  if (it != impl_symbols_map_.end()) {
-    auto func_it = it->second.find(func_name);
-    if (func_it != it->second.end()) {
-      return func_it->second;
-    }
+auto Scope::getNextChildScope() -> Scope * {
+  if (index_now >= children_.size()) {
+    return nullptr;
   }
-  if (parent_) {
-    return parent_->getImplSymbol(impl_name, func_name);
-  }
-  return nullptr;
+  return children_[index_now].get();
 }

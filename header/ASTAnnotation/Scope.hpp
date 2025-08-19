@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 class SymbolInfo;
 class SymbolTypeInfo;
@@ -10,26 +11,24 @@ class SymbolFunctionInfo;
 
 class Scope {
 private:
-  std::shared_ptr<Scope> parent_;
+  Scope *parent_;
+  uint32_t index_now;
+  std::vector<std::unique_ptr<Scope>> children_;
   std::unordered_map<std::string, std::shared_ptr<SymbolInfo>> symbols_;
   std::unordered_map<std::string, std::shared_ptr<SymbolTypeInfo>> types_;
-  std::unordered_map<
-      std::string,
-      std::unordered_map<std::string, std::shared_ptr<SymbolFunctionInfo>>>
-      impl_symbols_map_;
 
 public:
-  Scope(std::shared_ptr<Scope> parent);
+  Scope() = delete;
+  explicit Scope(Scope *parent);
   ~Scope();
-  auto getParent() const -> std::shared_ptr<Scope>;
-  auto addSymbol(const std::string &name, std::shared_ptr<SymbolInfo>) -> bool;
-  auto getSymbol(const std::string &name) const -> std::shared_ptr<SymbolInfo>;
-  auto addType(const std::string &name, std::shared_ptr<SymbolTypeInfo>)
+  auto getParent() const -> Scope *;
+  auto addSymbol(const std::string &name, std::shared_ptr<SymbolInfo> &&symbol)
       -> bool;
+  auto getSymbol(const std::string &name) const -> std::shared_ptr<SymbolInfo>;
+  auto addType(const std::string &name,
+               std::shared_ptr<SymbolTypeInfo> &&symbol) -> bool;
   auto getType(const std::string &name) const
       -> std::shared_ptr<SymbolTypeInfo>;
-  auto addImplSymbol(const std::string &impl_name, const std::string &func_name,
-                     std::shared_ptr<SymbolFunctionInfo> func) -> bool;
-  auto getImplSymbol(const std::string &impl_name, const std::string &func_name)
-      -> std::shared_ptr<SymbolFunctionInfo>;
+  auto addChildScope(std::unique_ptr<Scope> &&child) -> bool;
+  auto getNextChildScope() -> Scope *;
 };
