@@ -21,12 +21,13 @@ public:
 
 class TypeKindArray : public TypeKind {
 private:
-  std::shared_ptr<TypeDef> typeDef;
+  std::shared_ptr<TypeKind> type_kind_;
   uint32_t size;
+
 public:
-  TypeKindArray(std::shared_ptr<TypeDef> typeDef, uint32_t size);
+  TypeKindArray(std::shared_ptr<TypeKind> type_kind, uint32_t size);
   ~TypeKindArray() override;
   auto isEqual(const TypeKind &other) const -> bool override;
-  auto getTypeDef() const -> std::shared_ptr<TypeDef>;
+  auto getType() const -> const TypeKind &;
   auto getSize() const -> uint32_t;
 };
