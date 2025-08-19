@@ -3,21 +3,22 @@
 #include "Visitor.hpp"
 
 /*
-First pass: build up the Scope tree and gather names for all self-define types.
+The first pass builds up the Scope tree and gathers names for all self-define
+types.
 */
 
 class TypeKind;
 class TypeNode;
 
-class TypeSymbolCollector : public Visitor {
+class SymbolCollector : public Visitor {
 private:
   Scope *current_scope_;
 
   auto addType(const std::string type_name) -> bool;
 
 public:
-  TypeSymbolCollector(Scope *initial_scope);
-  ~TypeSymbolCollector() override;
+  SymbolCollector(Scope *initial_scope);
+  ~SymbolCollector() override;
 
   void visit(ASTRootNode *node) override;
 

@@ -1,5 +1,6 @@
 #include "Scope.hpp"
 #include "Symbol.hpp"
+#include <stdexcept>
 
 Scope::Scope(Scope *parent) : parent_(), index_now(0) {}
 
@@ -25,6 +26,7 @@ auto Scope::getSymbol(const std::string &name) const
   if (parent_) {
     return parent_->getSymbol(name);
   }
+  throw std::runtime_error("Symbol not found: " + name);
   return nullptr;
 }
 
@@ -46,6 +48,7 @@ auto Scope::getType(const std::string &name) const
   if (parent_) {
     return parent_->getType(name);
   }
+  throw std::runtime_error("Type not found: " + name);
   return nullptr;
 }
 
@@ -57,6 +60,7 @@ auto Scope::addNextChildScope() -> Scope * {
 
 auto Scope::getNextChildScope() -> Scope * {
   if (index_now >= children_.size()) {
+    throw std::runtime_error("No more child scopes available");
     return nullptr;
   }
   return children_[index_now].get();

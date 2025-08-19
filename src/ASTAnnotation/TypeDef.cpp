@@ -17,6 +17,15 @@ TypeDef::~TypeDef() = default;
 
 auto TypeDef::getName() const -> const std::string & { return name_; }
 
+auto TypeDef::addMember(const std::string &name,
+                        std::shared_ptr<TypeKind> &&type) -> bool {
+  if (members_.find(name) != members_.end()) {
+    return false;
+  }
+  members_.emplace(name, std::move(type));
+  return true;
+}
+
 auto TypeDef::getMember(const std::string &name) const
     -> std::shared_ptr<TypeKind> {
   auto iter = members_.find(name);

@@ -2,21 +2,26 @@
 #include "Scope.hpp"
 #include "Visitor.hpp"
 
+/*
+The second pass implies types by their members and impls, collects function
+signatures and const items.
+*/
 class TypeKind;
 class TypeNode;
 
-class SymbolCollector : public Visitor {
+class SymbolAnnotator : public Visitor {
 private:
-  std::shared_ptr<Scope> current_scope_;
+  Scope *current_scope_;
 
-  auto getType(const TypeNode *type_node) -> std::shared_ptr<TypeKind>;
-  auto getFunc(const ItemFnNode *node) -> std::shared_ptr<SymbolFunctionInfo>;
   auto getPathIndexName(const PathNode *path_node, uint32_t index)
       -> std::string;
+  auto typeNodeToType(const TypeNode *type_node) -> std::shared_ptr<TypeKind>;
+  auto fnNodeToFunc(const ItemFnNode *node)
+      -> std::shared_ptr<SymbolFunctionInfo>;
 
 public:
-  SymbolCollector(std::shared_ptr<Scope> initial_scope);
-  ~SymbolCollector() override;
+  SymbolAnnotator(Scope *initial_scope);
+  ~SymbolAnnotator() override;
 
   void visit(ASTRootNode *node) override;
 
@@ -41,7 +46,6 @@ public:
   void visit(ExprLiteralBoolNode *node) override;
   void visit(ExprLiteralCharNode *node) override;
   void visit(ExprLiteralStringNode *node) override;
-  void visit(ExprLiteralByteNode *node) override;
   void visit(ExprLoopNode *node) override;
   void visit(ExprWhileNode *node) override;
   void visit(ExprOperBinaryNode *node) override;

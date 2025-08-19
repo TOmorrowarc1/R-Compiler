@@ -22,6 +22,8 @@ public:
           std::vector<std::shared_ptr<TypeKind>> &&member_types);
   ~TypeDef();
   auto getName() const -> const std::string &;
+  auto addMember(const std::string &name, std::shared_ptr<TypeKind> &&type)
+      -> bool;
   auto getMember(const std::string &name) const -> std::shared_ptr<TypeKind>;
   auto addMethod(const std::string &name,
                  std::shared_ptr<SymbolFunctionInfo> &&method) -> bool;
