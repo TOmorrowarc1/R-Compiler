@@ -10,4 +10,4 @@ StmtLetNode::StmtLetNode(std::unique_ptr<PatternNode> &&pattern,
     : StmtNode(), pattern_(std::move(pattern)), type_(std::move(type)),
       init_value_(std::move(init_value)) {}
 StmtLetNode::~StmtLetNode() = default;
-void StmtLetNode::accept(Visitor &visitor) { visitor.visit(*this); }
+void StmtLetNode::accept(Visitor &visitor) { visitor.visit(this); }

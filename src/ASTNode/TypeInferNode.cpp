@@ -3,4 +3,4 @@
 
 TypeInferNode::TypeInferNode() : TypeNode() {}
 TypeInferNode::~TypeInferNode() = default;
-void TypeInferNode::accept(Visitor &visitor) { visitor.visit(*this); }
+void TypeInferNode::accept(Visitor &visitor) { visitor.visit(this); }

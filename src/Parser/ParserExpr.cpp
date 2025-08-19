@@ -65,6 +65,8 @@ const std::vector<bindPower> bind_powers = {
     {TokenType::NOT, 0, 23},
 
     {TokenType::LEFT_PAREN, 0, 0},
+    {TokenType::LEFT_BRACKET, 21, 0},
+    {TokenType::LEFT_BRACE, 1, 0},
     {TokenType::SEMICOLON, 0, 0},
 };
 

@@ -7,4 +7,4 @@ ExprTupleIndexNode::ExprTupleIndexNode(
     std::unique_ptr<ExprLiteralIntNode> &&index)
     : ExprBlockOutNode(), tuple_(std::move(tuple)), index_(std::move(index)) {}
 ExprTupleIndexNode::~ExprTupleIndexNode() = default;
-void ExprTupleIndexNode::accept(Visitor &visitor) { visitor.visit(*this); }
+void ExprTupleIndexNode::accept(Visitor &visitor) { visitor.visit(this); }

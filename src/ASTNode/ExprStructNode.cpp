@@ -7,4 +7,4 @@ ExprStructNode::ExprStructNode(std::unique_ptr<ExprPathNode> &&path,
                                std::vector<ExprStructField> &&fields)
     : ExprBlockOutNode(), path_(std::move(path)), fields_(std::move(fields)) {}
 ExprStructNode::~ExprStructNode() = default;
-void ExprStructNode::accept(Visitor &visitor) { visitor.visit(*this); }
+void ExprStructNode::accept(Visitor &visitor) { visitor.visit(this); }

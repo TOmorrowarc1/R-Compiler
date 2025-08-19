@@ -3,4 +3,4 @@
 
 ExprUnderScoreNode::ExprUnderScoreNode() : ExprBlockOutNode() {}
 ExprUnderScoreNode::~ExprUnderScoreNode() = default;
-void ExprUnderScoreNode::accept(Visitor &visitor) { visitor.visit(*this); }
+void ExprUnderScoreNode::accept(Visitor &visitor) { visitor.visit(this); }

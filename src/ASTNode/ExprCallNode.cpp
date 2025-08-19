@@ -6,4 +6,4 @@ ExprCallNode::ExprCallNode(std::unique_ptr<ExprNode> &&caller,
     : ExprBlockOutNode(), caller_(std::move(caller)),
       arguments_(std::move(arguments)) {}
 ExprCallNode::~ExprCallNode() = default;
-void ExprCallNode::accept(Visitor &visitor) { visitor.visit(*this); }
+void ExprCallNode::accept(Visitor &visitor) { visitor.visit(this); }

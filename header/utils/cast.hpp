@@ -24,6 +24,11 @@ auto dynamic_shared_ptr_cast(const std::shared_ptr<Base> &base_ptr)
 }
 
 template <typename Derived, typename Base>
-auto is_instance(const std::shared_ptr<Base> &base_ptr) -> bool {
+auto is_instance_of(const std::shared_ptr<Base> &base_ptr) -> bool {
   return std::dynamic_pointer_cast<Derived>(base_ptr) != nullptr;
+}
+
+template <typename Derived, typename Base>
+auto is_instance_of(const Base *base_ref) -> bool {
+  return dynamic_cast<const Derived *>(base_ref) != nullptr;
 }

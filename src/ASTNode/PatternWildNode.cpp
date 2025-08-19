@@ -3,4 +3,4 @@
 
 PatternWildNode::PatternWildNode() : PatternNode() {}
 PatternWildNode::~PatternWildNode() = default;
-void PatternWildNode::accept(Visitor &visitor) { visitor.visit(*this); }
+void PatternWildNode::accept(Visitor &visitor) { visitor.visit(this); }

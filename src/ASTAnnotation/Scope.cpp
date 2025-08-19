@@ -8,7 +8,7 @@ Scope::~Scope() = default;
 auto Scope::getParent() const -> std::shared_ptr<Scope> { return parent_; }
 
 auto Scope::addSymbol(const std::string &name,
-                      std::shared_ptr<SymbolInfo> symbol) -> bool {
+                      std::shared_ptr<SymbolInfo>&& symbol) -> bool {
   if (symbols_.find(name) != symbols_.end()) {
     return false;
   }
@@ -29,7 +29,7 @@ auto Scope::getSymbol(const std::string &name) const
 }
 
 auto Scope::addType(const std::string &name,
-                    std::shared_ptr<SymbolTypeInfo> type) -> bool {
+                    std::shared_ptr<SymbolTypeInfo>&& type) -> bool {
   if (types_.find(name) != types_.end()) {
     return false;
   }
@@ -51,7 +51,7 @@ auto Scope::getType(const std::string &name) const
 
 auto Scope::addImplSymbol(const std::string &impl_name,
                           const std::string &func_name,
-                          std::shared_ptr<SymbolFunctionInfo> func) -> bool {
+                          std::shared_ptr<SymbolFunctionInfo>&& func) -> bool {
   auto &func_map = impl_symbols_map_[impl_name];
   if (func_map.find(func_name) != func_map.end()) {
     return false;

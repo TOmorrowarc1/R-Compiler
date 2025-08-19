@@ -3,4 +3,4 @@
 
 StmtEmptyNode::StmtEmptyNode() {}
 StmtEmptyNode::~StmtEmptyNode() = default;
-void StmtEmptyNode::accept(Visitor &visitor) { visitor.visit(*this); }
+void StmtEmptyNode::accept(Visitor &visitor) { visitor.visit(this); }

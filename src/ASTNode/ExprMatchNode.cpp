@@ -8,4 +8,4 @@ ExprMatchNode::ExprMatchNode(std::unique_ptr<ExprNode> &&subject,
 
 ExprMatchNode::~ExprMatchNode() = default;
 
-void ExprMatchNode::accept(Visitor &visitor) { visitor.visit(*this); }
+void ExprMatchNode::accept(Visitor &visitor) { visitor.visit(this); }

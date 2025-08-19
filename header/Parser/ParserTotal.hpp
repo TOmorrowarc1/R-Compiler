@@ -1,6 +1,5 @@
 #pragma once
 #include "ASTNodeTotal.hpp"
-#include <stdexcept>
 
 auto parse(const std::vector<Token> &tokens) -> std::unique_ptr<ASTRootNode>;
 auto parseRootNode(TokenStream &stream) -> std::unique_ptr<ASTRootNode>;

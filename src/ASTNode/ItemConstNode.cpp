@@ -8,4 +8,4 @@ ItemConstNode::ItemConstNode(const std::string &ID,
                              std::unique_ptr<ExprNode> &&value)
     : ItemNode(), ID_(ID), type_(std::move(type)), value_(std::move(value)) {}
 ItemConstNode::~ItemConstNode() = default;
-void ItemConstNode::accept(Visitor &visitor) { visitor.visit(*this); }
+void ItemConstNode::accept(Visitor &visitor) { visitor.visit(this); }

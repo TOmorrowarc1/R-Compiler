@@ -5,4 +5,4 @@
 PatternPathNode::PatternPathNode(std::unique_ptr<PathNode> &&path)
     : PatternNode(), path_(std::move(path)) {}
 PatternPathNode::~PatternPathNode() = default;
-void PatternPathNode::accept(Visitor &visitor) { visitor.visit(*this); }
+void PatternPathNode::accept(Visitor &visitor) { visitor.visit(this); }

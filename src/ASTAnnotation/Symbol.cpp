@@ -3,7 +3,7 @@
 #include "TypeKind.hpp"
 
 SymbolVariableInfo::SymbolVariableInfo(const std::string &name,
-                                       std::shared_ptr<TypeKind> type)
+                                       std::shared_ptr<TypeKind>&& type)
     : SymbolInfo(), name_(std::move(name)), type_(std::move(type)) {}
 SymbolVariableInfo::~SymbolVariableInfo() = default;
 auto SymbolVariableInfo::getName() const -> const std::string & {
@@ -14,8 +14,8 @@ auto SymbolVariableInfo::getType() const -> std::shared_ptr<TypeKind> {
 }
 
 SymbolFunctionInfo::SymbolFunctionInfo(
-    const std::string &name, std::shared_ptr<TypeKind> returnType,
-    std::vector<std::shared_ptr<TypeKind>> parameters)
+    const std::string &name, std::shared_ptr<TypeKind>&& returnType,
+    std::vector<std::shared_ptr<TypeKind>>&& parameters)
     : SymbolInfo(), name_(name), return_type_(std::move(returnType)),
       parameters_(std::move(parameters)) {}
 SymbolFunctionInfo::~SymbolFunctionInfo() = default;
@@ -31,7 +31,7 @@ auto SymbolFunctionInfo::getParametersType() const
 }
 
 SymbolTypeInfo::SymbolTypeInfo(const std::string &name,
-                               std::shared_ptr<TypeDef> type)
+                               std::shared_ptr<TypeDef>&& type)
     : SymbolInfo(), name_(name), type_(std::move(type)) {}
 SymbolTypeInfo::~SymbolTypeInfo() = default;
 auto SymbolTypeInfo::getName() const -> const std::string & { return name_; }

@@ -10,4 +10,4 @@ ExprIfNode::ExprIfNode(std::unique_ptr<ExprNode> &&condition,
 
 ExprIfNode::~ExprIfNode() = default;
 
-void ExprIfNode::accept(Visitor &visitor) { visitor.visit(*this); }
+void ExprIfNode::accept(Visitor &visitor) { visitor.visit(this); }
