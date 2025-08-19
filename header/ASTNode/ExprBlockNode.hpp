@@ -15,10 +15,9 @@ public:
 };
 
 class ExprBlockConstNode : public ExprBlockInNode {
-private:
+public:
   std::unique_ptr<ExprBlockNode> block_expr_;
 
-public:
   ExprBlockConstNode(std::unique_ptr<ExprBlockNode> &&block_expr);
   ~ExprBlockConstNode();
   void accept(Visitor &visitor) override;

@@ -29,6 +29,6 @@ public:
                std::shared_ptr<SymbolTypeInfo> &&symbol) -> bool;
   auto getType(const std::string &name) const
       -> std::shared_ptr<SymbolTypeInfo>;
-  auto addChildScope(std::unique_ptr<Scope> &&child) -> bool;
+  auto addNextChildScope() -> Scope *;
   auto getNextChildScope() -> Scope *;
 };

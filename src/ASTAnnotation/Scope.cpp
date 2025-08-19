@@ -49,12 +49,10 @@ auto Scope::getType(const std::string &name) const
   return nullptr;
 }
 
-auto Scope::addChildScope(std::unique_ptr<Scope> &&child) -> bool {
-  if (!child) {
-    return false;
-  }
+auto Scope::addNextChildScope() -> Scope * {
+  auto child = std::make_unique<Scope>(this);
   children_.push_back(std::move(child));
-  return true;
+  return child.get();
 }
 
 auto Scope::getNextChildScope() -> Scope * {

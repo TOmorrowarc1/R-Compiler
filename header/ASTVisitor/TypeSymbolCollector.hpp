@@ -2,20 +2,22 @@
 #include "Scope.hpp"
 #include "Visitor.hpp"
 
+/*
+First pass: build up the Scope tree and gather names for all self-define types.
+*/
+
 class TypeKind;
+class TypeNode;
 
-class SymbolCollector : public Visitor {
+class TypeSymbolCollector : public Visitor {
 private:
-  std::shared_ptr<Scope> current_scope_;
+  Scope *current_scope_;
 
-  auto getType(const TypeNode *type_node) -> std::shared_ptr<TypeKind>;
-  auto getFunc(const ItemFnNode *node) -> std::shared_ptr<SymbolFunctionInfo>;
-  auto getPathIndexName(const PathNode *path_node, uint32_t index)
-      -> std::string;
+  auto addType(const std::string type_name) -> bool;
 
 public:
-  SymbolCollector(std::shared_ptr<Scope> initial_scope);
-  ~SymbolCollector() override;
+  TypeSymbolCollector(Scope *initial_scope);
+  ~TypeSymbolCollector() override;
 
   void visit(ASTRootNode *node) override;
 
@@ -40,7 +42,6 @@ public:
   void visit(ExprLiteralBoolNode *node) override;
   void visit(ExprLiteralCharNode *node) override;
   void visit(ExprLiteralStringNode *node) override;
-  void visit(ExprLiteralByteNode *node) override;
   void visit(ExprLoopNode *node) override;
   void visit(ExprWhileNode *node) override;
   void visit(ExprOperBinaryNode *node) override;

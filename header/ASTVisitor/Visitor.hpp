@@ -24,7 +24,6 @@ class ExprLiteralIntNode;
 class ExprLiteralBoolNode;
 class ExprLiteralCharNode;
 class ExprLiteralStringNode;
-class ExprLiteralByteNode;
 class ExprLoopNode;
 class ExprWhileNode;
 class ExprOperBinaryNode;
@@ -72,6 +71,11 @@ public:
   virtual void visit(ItemImplNode *node) = 0;
   virtual void visit(ItemTraitNode *node) = 0;
 
+  virtual void visit(StmtExprNode *node) = 0;
+  virtual void visit(StmtEmptyNode *node) = 0;
+  virtual void visit(StmtItemNode *node) = 0;
+  virtual void visit(StmtLetNode *node) = 0;
+
   virtual void visit(ExprArrayNode *node) = 0;
   virtual void visit(ExprArrayIndexNode *node) = 0;
   virtual void visit(ExprBlockNode *node) = 0;
@@ -86,7 +90,6 @@ public:
   virtual void visit(ExprLiteralBoolNode *node) = 0;
   virtual void visit(ExprLiteralCharNode *node) = 0;
   virtual void visit(ExprLiteralStringNode *node) = 0;
-  virtual void visit(ExprLiteralByteNode *node) = 0;
   virtual void visit(ExprLoopNode *node) = 0;
   virtual void visit(ExprWhileNode *node) = 0;
   virtual void visit(ExprOperBinaryNode *node) = 0;
@@ -99,11 +102,6 @@ public:
   virtual void visit(ExprTupleNode *node) = 0;
   virtual void visit(ExprTupleIndexNode *node) = 0;
   virtual void visit(ExprUnderScoreNode *node) = 0;
-
-  virtual void visit(StmtExprNode *node) = 0;
-  virtual void visit(StmtEmptyNode *node) = 0;
-  virtual void visit(StmtItemNode *node) = 0;
-  virtual void visit(StmtLetNode *node) = 0;
 
   virtual void visit(PatternLiteralNode *node) = 0;
   virtual void visit(PatternStructNode *node) = 0;

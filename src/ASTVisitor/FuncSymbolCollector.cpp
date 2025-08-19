@@ -1,4 +1,4 @@
-#include "SymbolCollector.hpp"
+#include "TypeSymbolCollector.hpp"
 #include "ASTNodeTotal.hpp"
 #include "Symbol.hpp"
 #include "TypeKind.hpp"
