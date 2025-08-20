@@ -75,6 +75,17 @@ auto SemanticChecker::judgeU32(const ExprNode *node) -> bool {
   return true;
 }
 
+auto SemanticChecker::judgeI32(const ExprNode *node) -> bool {
+  if (!is_instance_of<ExprLiteralIntNode, ExprNode>(node)) {
+    auto index_type = node->value_info_->getType();
+    if (!index_type->isTypePath(
+            current_scope_->getType("i32")->getType().get())) {
+      return false;
+    }
+  }
+  return true;
+}
+
 auto SemanticChecker::judgeNum(const ExprNode *node) -> bool {
   auto type = node->value_info_->getType();
   return type->isTypePath(current_scope_->getType("i32")->getType().get()) ||
@@ -146,24 +157,6 @@ void SemanticChecker::visit(ItemImplNode *node) {
 
 void SemanticChecker::visit(ItemTraitNode *node) {}
 
-void SemanticChecker::visit(StmtEmptyNode *node) {}
-
-void SemanticChecker::visit(StmtItemNode *node) { node->item_->accept(*this); }
-
-void SemanticChecker::visit(StmtLetNode *node) {
-  node->type_->accept(*this);
-  auto type = typeNodeToType(node->type_.get());
-  bindPatternToType(node->pattern_.get(), type);
-  if (node->init_value_) {
-    node->init_value_->accept(*this);
-  }
-  if (!node->init_value_->value_info_->getType()->isEqual(type.get())) {
-    throw std::runtime_error("Type mismatch in let statement initialization");
-  }
-}
-
-void SemanticChecker::visit(StmtExprNode *node) { node->expr_->accept(*this); }
-
 void SemanticChecker::visit(ExprArrayNode *node) {
   if (node->length_) {
     node->length_->accept(*this);
@@ -182,6 +175,7 @@ void SemanticChecker::visit(ExprArrayNode *node) {
     }
   }
   auto array_type = std::make_shared<TypeKind>(element_type, node->length_);
+  // The array expr is not a left value, not mutable, and not const.
   node->value_info_ =
       std::make_unique<ValueInfo>(array_type, false, false, false);
 }
@@ -197,9 +191,11 @@ void SemanticChecker::visit(ExprArrayIndexNode *node) {
   if (!judgeU32(node->index_.get())) {
     throw std::runtime_error("Array index must be U32.");
   }
+  // ValueInfo in arrayIndexExpr is decided by the array.
   node->value_info_ = std::make_unique<ValueInfo>(
-      dynamic_cast<TypeKindArray *>(array_type.get())->getType(), false, false,
-      false);
+      dynamic_cast<TypeKindArray *>(array_type.get())->getType(),
+      node->array_->value_info_->isLeftValue(),
+      node->array_->value_info_->isMutable(), node->value_info_->isConst());
 }
 
 void SemanticChecker::visit(ExprBlockNode *node) {
@@ -218,6 +214,7 @@ void SemanticChecker::visit(ExprBlockNode *node) {
     node->value_info_ =
         std::make_unique<ValueInfo>(unit_type, false, false, false);
   }
+  // Block expr return a anonymous value.
   current_scope_ = current_scope_->getParent();
 }
 void SemanticChecker::visit(ExprBlockConstNode *node) {
@@ -260,11 +257,18 @@ void SemanticChecker::visit(ExprCallNode *node) {
       throw std::runtime_error("Function call parameters type mismatch");
     }
   }
+  /*
+  A function call returns a value, which is neither a left value nor mutable,
+  and whether it is const depends on the function's qualifier.
+  */
   node->value_info_ = std::make_unique<ValueInfo>(
       function_info->getReturnType(), false, false, false);
 }
 
 void SemanticChecker::visit(ExprBreakNode *node) {
+  /*
+  The return value of control flow is same as the one from block expr.
+  */
   node->value_->accept(*this);
   auto value_type = node->value_->value_info_->getType();
   node->value_info_ =
@@ -374,13 +378,18 @@ void SemanticChecker::visit(ExprOperBinaryNode *node) {
     if (!judgeNum(node->rhs_.get())) {
       throw std::runtime_error("The rhs type is not number");
     }
+    node->value_info_ =
+        std::make_unique<ValueInfo>(rhs_type, false, false, false);
     break;
   case BinaryOperator::ASSIGN:
-    if (lhs_type->isEqual(rhs_type.get()) &&
-        node->lhs_->value_info_->isLeftValue()) {
-      node->value_info_ =
-          std::make_unique<ValueInfo>(lhs_type, true, false, false);
+    if (!lhs_type->isEqual(rhs_type.get())) {
+      throw std::runtime_error("Assignment requires types to match");
     }
+    if (!node->lhs_->value_info_->isLeftValue()) {
+      throw std::runtime_error("Assignment requires lhs to be a left value");
+    }
+    node->value_info_ =
+        std::make_unique<ValueInfo>(lhs_type, true, false, false);
     break;
   case BinaryOperator::EQUAL:
   case BinaryOperator::NOT_EQUAL:
@@ -407,8 +416,10 @@ void SemanticChecker::visit(ExprOperBinaryNode *node) {
         std::make_shared<TypeKind>(bool_type), false, false, false);
     break;
   default:
+    // These are numeric calculations.
     if (!judgeNum(node->lhs_.get()) || !judgeNum(node->rhs_.get())) {
-      throw std::runtime_error("Binary operation operands must be numeric");
+      throw std::runtime_error(
+          "Calculation binary operation operands must be numeric");
     }
     node->value_info_ =
         std::make_unique<ValueInfo>(lhs_type, false, false, false);
@@ -419,19 +430,29 @@ void SemanticChecker::visit(ExprOperUnaryNode *node) {
   node->operand_->accept(*this);
   auto operand_type = node->operand_->value_info_->getType();
   switch (node->op_) {
-  case UnaryOperator::NEGATE:
-    if (!judgeNum(node->operand_.get())) {
-      throw std::runtime_error("Negation operator requires a numeric operand");
+  case UnaryOperator::NEGATE: {
+    if (!judgeI32(node->operand_.get())) {
+      throw std::runtime_error("Negation operator requires a i32 operand");
+    }
+    auto i32_type =
+        std::make_shared<TypeKind>(current_scope_->getType("i32")->getType());
+    node->value_info_ =
+        std::make_unique<ValueInfo>(i32_type, false, false, false);
+    break;
+  }
+  case UnaryOperator::NOT: {
+    if (!operand_type->isTypePath(
+            current_scope_->getType("bool")->getType().get()) &&
+        !judgeNum(node->operand_.get())) {
+      throw std::runtime_error(
+          "Not operator requires a boolean or numeric operand");
     }
     node->value_info_ =
         std::make_unique<ValueInfo>(operand_type, false, false, false);
     break;
-  case UnaryOperator::NOT:
-    if (!operand_type->isTypePath(
-            current_scope_->getType("bool")->getType().get()) &&
-        !judgeNum(node->operand_.get())) {
-      throw std::runtime_error("Not operator requires a boolean operand");
-    }
+  }
+  default:
+    throw std::runtime_error("Unsupported unary operator");
   }
 }
 
@@ -449,7 +470,7 @@ void SemanticChecker::visit(ExprFieldNode *node) {
     throw std::runtime_error("Field " + node->ID_ + " not found in type");
   }
   node->value_info_ =
-      std::make_unique<ValueInfo>(member_type, false, false, false);
+      std::make_unique<ValueInfo>(member_type, true, false, false);
 }
 
 void SemanticChecker::visit(ExprMethodNode *node) {
@@ -498,7 +519,28 @@ void SemanticChecker::visit(ExprStructNode *node) {
                                " type mismatch in struct.");
     }
   }
+  auto struct_type_kind = std::make_shared<TypeKindPath>(struct_type);
+  node->value_info_ =
+      std::make_unique<ValueInfo>(struct_type_kind, true, false, false);
 }
+
+void SemanticChecker::visit(StmtEmptyNode *node) {}
+
+void SemanticChecker::visit(StmtItemNode *node) { node->item_->accept(*this); }
+
+void SemanticChecker::visit(StmtLetNode *node) {
+  node->type_->accept(*this);
+  auto type = typeNodeToType(node->type_.get());
+  bindPatternToType(node->pattern_.get(), type);
+  if (node->init_value_) {
+    node->init_value_->accept(*this);
+  }
+  if (!node->init_value_->value_info_->getType()->isEqual(type.get())) {
+    throw std::runtime_error("Type mismatch in let statement initialization");
+  }
+}
+
+void SemanticChecker::visit(StmtExprNode *node) { node->expr_->accept(*this); }
 
 void SemanticChecker::visit(PatternLiteralNode *node) {}
 void SemanticChecker::visit(PatternWildNode *node) {}

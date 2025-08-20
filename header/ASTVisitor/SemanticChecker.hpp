@@ -8,11 +8,11 @@ The third pass is semantic check, in which we realize characteristics below:
 variables, functions, types, methods, etc.
 2. Type Correctness: The type of an expression must match the expected type,
 such as assignment, function call, etc.
-3. L-value Correctness: An L-value must be assignable.
+3. Place Expression: Everything on the lhs of the = should be place expr.
 4. Mutability Correctness: A mutable variable must be declared as mutable, and
 everything modified is either a mutable var or a mutable reference.
 5. Pattern Correctness: Patterns must match the structure of the value they
-are matching against.
+are matching against when are irrefutable.
 6. Control Flow context: Control flow statements like `break`, `continue`, and
 `return` must be used in the correct context, such as loops or functions.
 7. Const Evaluation: Constants must be evaluated at compile time, and their
@@ -35,6 +35,7 @@ private:
                          const std::shared_ptr<TypeKind> &type) -> bool;
 
   auto judgeU32(const ExprNode *node) -> bool;
+  auto judgeI32(const ExprNode *node) -> bool;
   auto judgeNum(const ExprNode *node) -> bool;
 
 public:
