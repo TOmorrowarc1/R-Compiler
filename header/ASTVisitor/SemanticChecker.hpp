@@ -27,6 +27,16 @@ class SemanticChecker : public Visitor {
 private:
   Scope *current_scope_;
 
+  auto getPathIndexName(const PathNode *path_node, uint32_t index)
+      -> std::string;
+  auto typeNodeToType(const TypeNode *type_node) -> std::shared_ptr<TypeKind>;
+
+  auto bindPatternToType(const PatternNode *pattern_node,
+                         const std::shared_ptr<TypeKind> &type) -> bool;
+
+  auto judgeU32(const ExprNode *node) -> bool;
+  auto judgeNum(const ExprNode *node) -> bool;
+
 public:
   SemanticChecker(Scope *initial_scope);
   ~SemanticChecker() override;
@@ -63,8 +73,6 @@ public:
   void visit(ExprMethodNode *node) override;
   void visit(ExprMatchNode *node) override;
   void visit(ExprStructNode *node) override;
-  void visit(ExprTupleNode *node) override;
-  void visit(ExprTupleIndexNode *node) override;
 
   void visit(StmtExprNode *node) override;
   void visit(StmtEmptyNode *node) override;
@@ -72,15 +80,12 @@ public:
   void visit(StmtLetNode *node) override;
 
   void visit(PatternLiteralNode *node) override;
-  void visit(PatternStructNode *node) override;
-  void visit(PatternTupleNode *node) override;
   void visit(PatternWildNode *node) override;
   void visit(PatternPathNode *node) override;
   void visit(PatternIDNode *node) override;
 
   void visit(TypeArrayNode *node) override;
   void visit(TypeSliceNode *node) override;
-  void visit(TypeInferNode *node) override;
   void visit(TypePathNode *node) override;
 
   void visit(PathNode *node) override;

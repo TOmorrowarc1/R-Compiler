@@ -2,7 +2,6 @@
 #include "ASTNode.hpp"
 
 class TypeNode : public ASTNode {
-private:
 public:
   TypeNode() : ASTNode(){};
   virtual ~TypeNode() = default;

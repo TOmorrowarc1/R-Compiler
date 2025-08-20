@@ -181,8 +181,6 @@ void SymbolCollector::visit(ExprTupleIndexNode *node) {
 }
 
 void SymbolCollector::visit(PatternLiteralNode *node) {}
-void SymbolCollector::visit(PatternStructNode *node) {}
-void SymbolCollector::visit(PatternTupleNode *node) {}
 void SymbolCollector::visit(PatternWildNode *node) {}
 void SymbolCollector::visit(PatternPathNode *node) {}
 void SymbolCollector::visit(PatternIDNode *node) {}

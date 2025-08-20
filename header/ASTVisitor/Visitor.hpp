@@ -43,8 +43,6 @@ class StmtItemNode;
 class StmtLetNode;
 
 class PatternLiteralNode;
-class PatternStructNode;
-class PatternTupleNode;
 class PatternWildNode;
 class PatternPathNode;
 class PatternIDNode;
@@ -52,7 +50,6 @@ class PatternIDNode;
 class TypeTupleNode;
 class TypeArrayNode;
 class TypeSliceNode;
-class TypeInferNode;
 class TypePathNode;
 
 class PathNode;
@@ -99,20 +96,15 @@ public:
   virtual void visit(ExprMethodNode *node) = 0;
   virtual void visit(ExprMatchNode *node) = 0;
   virtual void visit(ExprStructNode *node) = 0;
-  virtual void visit(ExprTupleNode *node) = 0;
-  virtual void visit(ExprTupleIndexNode *node) = 0;
   virtual void visit(ExprUnderScoreNode *node) = 0;
 
   virtual void visit(PatternLiteralNode *node) = 0;
-  virtual void visit(PatternStructNode *node) = 0;
-  virtual void visit(PatternTupleNode *node) = 0;
   virtual void visit(PatternWildNode *node) = 0;
   virtual void visit(PatternPathNode *node) = 0;
   virtual void visit(PatternIDNode *node) = 0;
 
   virtual void visit(TypeArrayNode *node) = 0;
   virtual void visit(TypeSliceNode *node) = 0;
-  virtual void visit(TypeInferNode *node) = 0;
   virtual void visit(TypePathNode *node) = 0;
 
   virtual void visit(PathNode *node) = 0;

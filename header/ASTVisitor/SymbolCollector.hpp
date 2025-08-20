@@ -61,15 +61,12 @@ public:
   void visit(StmtLetNode *node) override;
 
   void visit(PatternLiteralNode *node) override;
-  void visit(PatternStructNode *node) override;
-  void visit(PatternTupleNode *node) override;
   void visit(PatternWildNode *node) override;
   void visit(PatternPathNode *node) override;
   void visit(PatternIDNode *node) override;
 
   void visit(TypeArrayNode *node) override;
   void visit(TypeSliceNode *node) override;
-  void visit(TypeInferNode *node) override;
   void visit(TypePathNode *node) override;
 
   void visit(PathNode *node) override;

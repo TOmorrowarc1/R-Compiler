@@ -2,6 +2,7 @@
 #include "ASTNode.hpp"
 
 class ValueInfo;
+
 class ExprNode : public ASTNode {
 public:
   std::unique_ptr<ValueInfo> value_info_;

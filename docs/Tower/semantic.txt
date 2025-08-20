@@ -268,7 +268,7 @@ Pattern →
 
 LiteralPattern → -? LiteralExpression
 
-IdentifierPattern → IDENTIFIER ( @ Pattern )?
+IdentifierPattern → IDENTIFIER ( @ Pattern )? //没有复杂类型？
 
 WildcardPattern → _
 
