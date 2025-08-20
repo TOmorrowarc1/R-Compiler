@@ -1,9 +1,12 @@
 #pragma once
 #include "ASTNode.hpp"
 
+class ValueInfo;
 class ExprNode : public ASTNode {
 public:
-  ExprNode() : ASTNode() {}
+  std::unique_ptr<ValueInfo> value_info_;
+
+  ExprNode() : ASTNode(), value_info_(nullptr) {}
   virtual ~ExprNode() = default;
   virtual void accept(Visitor &visitor) override = 0;
 };

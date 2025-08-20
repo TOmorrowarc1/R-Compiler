@@ -2,12 +2,33 @@
 #include "Scope.hpp"
 #include "Visitor.hpp"
 
+/*
+The third pass is semantic check, in which we realize characteristics below:
+1. Name Existence: A name must be defined before it is used, including
+variables, functions, types, methods, etc.
+2. Type Correctness: The type of an expression must match the expected type,
+such as assignment, function call, etc.
+3. L-value Correctness: An L-value must be assignable.
+4. Mutability Correctness: A mutable variable must be declared as mutable, and
+everything modified is either a mutable var or a mutable reference.
+5. Pattern Correctness: Patterns must match the structure of the value they
+are matching against.
+6. Control Flow context: Control flow statements like `break`, `continue`, and
+`return` must be used in the correct context, such as loops or functions.
+7. Const Evaluation: Constants must be evaluated at compile time, and their
+values must be known at compile time.
+8. Match Patterns: Match arms must cover all possible cases, and patterns must
+be valid for the type they are matching against.
+9. Recursive Type Definitions: Types can be defined recursively, but must be
+well-formed and not lead to infinite recursion.
+*/
+
 class SemanticChecker : public Visitor {
 private:
-  std::shared_ptr<Scope> current_scope_;
+  Scope *current_scope_;
 
 public:
-  SemanticChecker(std::shared_ptr<Scope> initial_scope);
+  SemanticChecker(Scope *initial_scope);
   ~SemanticChecker() override;
 
   void visit(ASTRootNode *node) override;
@@ -33,7 +54,6 @@ public:
   void visit(ExprLiteralBoolNode *node) override;
   void visit(ExprLiteralCharNode *node) override;
   void visit(ExprLiteralStringNode *node) override;
-  void visit(ExprLiteralByteNode *node) override;
   void visit(ExprLoopNode *node) override;
   void visit(ExprWhileNode *node) override;
   void visit(ExprOperBinaryNode *node) override;
