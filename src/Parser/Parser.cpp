@@ -1,11 +1,13 @@
 #include "Parser.hpp"
 #include "ParserTotal.hpp"
+#include "exception.hpp"
 
 auto parse(const std::vector<Token> &tokens) -> std::unique_ptr<ASTRootNode> {
   TokenStream stream(tokens);
   auto rootNode = parseRootNode(stream);
   if (stream.peek().type != TokenType::END_OF_FILE) {
-    throw std::runtime_error("Unexpected tokens after parsing AST.");
+    throw CompilerException("Expected EOF after parsing AST.",
+                            stream.peek().line);
   }
   return rootNode;
 }
