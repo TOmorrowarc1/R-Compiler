@@ -20,7 +20,7 @@ public:
 
   ItemFnNode(const std::string &ID, std::unique_ptr<TypeNode> &&return_type,
              std::vector<ItemFnPara> &&parameters,
-             std::unique_ptr<ExprBlockNode> &&body);
+             std::unique_ptr<ExprBlockNode> &&body,Position position);
   ~ItemFnNode();
   void accept(Visitor &visitor) override;
 };

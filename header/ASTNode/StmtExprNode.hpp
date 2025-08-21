@@ -7,7 +7,7 @@ class StmtExprNode : public StmtNode {
 public:
   std::unique_ptr<ExprNode> expr_;
 
-  StmtExprNode(std::unique_ptr<ExprNode> expr);
+  StmtExprNode(std::unique_ptr<ExprNode>&& expr, Position position);
   ~StmtExprNode();
   void accept(Visitor &visitor) override;
 };

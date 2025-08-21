@@ -5,7 +5,7 @@ class ExprGroupNode : public ExprBlockOutNode {
 public:
   std::unique_ptr<ExprNode> expr_;
 
-  ExprGroupNode(std::unique_ptr<ExprNode> &&expr);
+  ExprGroupNode(std::unique_ptr<ExprNode> &&expr, Position position);
   ~ExprGroupNode();
   void accept(Visitor &visitor) override;
 };

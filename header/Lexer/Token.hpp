@@ -1,4 +1,5 @@
 #pragma once
+#include "position.hpp"
 #include <string>
 #include <vector>
 
@@ -137,6 +138,7 @@ enum class TokenType {
 struct Token {
   std::string content;
   TokenType type;
+  Position line;
 };
 
 class TokenStream {

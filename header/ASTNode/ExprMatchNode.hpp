@@ -16,7 +16,7 @@ public:
   std::vector<ExprMatchArm> arms_;
 
   ExprMatchNode(std::unique_ptr<ExprNode> &&subject,
-                std::vector<ExprMatchArm> &&arms);
+                std::vector<ExprMatchArm> &&arms, Position position);
   ~ExprMatchNode();
   void accept(Visitor &visitor) override;
 };

@@ -3,7 +3,7 @@
 
 class StmtEmptyNode : public StmtNode {
 public:
-  StmtEmptyNode();
+  StmtEmptyNode(Position position);
   ~StmtEmptyNode();
   void accept(Visitor &visitor) override;
 };

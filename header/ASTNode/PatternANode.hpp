@@ -3,7 +3,7 @@
 
 class PatternNode : public ASTNode {
 public:
-  PatternNode() : ASTNode(){};
+  PatternNode(Position position) : ASTNode(position){};
   virtual ~PatternNode() = default;
   virtual void accept(Visitor &visitor) override = 0;
 };

@@ -3,7 +3,7 @@
 
 class ItemNode : public ASTNode {
 public:
-  ItemNode() : ASTNode() {}
+  ItemNode(Position position) : ASTNode(position) {}
   virtual ~ItemNode() = default;
   virtual void accept(Visitor &visitor) override = 0;
 };

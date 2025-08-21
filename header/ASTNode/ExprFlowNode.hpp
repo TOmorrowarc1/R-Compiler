@@ -5,14 +5,14 @@ class ExprBreakNode : public ExprBlockOutNode {
 public:
   std::unique_ptr<ExprNode> value_;
 
-  ExprBreakNode(std::unique_ptr<ExprNode> &&value);
+  ExprBreakNode(std::unique_ptr<ExprNode> &&value, Position position);
   ~ExprBreakNode();
   void accept(Visitor &visitor) override;
 };
 
 class ExprContinueNode : public ExprBlockOutNode {
 public:
-  ExprContinueNode();
+  ExprContinueNode(Position position);
   ~ExprContinueNode();
   void accept(Visitor &visitor) override;
 };
@@ -21,7 +21,7 @@ class ExprReturnNode : public ExprBlockOutNode {
 public:
   std::unique_ptr<ExprNode> value_;
 
-  ExprReturnNode(std::unique_ptr<ExprNode> &&value);
+  ExprReturnNode(std::unique_ptr<ExprNode> &&value, Position position);
   ~ExprReturnNode();
   void accept(Visitor &visitor) override;
 };

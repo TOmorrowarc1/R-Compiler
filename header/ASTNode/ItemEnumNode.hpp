@@ -6,7 +6,8 @@ public:
   std::string ID_;
   std::vector<std::string> variants_;
 
-  ItemEnumNode(const std::string &ID, std::vector<std::string> &&variants);
+  ItemEnumNode(const std::string &ID, std::vector<std::string> &&variants,
+               Position position);
   ~ItemEnumNode();
   void accept(Visitor &visitor) override;
 };

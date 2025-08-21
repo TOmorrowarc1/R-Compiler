@@ -14,7 +14,7 @@ public:
   std::vector<ExprStructField> fields_;
 
   ExprStructNode(std::unique_ptr<ExprPathNode> &&path,
-                 std::vector<ExprStructField> &&fields);
+                 std::vector<ExprStructField> &&fields, Position position);
   ~ExprStructNode();
   void accept(Visitor &visitor) override;
 };

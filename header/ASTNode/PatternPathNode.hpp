@@ -7,7 +7,7 @@ class PatternPathNode : public PatternNode {
 public:
   std::unique_ptr<PathNode> path_;
 
-  PatternPathNode(std::unique_ptr<PathNode> &&path);
+  PatternPathNode(std::unique_ptr<PathNode> &&path, Position position);
   ~PatternPathNode();
   void accept(Visitor &visitor) override;
 };

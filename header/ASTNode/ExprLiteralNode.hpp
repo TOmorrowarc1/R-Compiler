@@ -3,7 +3,7 @@
 
 class ExprLiteralNode : public ExprBlockOutNode {
 public:
-  ExprLiteralNode() : ExprBlockOutNode(){};
+  ExprLiteralNode(Position position) : ExprBlockOutNode(position){};
   virtual ~ExprLiteralNode() = default;
   virtual void accept(Visitor &visitor) override = 0;
 };
@@ -13,7 +13,7 @@ public:
   int32_t value_;
   bool signed_;
 
-  ExprLiteralIntNode(int32_t value, bool signed_);
+  ExprLiteralIntNode(int32_t value, bool signed_, Position position);
   ~ExprLiteralIntNode();
   void accept(Visitor &visitor) override;
 };
@@ -23,7 +23,7 @@ private:
   bool value_;
 
 public:
-  ExprLiteralBoolNode(bool value);
+  ExprLiteralBoolNode(bool value, Position position);
   ~ExprLiteralBoolNode();
   void accept(Visitor &visitor) override;
 };
@@ -33,7 +33,7 @@ private:
   uint32_t value_;
 
 public:
-  ExprLiteralCharNode(uint32_t value);
+  ExprLiteralCharNode(uint32_t value, Position position);
   ~ExprLiteralCharNode();
   void accept(Visitor &visitor) override;
 };
@@ -43,7 +43,7 @@ private:
   std::string value_;
 
 public:
-  ExprLiteralStringNode(const std::string &value);
+  ExprLiteralStringNode(const std::string &value, Position position);
   ~ExprLiteralStringNode();
   void accept(Visitor &visitor) override;
 };

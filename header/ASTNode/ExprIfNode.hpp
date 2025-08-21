@@ -11,7 +11,7 @@ public:
 
   ExprIfNode(std::unique_ptr<ExprNode> &&condition,
              std::unique_ptr<ExprBlockNode> &&then_block,
-             std::unique_ptr<ExprBlockNode> &&else_block);
+             std::unique_ptr<ExprBlockNode> &&else_block, Position position);
   ~ExprIfNode();
   void accept(Visitor &visitor) override;
 };

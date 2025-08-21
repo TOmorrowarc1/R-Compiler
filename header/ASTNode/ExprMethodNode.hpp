@@ -8,7 +8,8 @@ public:
   std::vector<std::unique_ptr<ExprNode>> parameters_;
 
   ExprMethodNode(std::unique_ptr<ExprNode> &&instance, const std::string &ID,
-                 std::vector<std::unique_ptr<ExprNode>> &&parameters);
+                 std::vector<std::unique_ptr<ExprNode>> &&parameters,
+                 Position position);
   ~ExprMethodNode();
   void accept(Visitor &visitor) override;
 };

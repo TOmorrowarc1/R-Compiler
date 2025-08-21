@@ -13,7 +13,8 @@ public:
   std::string ID_;
   std::vector<ItemStructField> fields_;
 
-  ItemStructNode(const std::string &ID, std::vector<ItemStructField> &&fields);
+  ItemStructNode(const std::string &ID, std::vector<ItemStructField> &&fields,
+                 Position position);
   ~ItemStructNode();
   void accept(Visitor &visitor) override;
 };

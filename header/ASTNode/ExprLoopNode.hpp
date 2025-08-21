@@ -7,7 +7,7 @@ class ExprLoopNode : public ExprBlockInNode {
 public:
   std::unique_ptr<ExprBlockNode> loop_body_;
 
-  ExprLoopNode(std::unique_ptr<ExprBlockNode> &&loop_body);
+  ExprLoopNode(std::unique_ptr<ExprBlockNode> &&loop_body, Position position);
   ~ExprLoopNode();
   void accept(Visitor &visitor) override;
 };
@@ -18,7 +18,7 @@ public:
   std::unique_ptr<ExprBlockNode> loop_body_;
 
   ExprWhileNode(std::unique_ptr<ExprNode> &&condition,
-                std::unique_ptr<ExprBlockNode> &&loop_body);
+                std::unique_ptr<ExprBlockNode> &&loop_body, Position position);
   ~ExprWhileNode();
   void accept(Visitor &visitor) override;
 };

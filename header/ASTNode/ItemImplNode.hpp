@@ -16,7 +16,7 @@ public:
   std::vector<ItemAssociatedItem> items_;
 
   ItemImplNode(std::unique_ptr<TypeNode> &&type,
-               std::vector<ItemAssociatedItem> &&items);
+               std::vector<ItemAssociatedItem> &&items,Position position);
   ~ItemImplNode();
   void accept(Visitor &visitor) override;
 };

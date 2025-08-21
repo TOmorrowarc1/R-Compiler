@@ -45,7 +45,7 @@ public:
   std::unique_ptr<ExprNode> rhs_;
 
   ExprOperBinaryNode(BinaryOperator op, std::unique_ptr<ExprNode> &&lhs,
-                     std::unique_ptr<ExprNode> &&rhs);
+                     std::unique_ptr<ExprNode> &&rhs, Position position);
   ~ExprOperBinaryNode();
   void accept(Visitor &visitor) override;
 };

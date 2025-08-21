@@ -7,7 +7,7 @@ public:
   std::unique_ptr<PatternNode> pattern_;
 
   PatternIDNode(const std::string &identifier,
-                std::unique_ptr<PatternNode> &&pattern);
+                std::unique_ptr<PatternNode> &&pattern,Position position);
   ~PatternIDNode();
   void accept(Visitor &visitor) override;
 };

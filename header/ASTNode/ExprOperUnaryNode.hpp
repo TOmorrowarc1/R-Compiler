@@ -7,7 +7,8 @@ public:
   UnaryOperator op_;
   std::unique_ptr<ExprNode> operand_;
 
-  ExprOperUnaryNode(UnaryOperator op, std::unique_ptr<ExprNode> &&operand);
+  ExprOperUnaryNode(UnaryOperator op, std::unique_ptr<ExprNode> &&operand,
+                    Position position);
   ~ExprOperUnaryNode();
   void accept(Visitor &visitor) override;
 };

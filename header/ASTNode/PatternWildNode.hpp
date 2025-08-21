@@ -3,7 +3,7 @@
 
 class PatternWildNode : public PatternNode {
 public:
-  PatternWildNode();
+  PatternWildNode(Position position);
   ~PatternWildNode();
   void accept(Visitor &visitor) override;
 };

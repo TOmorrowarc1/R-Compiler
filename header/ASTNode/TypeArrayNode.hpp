@@ -9,7 +9,7 @@ public:
   std::unique_ptr<ExprNode> length_;
 
   TypeArrayNode(std::unique_ptr<TypeNode> &&type,
-                std::unique_ptr<ExprNode> &&length);
+                std::unique_ptr<ExprNode> &&length, Position position);
   ~TypeArrayNode();
   void accept(Visitor &visitor) override;
 };

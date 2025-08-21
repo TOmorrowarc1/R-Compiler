@@ -1,7 +1,8 @@
 #include "ExprUnderScoreNode.hpp"
-#include "Visitor.hpp"
 #include "ValueInfo.hpp"
+#include "Visitor.hpp"
 
-ExprUnderScoreNode::ExprUnderScoreNode() : ExprBlockOutNode() {}
+ExprUnderScoreNode::ExprUnderScoreNode(Position position)
+    : ExprBlockOutNode(position) {}
 ExprUnderScoreNode::~ExprUnderScoreNode() = default;
 void ExprUnderScoreNode::accept(Visitor &visitor) { visitor.visit(this); }

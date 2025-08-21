@@ -4,6 +4,38 @@
 #include <stdint.h>
 #include <string_view>
 
+class LineFinder {
+private:
+  std::vector<int32_t> line_starts_;
+  int32_t line_count_;
+  int32_t cursor_;
+
+public:
+  LineFinder(const std::string &target) : line_count_(0), cursor_(0) {
+    line_starts_.push_back(0);
+    line_count_ = 0;
+    cursor_ = 0;
+    int32_t length = target.length();
+    for (int32_t i = 0; i < length; ++i) {
+      if (target[i] == '\n') {
+        line_starts_.push_back(i + 1);
+      }
+    }
+    if (length > 0 && target[length - 1] != '\n') {
+      line_starts_.push_back(length);
+    }
+  }
+
+  auto getLine() -> int32_t { return line_count_; }
+
+  void forward(int32_t length) {
+    cursor_ += length;
+    while (cursor_ >= line_starts_[line_count_ + 1]) {
+      ++line_count_;
+    }
+  }
+};
+
 struct PlainRule {
   std::string prefix;
   int32_t length;
@@ -131,6 +163,7 @@ class Matcher {
 private:
   std::vector<PlainRule> plain_rules;
   std::vector<RegexRule> regex_rules;
+
   Matcher();
   auto lexRegex(const std::string &target) const -> Token;
   auto lexPlain(const std::string &target) const -> Token;
@@ -273,14 +306,18 @@ auto commentLex(const std::string &target) -> std::string {
 }
 
 auto lex(const std::string &target) -> std::vector<Token> {
+  LineFinder line_finder_(target);
   std::vector<Token> result;
   std::string buffer = commentLex(target);
   while (!buffer.empty()) {
     auto next_token = Matcher::getInstance().lexString(buffer);
+    auto next_length = next_token.content.length();
+    next_token.line.setLine(line_finder_.getLine());
+    line_finder_.forward(next_length);
+    buffer.erase(0, next_length);
     if (next_token.type != TokenType::WHITESPACE) {
       result.push_back(next_token);
     }
-    buffer.erase(0, next_token.content.length());
   }
   result.push_back(Token{"", TokenType::END_OF_FILE});
   return result;

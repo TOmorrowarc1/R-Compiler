@@ -3,7 +3,7 @@
 
 class StmtNode : public ASTNode {
 public:
-  StmtNode() : ASTNode() {}
+  StmtNode(Position position) : ASTNode(position) {}
   virtual ~StmtNode() = default;
   virtual void accept(Visitor &visitor) = 0;
 };

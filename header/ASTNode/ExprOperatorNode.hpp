@@ -3,7 +3,7 @@
 
 class ExprOperatorNode : public ExprBlockOutNode {
 public:
-  ExprOperatorNode() : ExprBlockOutNode(){};
+  ExprOperatorNode(Position position) : ExprBlockOutNode(position){};
   virtual ~ExprOperatorNode() = default;
   virtual void accept(Visitor &visitor) override = 0;
 };

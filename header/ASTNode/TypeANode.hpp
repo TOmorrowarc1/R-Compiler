@@ -3,7 +3,7 @@
 
 class TypeNode : public ASTNode {
 public:
-  TypeNode() : ASTNode(){};
+  TypeNode(Position position) : ASTNode(position){};
   virtual ~TypeNode() = default;
   virtual void accept(Visitor &visitor) = 0;
 };

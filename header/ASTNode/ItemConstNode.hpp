@@ -11,7 +11,7 @@ public:
   std::unique_ptr<ExprNode> value_;
 
   ItemConstNode(const std::string &ID, std::unique_ptr<TypeNode> &&type,
-                std::unique_ptr<ExprNode> &&value);
+                std::unique_ptr<ExprNode> &&value, Position position);
   ~ItemConstNode();
   void accept(Visitor &visitor) override;
 };

@@ -13,7 +13,7 @@ public:
 
   StmtLetNode(std::unique_ptr<PatternNode> &&pattern,
               std::unique_ptr<TypeNode> &&type,
-              std::unique_ptr<ExprNode> &&init_value);
+              std::unique_ptr<ExprNode> &&init_value, Position position);
   ~StmtLetNode();
   void accept(Visitor &visitor) override;
 };

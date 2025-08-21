@@ -1,4 +1,5 @@
 #pragma once
+#include "position.hpp"
 #include <memory>
 #include <stdexcept>
 #include <stdint.h>
@@ -9,7 +10,8 @@ class Visitor;
 
 class ASTNode {
 public:
-  ASTNode() = default;
+  Position position_;
+  ASTNode(Position position) : position_(position){};
   ~ASTNode() = default;
   virtual void accept(Visitor &visitor) = 0;
 };
