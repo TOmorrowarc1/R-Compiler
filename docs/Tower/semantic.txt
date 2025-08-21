@@ -213,7 +213,7 @@ IfExpression →
     ( else ( BlockExpression | IfExpression ) )?
 
 Conditions →
-      Expressionexcept StructExpression
+     ( Expressionexcept StructExpression )
     | LetChain
 
 LetChain → LetChainCondition ( && LetChainCondition )*
@@ -227,21 +227,6 @@ ExcludedConditions →
     | LazyBooleanExpression
     | AssignmentExpression
     | CompoundAssignmentExpression
-
-MatchExpression →
-    match Scrutinee {
-        MatchArms?
-    }
-
-Scrutinee → Expressionexcept StructExpression
-
-MatchArms →
-    ( MatchArm => ( ExpressionWithoutBlock , | ExpressionWithBlock ,? ) )*
-    MatchArm => Expression ,?
-
-MatchArm → Pattern MatchArmGuard?
-
-MatchArmGuard → if Expression
 
 ReturnExpression → return Expression?
 
@@ -286,14 +271,11 @@ check both side shoule be used.
 
 TYPE Syntax
 Type →
-    | PathExprSegment //What about self & Self?
+    | PathExprSegment
     | ArrayType
-    | SliceType
     | InferredType
 
 ArrayType → [ Type ; Expression ]
-
-SliceType → [ Type ]
 
 /*
 Every path(maybe contains identifier) in syntax is a handle to a "object" in 

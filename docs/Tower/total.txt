@@ -248,7 +248,7 @@ IfExpression →
     ( else ( BlockExpression | IfExpression ) )?
 
 Conditions →
-      Expressionexcept StructExpression
+      ( Expressionexcept StructExpression )
     | LetChain
 
 LetChain → LetChainCondition ( && LetChainCondition )*
@@ -262,21 +262,6 @@ ExcludedConditions →
     | LazyBooleanExpression
     | AssignmentExpression
     | CompoundAssignmentExpression
-
-MatchExpression →
-    match Scrutinee {
-        MatchArms?
-    }
-
-Scrutinee → Expressionexcept StructExpression
-
-MatchArms →
-    ( MatchArm => ( ExpressionWithoutBlock , | ExpressionWithBlock ,? ) )*
-    MatchArm => Expression ,?
-
-MatchArm → Pattern MatchArmGuard?
-
-MatchArmGuard → if Expression
 
 ReturnExpression → return Expression?
 
@@ -321,12 +306,9 @@ TypeNoBounds →
       TypePath
     | ReferenceType
     | ArrayType
-    | SliceType
     | InferredType
 
 ArrayType → [ Type ; Expression ]
-
-SliceType → [ Type ]
 
 ReferenceType → & mut? TypeNoBounds
 
