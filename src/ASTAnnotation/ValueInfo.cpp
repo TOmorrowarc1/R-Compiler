@@ -1,6 +1,6 @@
 #include "ValueInfo.hpp"
 
-ValueInfo::ValueInfo(std::shared_ptr<TypeKind> &&type, bool is_left_value,
+ValueInfo::ValueInfo(std::shared_ptr<TypeKind> type, bool is_left_value,
                      bool is_mutable, bool is_const)
     : type_(std::move(type)), is_left_value_(is_left_value),
       is_mutable_(is_mutable), is_const_(is_const) {}

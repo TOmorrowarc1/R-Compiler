@@ -2,7 +2,9 @@
 #include "Symbol.hpp"
 #include <stdexcept>
 
-Scope::Scope(Scope *parent) : parent_(), index_now(0) {}
+Scope::Scope() : parent_(nullptr), index_now(0) {}
+
+Scope::Scope(Scope *parent) : parent_(parent), index_now(0) {}
 
 Scope::~Scope() = default;
 

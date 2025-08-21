@@ -57,7 +57,7 @@ class PathNode;
 class Visitor {
 public:
   Visitor() = default;
-  virtual ~Visitor() = 0;
+  virtual ~Visitor() = default;
 
   virtual void visit(ASTRootNode *node) = 0;
 

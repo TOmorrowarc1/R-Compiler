@@ -23,7 +23,7 @@ TypeKindArray::TypeKindArray(std::shared_ptr<TypeKind> type_kind, uint32_t size)
 TypeKindArray::~TypeKindArray() = default;
 auto TypeKindArray::isEqual(const TypeKind *other) const -> bool {
   if (const auto *otherArray = dynamic_cast<const TypeKindArray *>(other)) {
-    return type_kind_->isEqual(otherArray->getType()) &&
+    return type_kind_->isEqual(otherArray->getType().get()) &&
            size == otherArray->size;
   }
   return false;
@@ -31,10 +31,10 @@ auto TypeKindArray::isEqual(const TypeKind *other) const -> bool {
 auto TypeKindArray::isTypePath(const TypeDef *typeDef) const -> bool {
   return false;
 }
-auto TypeKindArray::getType() const -> const TypeKind * {
+auto TypeKindArray::getType() const -> const std::shared_ptr<TypeKind> {
   if (type_kind_ == nullptr) {
     throw std::runtime_error("TypeKindArray type_kind_ is null");
   }
-  return type_kind_.get();
+  return type_kind_;
 }
 auto TypeKindArray::getSize() const -> uint32_t { return size; }

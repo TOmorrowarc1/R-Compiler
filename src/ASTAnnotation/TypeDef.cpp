@@ -108,6 +108,6 @@ auto EnumDef::getVariant(const std::string &variant) const -> bool {
   return variants_.count(variant) != 0;
 }
 
-auto EnumDef::getVariants() const -> const std::vector<std::string> & {
+auto EnumDef::getVariants() const -> const std::vector<std::string> {
   return std::vector<std::string>(variants_.begin(), variants_.end());
 }

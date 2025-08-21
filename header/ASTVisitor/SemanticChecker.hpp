@@ -23,6 +23,8 @@ be valid for the type they are matching against.
 well-formed and not lead to infinite recursion.
 */
 
+class TypeKind;
+
 class SemanticChecker : public Visitor {
 private:
   Scope *current_scope_;
@@ -32,7 +34,7 @@ private:
   auto typeNodeToType(const TypeNode *type_node) -> std::shared_ptr<TypeKind>;
 
   auto bindPatternToType(const PatternNode *pattern_node,
-                         const std::shared_ptr<TypeKind> &type) -> bool;
+                         std::shared_ptr<TypeKind> &type) -> bool;
 
   auto judgeU32(const ExprNode *node) -> bool;
   auto judgeI32(const ExprNode *node) -> bool;

@@ -4,7 +4,7 @@
 class TypeKind {
 public:
   TypeKind() = default;
-  virtual ~TypeKind() = 0;
+  virtual ~TypeKind() = default;
   virtual auto isEqual(const TypeKind *other) const -> bool = 0;
   virtual auto isTypePath(const TypeDef *typeDef) const -> bool = 0;
 };
@@ -31,6 +31,6 @@ public:
   ~TypeKindArray() override;
   auto isEqual(const TypeKind *other) const -> bool override;
   auto isTypePath(const TypeDef *typeDef) const -> bool override;
-  auto getType() const -> const TypeKind *;
+  auto getType() const -> const std::shared_ptr<TypeKind>;
   auto getSize() const -> uint32_t;
 };

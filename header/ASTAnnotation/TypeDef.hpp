@@ -18,7 +18,7 @@ private:
 
 public:
   TypeDef(const std::string &name);
-  virtual ~TypeDef() = default;
+  virtual ~TypeDef();
   auto getName() const -> const std::string &;
   auto addMethod(const std::string &name,
                  std::shared_ptr<SymbolFunctionInfo> &&method) -> bool;
@@ -56,5 +56,5 @@ public:
   ~EnumDef() override;
   auto addVariant(const std::string &variant) -> bool;
   auto getVariant(const std::string &variant) const -> bool;
-  auto getVariants() const -> const std::vector<std::string> &;
+  auto getVariants() const -> const std::vector<std::string>;
 };

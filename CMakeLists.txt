@@ -18,10 +18,11 @@ FetchContent_MakeAvailable(googletest)
 # 对应命令行中的 -I，不过 target_include_directories更强调针对目标对象的引入。
 set(HEADER_ALL
   header/Lexer
+  header/Parser
   header/ASTNode
   header/ASTVisitor
   header/ASTAnnotation
-  header/Parser
+  header/ASTAnnotator
   header/utils
 )
 
@@ -73,6 +74,10 @@ set(EXECUTABLE_SOURCES
   src/ASTAnnotation/TypeKind.cpp
   src/ASTAnnotation/TypeDef.cpp
   src/ASTAnnotation/ValueInfo.cpp
+  src/ASTVisitor/SemanticChecker.cpp
+  src/ASTVisitor/SymbolCollector.cpp
+  src/ASTVisitor/SymbolAnnotator.cpp
+  src/ASTAnnotator/ASTAnnotator.cpp
 )
 
 # 将以上文档编译为.so准备用于静态链接。

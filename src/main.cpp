@@ -1,3 +1,4 @@
+#include "ASTAnnotator.hpp"
 #include "ASTRootNode.hpp"
 #include "Parser.hpp"
 #include "lexer.hpp"
@@ -13,7 +14,10 @@ int main() {
 
   auto lex_result = lex(text);
   auto AST_root = parse(lex_result);
-  
+
+  Scope init_scope;
+  auto root = AST_root.get();
+  ASTAnnotate(root, &init_scope);
 
   auto end = std::chrono::steady_clock::now();
   auto duration = end - start;

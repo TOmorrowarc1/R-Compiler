@@ -18,8 +18,8 @@ private:
   std::unordered_map<std::string, std::shared_ptr<SymbolTypeInfo>> types_;
 
 public:
-  Scope() = delete;
-  explicit Scope(Scope *parent);
+  Scope();
+  Scope(Scope *parent);
   ~Scope();
   auto getParent() const -> Scope *;
   auto addSymbol(const std::string &name, std::shared_ptr<SymbolInfo> &&symbol)

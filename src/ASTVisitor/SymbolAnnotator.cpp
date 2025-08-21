@@ -1,6 +1,6 @@
+#include "SymbolAnnotator.hpp"
 #include "ASTNodeTotal.hpp"
 #include "Symbol.hpp"
-#include "SymbolAnnotator.hpp"
 #include "TypeKind.hpp"
 #include "cast.hpp"
 
@@ -12,13 +12,13 @@ SymbolAnnotator::~SymbolAnnotator() = default;
 auto SymbolAnnotator::typeNodeToType(const TypeNode *type_node)
     -> std::shared_ptr<TypeKind> {
   if (type_node == nullptr) {
-    return std::make_shared<TypeKind>(
+    return std::make_shared<TypeKindPath>(
         current_scope_->getType("super")->getType());
   }
   if (is_instance_of<TypePathNode, TypeNode>(type_node)) {
     const auto *type_path = dynamic_cast<const TypePathNode *>(type_node);
     std::string type_name = getPathIndexName(type_path->path_.get(), 0);
-    return std::make_shared<TypeKind>(
+    return std::make_shared<TypeKindPath>(
         current_scope_->getType(type_name)->getType());
   }
   if (is_instance_of<TypeArrayNode, TypeNode>(type_node)) {
@@ -34,7 +34,7 @@ auto SymbolAnnotator::typeNodeToType(const TypeNode *type_node)
     } else {
       throw std::runtime_error("Array length must be a literal integer");
     }
-    return std::make_shared<TypeKind>(type, length);
+    return std::make_shared<TypeKindArray>(std::move(type), length);
   }
   throw std::runtime_error("Unsupported type node for symbol collection");
   return nullptr;
@@ -69,8 +69,8 @@ void SymbolAnnotator::visit(ItemConstNode *node) {
   node->type_->accept(*this);
   node->value_->accept(*this);
   auto type = typeNodeToType(node->type_.get());
-  current_scope_->addSymbol(
-      node->ID_, std::make_shared<SymbolVariableInfo>(node->ID_, type));
+  current_scope_->addSymbol(node->ID_, std::make_shared<SymbolVariableInfo>(
+                                           node->ID_, std::move(type)));
 }
 
 void SymbolAnnotator::visit(ItemFnNode *node) {

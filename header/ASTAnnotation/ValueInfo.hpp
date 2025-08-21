@@ -13,8 +13,8 @@ private:
   bool is_const_;
 
 public:
-  ValueInfo(std::shared_ptr<TypeKind> &&type, bool is_left_value,
-            bool is_mutable, bool is_const);
+  ValueInfo(std::shared_ptr<TypeKind> type, bool is_left_value, bool is_mutable,
+            bool is_const);
   ~ValueInfo();
   auto getType() const -> std::shared_ptr<TypeKind>;
   auto isLeftValue() const -> bool;
