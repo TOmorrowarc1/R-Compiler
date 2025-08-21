@@ -1,5 +1,6 @@
 #include "ExprOperBinaryNode.hpp"
 #include "Visitor.hpp"
+#include "ValueInfo.hpp"
 
 ExprOperBinaryNode::ExprOperBinaryNode(BinaryOperator op,
                                        std::unique_ptr<ExprNode> &&lhs,

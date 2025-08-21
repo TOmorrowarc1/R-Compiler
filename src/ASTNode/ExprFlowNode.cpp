@@ -1,5 +1,6 @@
 #include "ExprFlowNode.hpp"
 #include "Visitor.hpp"
+#include "ValueInfo.hpp"
 
 ExprBreakNode::ExprBreakNode(std::unique_ptr<ExprNode> &&value)
     : ExprBlockOutNode(), value_(std::move(value)) {}

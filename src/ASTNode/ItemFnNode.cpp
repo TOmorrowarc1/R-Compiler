@@ -3,6 +3,7 @@
 #include "PatternANode.hpp"
 #include "TypeANode.hpp"
 #include "Visitor.hpp"
+#include "ValueInfo.hpp"
 
 ItemFnNode::ItemFnNode(const std::string &ID,
                        std::unique_ptr<TypeNode> &&return_type,

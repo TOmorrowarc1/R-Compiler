@@ -1,6 +1,7 @@
 #include "PatternLiteralNode.hpp"
 #include "ExprLiteralNode.hpp"
 #include "Visitor.hpp"
+#include "ValueInfo.hpp"
 
 PatternLiteralNode::PatternLiteralNode(std::unique_ptr<ExprLiteralNode> &&expr,
                                        bool minus)

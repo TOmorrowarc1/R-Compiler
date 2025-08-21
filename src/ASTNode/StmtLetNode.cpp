@@ -3,6 +3,7 @@
 #include "PatternANode.hpp"
 #include "TypeANode.hpp"
 #include "Visitor.hpp"
+#include "ValueInfo.hpp"
 
 StmtLetNode::StmtLetNode(std::unique_ptr<PatternNode> &&pattern,
                          std::unique_ptr<TypeNode> &&type,

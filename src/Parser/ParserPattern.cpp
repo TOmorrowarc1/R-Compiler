@@ -4,8 +4,8 @@
 auto parsePatternLiteralNode(TokenStream &stream)
     -> std::unique_ptr<PatternLiteralNode>;
 auto parsePatternIDNode(TokenStream &stream) -> std::unique_ptr<PatternIDNode>;
-auto parsePatternPathBeginNode(TokenStream &stream)
-    -> std::unique_ptr<PatternNode>;
+auto parsePatternPathNode(TokenStream &stream)
+    -> std::unique_ptr<PatternPathNode>;
 auto parsePatternWildcardNode(TokenStream &stream)
     -> std::unique_ptr<PatternWildNode>;
 
@@ -25,7 +25,7 @@ auto parsePatternNode(TokenStream &stream) -> std::unique_ptr<PatternNode> {
     return parsePatternWildcardNode(stream);
   case TokenType::IDENTIFIER:
     if (stream.peekNum(1).type == TokenType::COLON_COLON) {
-      return parsePatternPathBeginNode(stream);
+      return parsePatternPathNode(stream);
     } else {
       /*Allow the ambiguity.*/
       return parsePatternIDNode(stream);
@@ -55,31 +55,9 @@ auto parsePatternIDNode(TokenStream &stream) -> std::unique_ptr<PatternIDNode> {
   return std::make_unique<PatternIDNode>(name, std::move(pattern));
 }
 
-auto parsePatternPathBeginNode(TokenStream &stream)
-    -> std::unique_ptr<PatternNode> {
+auto parsePatternPathNode(TokenStream &stream)
+    -> std::unique_ptr<PatternPathNode> {
   auto path = parsePathNode(stream);
-  if (stream.peek().type == TokenType::LEFT_PAREN) {
-    stream.next();
-    std::vector<std::unique_ptr<PatternNode>> patterns;
-    if (stream.next().type == TokenType::RIGHT_PAREN) {
-      stream.next();
-    } else {
-      patterns.push_back(parsePatternNode(stream));
-      while (stream.peek().type == TokenType::COMMA) {
-        stream.next();
-        if (stream.peek().type == TokenType::RIGHT_PAREN) {
-          break;
-        }
-        patterns.push_back(parsePatternNode(stream));
-      }
-      if (stream.peek().type != TokenType::RIGHT_PAREN) {
-        throw std::runtime_error("Expect right bracket after slice end.");
-      }
-      stream.next();
-    }
-    return std::make_unique<PatternTupleNode>(std::move(path),
-                                              std::move(patterns));
-  }
   return std::make_unique<PatternPathNode>(std::move(path));
 }
 

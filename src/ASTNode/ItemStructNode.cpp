@@ -1,6 +1,7 @@
 #include "ItemStructNode.hpp"
 #include "TypeANode.hpp"
 #include "Visitor.hpp"
+#include "ValueInfo.hpp"
 
 ItemStructNode::ItemStructNode(const std::string &ID,
                                std::vector<ItemStructField> &&fields)

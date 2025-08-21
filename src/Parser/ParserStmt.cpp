@@ -1,4 +1,5 @@
 #include "ParserTotal.hpp"
+#include "cast.hpp"
 
 // By Gemini.
 auto parseStmtEmptyNode(TokenStream &stream) -> std::unique_ptr<StmtEmptyNode>;

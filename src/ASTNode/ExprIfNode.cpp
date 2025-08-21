@@ -1,6 +1,7 @@
 #include "ExprIfNode.hpp"
 #include "ExprBlockNode.hpp"
 #include "Visitor.hpp"
+#include "ValueInfo.hpp"
 
 ExprIfNode::ExprIfNode(std::unique_ptr<ExprNode> &&condition,
                        std::unique_ptr<ExprBlockNode> &&then_block,

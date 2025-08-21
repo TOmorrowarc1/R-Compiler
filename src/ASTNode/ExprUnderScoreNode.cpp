@@ -1,5 +1,6 @@
 #include "ExprUnderScoreNode.hpp"
 #include "Visitor.hpp"
+#include "ValueInfo.hpp"
 
 ExprUnderScoreNode::ExprUnderScoreNode() : ExprBlockOutNode() {}
 ExprUnderScoreNode::~ExprUnderScoreNode() = default;

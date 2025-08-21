@@ -1,5 +1,6 @@
 #include "PathNode.hpp"
 #include "Visitor.hpp"
+#include "ValueInfo.hpp"
 
 PathNode::PathNode(std::vector<PathSegment> &&segments)
     : ASTNode(), segments_(std::move(segments)) {}

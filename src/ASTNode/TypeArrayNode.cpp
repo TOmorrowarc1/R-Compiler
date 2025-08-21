@@ -1,6 +1,7 @@
 #include "TypeArrayNode.hpp"
 #include "ExprANode.hpp"
 #include "Visitor.hpp"
+#include "ValueInfo.hpp"
 
 TypeArrayNode::TypeArrayNode(std::unique_ptr<TypeNode> &&type,
                              std::unique_ptr<ExprNode> &&length)

@@ -1,4 +1,5 @@
 #include "ParserTotal.hpp"
+#include "cast.hpp"
 #include "token.hpp"
 #include <string>
 #include <unordered_map>
@@ -203,32 +204,12 @@ auto parseNudExprNode(TokenStream &stream, int32_t power)
   case TokenType::LEFT_PAREN: {
     stream.next();
     std::unique_ptr<ExprNode> expr;
-    std::vector<std::unique_ptr<ExprNode>> elements;
-    if (stream.peek().type == TokenType::RIGHT_PAREN) {
-      stream.next();
-      return std::make_unique<ExprTupleNode>(std::move(elements));
-    }
     expr = parseExprNode(stream);
-    if (stream.peek().type == TokenType::COMMA) {
-      elements.push_back(std::move(expr));
-      while (stream.peek().type == TokenType::COMMA) {
-        stream.next();
-        if (stream.peek().type == TokenType::RIGHT_PAREN) {
-          break;
-        }
-        elements.push_back(parseExprNode(stream));
-      }
-      if (stream.peek().type != TokenType::RIGHT_PAREN) {
-        throw std::runtime_error("Missing ) after elements.");
-      }
-      stream.next();
-      return std::make_unique<ExprTupleNode>(std::move(elements));
-    } else if (stream.peek().type == TokenType::RIGHT_PAREN) {
-      stream.next();
-      return std::make_unique<ExprGroupNode>(std::move(expr));
+    if (stream.peek().type != TokenType::RIGHT_PAREN) {
+      throw std::runtime_error("Right parent is lost.");
     }
-    throw std::runtime_error("Unexcepted token after expr.");
-    return nullptr;
+    stream.next();
+    return std::make_unique<ExprGroupNode>(std::move(expr));
   }
   case TokenType::LEFT_BRACKET:
     return parseExprArrayNode(stream);
@@ -294,35 +275,31 @@ auto parseLedExprNode(TokenStream &stream, const Token &token,
   }
   case TokenType::DOT: {
     auto next_token = stream.next();
-    if (next_token.type == TokenType::INTEGERLITERAL) {
-      return std::make_unique<ExprTupleIndexNode>(
-          std::move(lhs), parseExprLiteralIntNode(stream));
-    } else if (next_token.type == TokenType::IDENTIFIER) {
-      std::string ID = next_token.content;
-      if (stream.peek().type == TokenType::LEFT_PAREN) {
-        stream.next();
-        std::vector<std::unique_ptr<ExprNode>> parameters;
-        if (stream.peek().type != TokenType::RIGHT_PAREN) {
-          parameters.push_back(parseExprNode(stream));
-        }
-        while (stream.peek().type == TokenType::COMMA) {
-          stream.next();
-          if (stream.peek().type == TokenType::RIGHT_PAREN) {
-            break;
-          }
-          parameters.push_back(parseExprNode(stream));
-        }
-        if (stream.peek().type != TokenType::RIGHT_PAREN) {
-          throw std::runtime_error("Missing ) in struct fields.");
-        }
-        stream.next();
-        return std::make_unique<ExprMethodNode>(std::move(lhs), ID,
-                                                std::move(parameters));
-      }
-      return std::make_unique<ExprFieldNode>(std::move(lhs), ID);
+    if (next_token.type != TokenType::IDENTIFIER) {
+      throw std::runtime_error("Except id after the dot.");
     }
-    throw std::runtime_error("Unexpect token type after dot.");
-    return nullptr;
+    std::string ID = next_token.content;
+    if (stream.peek().type == TokenType::LEFT_PAREN) {
+      stream.next();
+      std::vector<std::unique_ptr<ExprNode>> parameters;
+      if (stream.peek().type != TokenType::RIGHT_PAREN) {
+        parameters.push_back(parseExprNode(stream));
+      }
+      while (stream.peek().type == TokenType::COMMA) {
+        stream.next();
+        if (stream.peek().type == TokenType::RIGHT_PAREN) {
+          break;
+        }
+        parameters.push_back(parseExprNode(stream));
+      }
+      if (stream.peek().type != TokenType::RIGHT_PAREN) {
+        throw std::runtime_error("Missing ) in struct fields.");
+      }
+      stream.next();
+      return std::make_unique<ExprMethodNode>(std::move(lhs), ID,
+                                              std::move(parameters));
+    }
+    return std::make_unique<ExprFieldNode>(std::move(lhs), ID);
   }
   }
   int32_t right_power = OpPowerRecoder::getInstance().getRight(token.type);

@@ -1,5 +1,6 @@
 #include "ExprLiteralNode.hpp"
 #include "Visitor.hpp"
+#include "ValueInfo.hpp"
 
 ExprLiteralIntNode::ExprLiteralIntNode(int32_t value, bool sign)
     : ExprLiteralNode(), value_(value), signed_(sign) {}

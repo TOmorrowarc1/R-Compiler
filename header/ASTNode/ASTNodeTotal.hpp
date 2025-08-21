@@ -33,6 +33,4 @@
 #include "StmtLetNode.hpp"
 #include "TypeArrayNode.hpp"
 #include "TypePathNode.hpp"
-#include "TypeSliceNode.hpp"
 #include "ValueInfo.hpp"
-#include "token.hpp"

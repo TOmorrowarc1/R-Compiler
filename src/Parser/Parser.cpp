@@ -1,3 +1,4 @@
+#include "Parser.hpp"
 #include "ParserTotal.hpp"
 
 auto parse(const std::vector<Token> &tokens) -> std::unique_ptr<ASTRootNode> {

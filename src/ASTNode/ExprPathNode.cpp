@@ -1,6 +1,7 @@
 #include "ExprPathNode.hpp"
 #include "PathNode.hpp"
 #include "Visitor.hpp"
+#include "ValueInfo.hpp"
 
 ExprPathNode::ExprPathNode(std::unique_ptr<PathNode> &&path)
     : ExprNode(), path_(std::move(path)) {}

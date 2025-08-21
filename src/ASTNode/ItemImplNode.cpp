@@ -3,6 +3,7 @@
 #include "ItemFnNode.hpp"
 #include "TypeANode.hpp"
 #include "Visitor.hpp"
+#include "ValueInfo.hpp"
 
 ItemImplNode::ItemImplNode(std::unique_ptr<TypeNode> &&type,
                            std::vector<ItemAssociatedItem> &&items)

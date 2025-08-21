@@ -1,5 +1,6 @@
 #include "ExprArrayIndexNode.hpp"
 #include "Visitor.hpp"
+#include "ValueInfo.hpp"
 
 ExprArrayIndexNode::ExprArrayIndexNode(std::unique_ptr<ExprNode> &&array,
                                        std::unique_ptr<ExprNode> &&index)

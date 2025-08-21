@@ -1,5 +1,6 @@
 #include "ExprMethodNode.hpp"
 #include "Visitor.hpp"
+#include "ValueInfo.hpp"
 
 ExprMethodNode::ExprMethodNode(
     std::unique_ptr<ExprNode> &&instance, const std::string &ID,

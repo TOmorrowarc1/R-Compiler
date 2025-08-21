@@ -1,3 +1,5 @@
+#include "ASTRootNode.hpp"
+#include "Parser.hpp"
 #include "lexer.hpp"
 #include <chrono>
 #include <iostream>
@@ -10,9 +12,7 @@ int main() {
   std::string text = buffer.str();
 
   auto lex_result = lex(text);
-  for (auto iter = lex_result.begin(); iter != lex_result.end(); ++iter) {
-    std::cout << iter->content << '\n';
-  }
+  auto AST_root = parse(lex_result);
 
   auto end = std::chrono::steady_clock::now();
   auto duration = end - start;

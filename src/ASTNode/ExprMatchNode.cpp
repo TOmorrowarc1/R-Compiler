@@ -1,6 +1,7 @@
 #include "ExprMatchNode.hpp"
 #include "PatternANode.hpp"
 #include "Visitor.hpp"
+#include "ValueInfo.hpp"
 
 ExprMatchNode::ExprMatchNode(std::unique_ptr<ExprNode> &&subject,
                              std::vector<ExprMatchArm> &&arms)

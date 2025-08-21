@@ -1,5 +1,6 @@
 #include "ExprArrayNode.hpp"
 #include "Visitor.hpp"
+#include "ValueInfo.hpp"
 
 ExprArrayNode::ExprArrayNode(std::vector<std::unique_ptr<ExprNode>> &&elements,
                              std::unique_ptr<ExprNode> &&length)

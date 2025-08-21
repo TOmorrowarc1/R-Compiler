@@ -1,6 +1,7 @@
 #include "StmtItemNode.hpp"
 #include "ItemANode.hpp"
 #include "Visitor.hpp"
+#include "ValueInfo.hpp"
 
 StmtItemNode::StmtItemNode(std::unique_ptr<ItemNode> item)
     : StmtNode(), item_(std::move(item)) {}

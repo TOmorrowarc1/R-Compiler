@@ -1,6 +1,7 @@
 #include "ExprStructNode.hpp"
 #include "ExprPathNode.hpp"
 #include "Visitor.hpp"
+#include "ValueInfo.hpp"
 
 // Allow possible path not simple for the pratt needs lhs to be a expr.
 ExprStructNode::ExprStructNode(std::unique_ptr<ExprPathNode> &&path,

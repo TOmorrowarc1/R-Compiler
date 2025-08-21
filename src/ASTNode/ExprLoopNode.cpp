@@ -1,6 +1,7 @@
 #include "ExprLoopNode.hpp"
 #include "ExprBlockNode.hpp"
 #include "Visitor.hpp"
+#include "ValueInfo.hpp"
 
 ExprLoopNode::ExprLoopNode(std::unique_ptr<ExprBlockNode> &&loop_body)
     : ExprBlockInNode(), loop_body_(std::move(loop_body)) {}

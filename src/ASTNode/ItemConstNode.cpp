@@ -2,6 +2,7 @@
 #include "ExprANode.hpp"
 #include "TypeANode.hpp"
 #include "Visitor.hpp"
+#include "ValueInfo.hpp"
 
 ItemConstNode::ItemConstNode(const std::string &ID,
                              std::unique_ptr<TypeNode> &&type,

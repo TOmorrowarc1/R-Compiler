@@ -1,7 +1,11 @@
 #pragma once
 #include "ASTNodeTotal.hpp"
+#include "token.hpp"
 
-auto parse(const std::vector<Token> &tokens) -> std::unique_ptr<ASTRootNode>;
+/*
+Private interfaces of modules of the Parser.
+*/
+
 auto parseRootNode(TokenStream &stream) -> std::unique_ptr<ASTRootNode>;
 
 auto parseItemNode(TokenStream &stream) -> std::unique_ptr<ItemNode>;

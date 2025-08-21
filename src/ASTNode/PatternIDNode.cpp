@@ -1,5 +1,6 @@
 #include "PatternIDNode.hpp"
 #include "Visitor.hpp"
+#include "ValueInfo.hpp"
 
 PatternIDNode::PatternIDNode(const std::string &identifier,
                              std::unique_ptr<PatternNode> &&pattern)

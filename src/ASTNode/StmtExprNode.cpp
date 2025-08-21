@@ -1,6 +1,7 @@
 #include "StmtExprNode.hpp"
 #include "ExprANode.hpp"
 #include "Visitor.hpp"
+#include "ValueInfo.hpp"
 
 StmtExprNode::StmtExprNode(std::unique_ptr<ExprNode> expr)
     : StmtNode(), expr_(std::move(expr)) {}

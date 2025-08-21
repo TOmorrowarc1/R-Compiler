@@ -1,6 +1,7 @@
 #include "TypePathNode.hpp"
 #include "PathNode.hpp"
 #include "Visitor.hpp"
+#include "ValueInfo.hpp"
 
 TypePathNode::TypePathNode(std::unique_ptr<PathNode> &&path)
     : TypeNode(), path_(std::move(path)) {}

@@ -43,8 +43,6 @@ set(EXECUTABLE_SOURCES
   src/ASTNode/ExprOperUnaryNode.cpp
   src/ASTNode/ExprPathNode.cpp
   src/ASTNode/ExprStructNode.cpp
-  src/ASTNode/ExprTupleIndexNode.cpp
-  src/ASTNode/ExprTupleNode.cpp
   src/ASTNode/ItemConstNode.cpp
   src/ASTNode/ItemEnumNode.cpp
   src/ASTNode/ItemFnNode.cpp
@@ -54,14 +52,12 @@ set(EXECUTABLE_SOURCES
   src/ASTNode/PatternIDNode.cpp
   src/ASTNode/PatternLiteralNode.cpp
   src/ASTNode/PatternPathNode.cpp
-  src/ASTNode/PatternTupleNode.cpp
   src/ASTNode/PatternWildNode.cpp
   src/ASTNode/StmtEmptyNode.cpp
   src/ASTNode/StmtExprNode.cpp
   src/ASTNode/StmtItemNode.cpp
   src/ASTNode/StmtLetNode.cpp
   src/ASTNode/TypeArrayNode.cpp
-  src/ASTNode/TypeInferNode.cpp
   src/ASTNode/TypePathNode.cpp
   src/Lexer/lexer.cpp
   src/Lexer/token.cpp
@@ -72,7 +68,13 @@ set(EXECUTABLE_SOURCES
   src/Parser/ParserPattern.cpp
   src/Parser/ParserStmt.cpp
   src/Parser/ParserType.cpp
+  src/ASTAnnotation/Scope.cpp
+  src/ASTAnnotation/Symbol.cpp
+  src/ASTAnnotation/TypeKind.cpp
+  src/ASTAnnotation/TypeDef.cpp
+  src/ASTAnnotation/ValueInfo.cpp
 )
+
 # 将以上文档编译为.so准备用于静态链接。
 add_library(compiler_lib STATIC ${EXECUTABLE_SOURCES})
 target_include_directories(compiler_lib PUBLIC ${HEADER_ALL})

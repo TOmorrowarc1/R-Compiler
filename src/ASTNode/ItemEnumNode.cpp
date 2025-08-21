@@ -1,5 +1,6 @@
 #include "ItemEnumNode.hpp"
 #include "Visitor.hpp"
+#include "ValueInfo.hpp"
 
 ItemEnumNode::ItemEnumNode(const std::string &ID,
                            std::vector<std::string> &&variants)

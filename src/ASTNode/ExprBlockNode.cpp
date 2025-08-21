@@ -1,6 +1,7 @@
 #include "ExprBlockNode.hpp"
 #include "StmtANode.hpp"
 #include "Visitor.hpp"
+#include "ValueInfo.hpp"
 
 ExprBlockNode::ExprBlockNode(
     std::vector<std::unique_ptr<StmtNode>> &&statements,

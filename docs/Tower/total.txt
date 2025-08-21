@@ -280,7 +280,6 @@ PatternWithoutRange →
     | IdentifierPattern
     | WildcardPattern
     | ReferencePattern
-    | TupleStructPattern //Tuple struct 都没了，怎么还有这个？
     | PathPattern
 
 LiteralPattern → -? LiteralExpression
@@ -290,10 +289,6 @@ IdentifierPattern → ref? mut? IDENTIFIER ( @ PatternNoTopAlt )?
 WildcardPattern → _
 
 ReferencePattern → ( & | && ) mut? PatternWithoutRange
-
-TupleStructPattern → PathInExpression ( TupleStructItems? )
-
-TupleStructItems → Pattern ( , Pattern )* ,?
 
 PathPattern → PathInExpression
 
@@ -306,7 +301,6 @@ TypeNoBounds →
       TypePath
     | ReferenceType
     | ArrayType
-    | InferredType
 
 ArrayType → [ Type ; Expression ]
 

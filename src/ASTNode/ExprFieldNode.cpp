@@ -1,5 +1,6 @@
 #include "ExprFieldNode.hpp"
 #include "Visitor.hpp"
+#include "ValueInfo.hpp"
 
 ExprFieldNode::ExprFieldNode(std::unique_ptr<ExprNode> &&instance,
                              const std::string &ID)

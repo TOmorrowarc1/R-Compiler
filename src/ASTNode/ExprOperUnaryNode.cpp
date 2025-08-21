@@ -1,5 +1,6 @@
 #include "ExprOperUnaryNode.hpp"
 #include "Visitor.hpp"
+#include "ValueInfo.hpp"
 
 ExprOperUnaryNode::ExprOperUnaryNode(UnaryOperator op,
                                      std::unique_ptr<ExprNode> &&operand)

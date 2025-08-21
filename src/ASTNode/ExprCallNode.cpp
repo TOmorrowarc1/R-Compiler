@@ -1,5 +1,6 @@
 #include "ExprCallNode.hpp"
 #include "Visitor.hpp"
+#include "ValueInfo.hpp"
 
 ExprCallNode::ExprCallNode(std::unique_ptr<ExprNode> &&caller,
                            std::vector<std::unique_ptr<ExprNode>> &&arguments)
