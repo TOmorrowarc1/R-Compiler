@@ -227,15 +227,7 @@ void SymbolAnnotator::visit(ExprStructNode *node) {
     field.expr->accept(*this);
   }
 }
-void SymbolAnnotator::visit(ExprTupleNode *node) {
-  for (auto &element : node->elements_) {
-    element->accept(*this);
-  }
-}
-void SymbolAnnotator::visit(ExprTupleIndexNode *node) {
-  node->tuple_->accept(*this);
-  node->index_->accept(*this);
-}
+void SymbolAnnotator::visit(ExprUnderScoreNode *node) {}
 
 void SymbolAnnotator::visit(PatternLiteralNode *node) {}
 void SymbolAnnotator::visit(PatternWildNode *node) {}
@@ -248,11 +240,6 @@ void SymbolAnnotator::visit(TypeArrayNode *node) {
   }
   if (node->length_) {
     node->length_->accept(*this);
-  }
-}
-void SymbolAnnotator::visit(TypeSliceNode *node) {
-  if (node->type_) {
-    node->type_->accept(*this);
   }
 }
 void SymbolAnnotator::visit(TypePathNode *node) {}

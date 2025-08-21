@@ -170,15 +170,7 @@ void SymbolCollector::visit(ExprStructNode *node) {
     field.expr->accept(*this);
   }
 }
-void SymbolCollector::visit(ExprTupleNode *node) {
-  for (auto &element : node->elements_) {
-    element->accept(*this);
-  }
-}
-void SymbolCollector::visit(ExprTupleIndexNode *node) {
-  node->tuple_->accept(*this);
-  node->index_->accept(*this);
-}
+void SymbolCollector::visit(ExprUnderScoreNode *node) {}
 
 void SymbolCollector::visit(PatternLiteralNode *node) {}
 void SymbolCollector::visit(PatternWildNode *node) {}
@@ -191,11 +183,6 @@ void SymbolCollector::visit(TypeArrayNode *node) {
   }
   if (node->length_) {
     node->length_->accept(*this);
-  }
-}
-void SymbolCollector::visit(TypeSliceNode *node) {
-  if (node->type_) {
-    node->type_->accept(*this);
   }
 }
 void SymbolCollector::visit(TypePathNode *node) {}

@@ -10,6 +10,7 @@ class ItemEnumNode;
 class ItemImplNode;
 class ItemTraitNode;
 
+class ExprNode;
 class ExprArrayNode;
 class ExprArrayIndexNode;
 class ExprBlockNode;
@@ -33,23 +34,22 @@ class ExprFieldNode;
 class ExprMethodNode;
 class ExprMatchNode;
 class ExprStructNode;
-class ExprTupleNode;
-class ExprTupleIndexNode;
 class ExprUnderScoreNode;
 
+class StmtNode;
 class StmtExprNode;
 class StmtEmptyNode;
 class StmtItemNode;
 class StmtLetNode;
 
+class PatternNode;
 class PatternLiteralNode;
 class PatternWildNode;
 class PatternPathNode;
 class PatternIDNode;
 
-class TypeTupleNode;
+class TypeNode;
 class TypeArrayNode;
-class TypeSliceNode;
 class TypePathNode;
 
 class PathNode;
@@ -104,7 +104,6 @@ public:
   virtual void visit(PatternIDNode *node) = 0;
 
   virtual void visit(TypeArrayNode *node) = 0;
-  virtual void visit(TypeSliceNode *node) = 0;
   virtual void visit(TypePathNode *node) = 0;
 
   virtual void visit(PathNode *node) = 0;

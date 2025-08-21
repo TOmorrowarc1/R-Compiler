@@ -52,8 +52,7 @@ public:
   void visit(ExprMethodNode *node) override;
   void visit(ExprMatchNode *node) override;
   void visit(ExprStructNode *node) override;
-  void visit(ExprTupleNode *node) override;
-  void visit(ExprTupleIndexNode *node) override;
+  void visit(ExprUnderScoreNode *node) override;
 
   void visit(StmtExprNode *node) override;
   void visit(StmtEmptyNode *node) override;
@@ -66,7 +65,6 @@ public:
   void visit(PatternIDNode *node) override;
 
   void visit(TypeArrayNode *node) override;
-  void visit(TypeSliceNode *node) override;
   void visit(TypePathNode *node) override;
 
   void visit(PathNode *node) override;

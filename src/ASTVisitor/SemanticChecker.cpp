@@ -524,6 +524,12 @@ void SemanticChecker::visit(ExprStructNode *node) {
       std::make_unique<ValueInfo>(struct_type_kind, true, false, false);
 }
 
+void SemanticChecker::visit(ExprUnderScoreNode *node) {
+  node->value_info_ = std::make_unique<ValueInfo>(
+      std::make_shared<TypeKind>(current_scope_->getType("super")->getType()),
+      false, false, false);
+}
+
 void SemanticChecker::visit(StmtEmptyNode *node) {}
 
 void SemanticChecker::visit(StmtItemNode *node) { node->item_->accept(*this); }
@@ -548,7 +554,6 @@ void SemanticChecker::visit(PatternPathNode *node) {}
 void SemanticChecker::visit(PatternIDNode *node) {}
 
 void SemanticChecker::visit(TypeArrayNode *node) {}
-void SemanticChecker::visit(TypeSliceNode *node) {}
 void SemanticChecker::visit(TypePathNode *node) {}
 
 void SemanticChecker::visit(PathNode *node) {}

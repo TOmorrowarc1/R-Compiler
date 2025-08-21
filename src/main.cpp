@@ -13,6 +13,7 @@ int main() {
 
   auto lex_result = lex(text);
   auto AST_root = parse(lex_result);
+  
 
   auto end = std::chrono::steady_clock::now();
   auto duration = end - start;

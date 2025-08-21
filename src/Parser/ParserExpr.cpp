@@ -149,6 +149,7 @@ auto parseStructField(TokenStream &stream) -> ExprStructField;
 auto tokenToBinaryOp(TokenType type) -> BinaryOperator;
 auto tokenToUnaryOp(TokenType type) -> UnaryOperator;
 auto parseExprMatchArm(TokenStream &stream) -> ExprMatchArm;
+auto parseCondition(TokenStream &stream) -> std::unique_ptr<ExprNode>;
 
 auto parseExprNode(TokenStream &stream) -> std::unique_ptr<ExprNode> {
   return parseExprNode(stream, 0);
@@ -474,7 +475,7 @@ auto parseExprLoopNode(TokenStream &stream) -> std::unique_ptr<ExprLoopNode> {
 
 auto parseExprWhileNode(TokenStream &stream) -> std::unique_ptr<ExprWhileNode> {
   stream.next();
-  auto condition = std::move(parseExprNode(stream));
+  auto condition = parseCondition(stream);
   if (stream.next().type != TokenType::LEFT_BRACE) {
     throw std::runtime_error("the while expr missed left brace.");
   }
@@ -485,7 +486,7 @@ auto parseExprWhileNode(TokenStream &stream) -> std::unique_ptr<ExprWhileNode> {
 
 auto parseExprIfNode(TokenStream &stream) -> std::unique_ptr<ExprIfNode> {
   stream.next();
-  auto condition = std::move(parseExprNode(stream));
+  auto condition = parseCondition(stream);
   if (stream.next().type != TokenType::LEFT_BRACE) {
     throw std::runtime_error("the if expr missed left brace.");
   }
@@ -500,6 +501,19 @@ auto parseExprIfNode(TokenStream &stream) -> std::unique_ptr<ExprIfNode> {
   }
   return std::make_unique<ExprIfNode>(
       std::move(condition), std::move(then_block), std::move(else_block));
+}
+
+auto parseCondition(TokenStream &stream) -> std::unique_ptr<ExprNode> {
+  if (stream.peek().type != TokenType::LEFT_PAREN) {
+    throw std::runtime_error("The condition expr missed left parenthesis.");
+  }
+  stream.next();
+  auto condition = parseExprNode(stream);
+  if (stream.peek().type != TokenType::RIGHT_PAREN) {
+    throw std::runtime_error("The condition expr missed right parenthesis.");
+  }
+  stream.next();
+  return condition;
 }
 
 auto parseExprMatchNode(TokenStream &stream) -> std::unique_ptr<ExprMatchNode> {
