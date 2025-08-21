@@ -14,7 +14,8 @@ class SymbolCollector : public Visitor {
 private:
   Scope *current_scope_;
 
-  auto addType(const std::string type_name) -> bool;
+  auto addStructType(const std::string &type_name) -> bool;
+  auto addEnumType(const std::string &type_name) -> bool;
 
 public:
   SymbolCollector(Scope *initial_scope);

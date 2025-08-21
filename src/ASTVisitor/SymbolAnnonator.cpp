@@ -72,6 +72,7 @@ void SymbolAnnotator::visit(ItemConstNode *node) {
   current_scope_->addSymbol(
       node->ID_, std::make_shared<SymbolVariableInfo>(node->ID_, type));
 }
+
 void SymbolAnnotator::visit(ItemFnNode *node) {
   for (const auto &param : node->parameters_) {
     param.type->accept(*this);
@@ -84,17 +85,37 @@ void SymbolAnnotator::visit(ItemFnNode *node) {
   }
   current_scope_->addSymbol(node->ID_, fnNodeToFunc(node));
 }
+
 void SymbolAnnotator::visit(ItemStructNode *node) {
   auto type_def = current_scope_->getType(node->ID_)->getType();
+  if (type_def == nullptr ||
+      !is_instance_of<StructDef, TypeDef>(type_def.get())) {
+    throw std::runtime_error("TypeDef for struct " + node->ID_ + " not found");
+  }
+  auto struct_def = std::dynamic_pointer_cast<StructDef>(type_def);
   for (const auto &field : node->fields_) {
     field.type->accept(*this);
     auto field_type = typeNodeToType(field.type.get());
-    if (!type_def->addMember(field.identifier, std::move(field_type))) {
+    if (!struct_def->addMember(field.identifier, std::move(field_type))) {
       throw std::runtime_error("Duplicate member name: " + field.identifier);
     }
   }
 }
-void SymbolAnnotator::visit(ItemEnumNode *node) {}
+
+void SymbolAnnotator::visit(ItemEnumNode *node) {
+  auto type_def = current_scope_->getType(node->ID_)->getType();
+  if (type_def == nullptr ||
+      !is_instance_of<EnumDef, TypeDef>(type_def.get())) {
+    throw std::runtime_error("TypeDef for enum " + node->ID_ + " not found");
+  }
+  auto enum_def = std::dynamic_pointer_cast<EnumDef>(type_def);
+  for (const auto &variant : node->variants_) {
+    if (!enum_def->addVariant(variant)) {
+      throw std::runtime_error("Duplicate variant name: " + variant);
+    }
+  }
+}
+
 void SymbolAnnotator::visit(ItemImplNode *node) {
   if (!is_instance_of<TypePathNode, TypeNode>(node->type_.get())) {
     throw std::runtime_error("Impl type must be a path type");
@@ -115,19 +136,8 @@ void SymbolAnnotator::visit(ItemImplNode *node) {
     }
   }
 }
-void SymbolAnnotator::visit(ItemTraitNode *node) {}
 
-void SymbolAnnotator::visit(StmtEmptyNode *node) {}
-void SymbolAnnotator::visit(StmtItemNode *node) { node->item_->accept(*this); }
-void SymbolAnnotator::visit(StmtLetNode *node) {
-  if (node->type_) {
-    node->type_->accept(*this);
-  }
-  if (node->init_value_) {
-    node->init_value_->accept(*this);
-  }
-}
-void SymbolAnnotator::visit(StmtExprNode *node) { node->expr_->accept(*this); }
+void SymbolAnnotator::visit(ItemTraitNode *node) {}
 
 void SymbolAnnotator::visit(ExprArrayNode *node) {
   for (const auto &item : node->elements_) {
@@ -137,10 +147,12 @@ void SymbolAnnotator::visit(ExprArrayNode *node) {
     node->length_->accept(*this);
   }
 }
+
 void SymbolAnnotator::visit(ExprArrayIndexNode *node) {
   node->array_->accept(*this);
   node->index_->accept(*this);
 }
+
 void SymbolAnnotator::visit(ExprBlockNode *node) {
   current_scope_ = current_scope_->getNextChildScope();
   for (auto &stmt : node->statements_) {
@@ -151,27 +163,34 @@ void SymbolAnnotator::visit(ExprBlockNode *node) {
   }
   current_scope_ = current_scope_->getParent();
 }
+
 void SymbolAnnotator::visit(ExprBlockConstNode *node) {
   node->block_expr_->accept(*this);
 }
+
 void SymbolAnnotator::visit(ExprCallNode *node) {
   node->caller_->accept(*this);
   for (auto &arg : node->arguments_) {
     arg->accept(*this);
   }
 }
+
 void SymbolAnnotator::visit(ExprBreakNode *node) {
   if (node->value_) {
     node->value_->accept(*this);
   }
 }
+
 void SymbolAnnotator::visit(ExprReturnNode *node) {
   if (node->value_) {
     node->value_->accept(*this);
   }
 }
+
 void SymbolAnnotator::visit(ExprContinueNode *node) {}
+
 void SymbolAnnotator::visit(ExprGroupNode *node) { node->expr_->accept(*this); }
+
 void SymbolAnnotator::visit(ExprIfNode *node) {
   node->condition_->accept(*this);
   if (node->then_block_) {
@@ -181,34 +200,46 @@ void SymbolAnnotator::visit(ExprIfNode *node) {
     node->else_block_->accept(*this);
   }
 }
+
 void SymbolAnnotator::visit(ExprLiteralIntNode *node) {}
+
 void SymbolAnnotator::visit(ExprLiteralBoolNode *node) {}
+
 void SymbolAnnotator::visit(ExprLiteralCharNode *node) {}
+
 void SymbolAnnotator::visit(ExprLiteralStringNode *node) {}
+
 void SymbolAnnotator::visit(ExprLoopNode *node) {
   node->loop_body_->accept(*this);
 }
+
 void SymbolAnnotator::visit(ExprWhileNode *node) {
   node->condition_->accept(*this);
   node->loop_body_->accept(*this);
 }
+
 void SymbolAnnotator::visit(ExprOperBinaryNode *node) {
   node->lhs_->accept(*this);
   node->rhs_->accept(*this);
 }
+
 void SymbolAnnotator::visit(ExprOperUnaryNode *node) {
   node->operand_->accept(*this);
 }
+
 void SymbolAnnotator::visit(ExprPathNode *node) {}
+
 void SymbolAnnotator::visit(ExprFieldNode *node) {
   node->instance_->accept(*this);
 }
+
 void SymbolAnnotator::visit(ExprMethodNode *node) {
   node->instance_->accept(*this);
   for (auto &param : node->parameters_) {
     param->accept(*this);
   }
 }
+
 void SymbolAnnotator::visit(ExprMatchNode *node) {
   node->subject_->accept(*this);
   for (auto &arm : node->arms_) {
@@ -221,17 +252,37 @@ void SymbolAnnotator::visit(ExprMatchNode *node) {
     }
   }
 }
+
 void SymbolAnnotator::visit(ExprStructNode *node) {
   node->path_->accept(*this);
   for (const auto &field : node->fields_) {
     field.expr->accept(*this);
   }
 }
+
 void SymbolAnnotator::visit(ExprUnderScoreNode *node) {}
 
+void SymbolAnnotator::visit(StmtEmptyNode *node) {}
+
+void SymbolAnnotator::visit(StmtItemNode *node) { node->item_->accept(*this); }
+
+void SymbolAnnotator::visit(StmtLetNode *node) {
+  if (node->type_) {
+    node->type_->accept(*this);
+  }
+  if (node->init_value_) {
+    node->init_value_->accept(*this);
+  }
+}
+
+void SymbolAnnotator::visit(StmtExprNode *node) { node->expr_->accept(*this); }
+
 void SymbolAnnotator::visit(PatternLiteralNode *node) {}
+
 void SymbolAnnotator::visit(PatternWildNode *node) {}
+
 void SymbolAnnotator::visit(PatternPathNode *node) {}
+
 void SymbolAnnotator::visit(PatternIDNode *node) {}
 
 void SymbolAnnotator::visit(TypeArrayNode *node) {
@@ -242,6 +293,7 @@ void SymbolAnnotator::visit(TypeArrayNode *node) {
     node->length_->accept(*this);
   }
 }
+
 void SymbolAnnotator::visit(TypePathNode *node) {}
 
 void SymbolAnnotator::visit(PathNode *node) {}

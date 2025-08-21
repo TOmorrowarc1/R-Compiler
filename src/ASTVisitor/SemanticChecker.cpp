@@ -217,6 +217,7 @@ void SemanticChecker::visit(ExprBlockNode *node) {
   // Block expr return a anonymous value.
   current_scope_ = current_scope_->getParent();
 }
+
 void SemanticChecker::visit(ExprBlockConstNode *node) {
   node->block_expr_->accept(*this);
   auto block_type = node->block_expr_->value_info_->getType();
@@ -456,7 +457,44 @@ void SemanticChecker::visit(ExprOperUnaryNode *node) {
   }
 }
 
-void SemanticChecker::visit(ExprPathNode *node) {}
+void SemanticChecker::visit(ExprPathNode *node) {
+  if (node->path_->segments_.size() == 2) {
+    auto type_name = getPathIndexName(node->path_.get(), 0);
+    auto type = current_scope_->getType(type_name)->getType();
+    if (is_instance_of<EnumDef, TypeDef>(type.get())) {
+      auto enum_def = dynamic_cast<EnumDef *>(type.get());
+      auto variant_name = getPathIndexName(node->path_.get(), 1);
+      if (!enum_def->getVariant(variant_name)) {
+        throw std::runtime_error("Enum variant not found in enum.");
+      }
+      node->value_info_ = std::make_unique<ValueInfo>(
+          std::make_shared<TypeKindPath>(type), false, false, false);
+    } else if (is_instance_of<StructDef, TypeDef>(type.get())) {
+      // Here we lost the const item.
+      auto struct_def = dynamic_cast<StructDef *>(type.get());
+      auto member_type =
+          struct_def->getMember(getPathIndexName(node->path_.get(), 1));
+      if (!member_type) {
+        throw std::runtime_error("Struct member not found in struct.");
+      }
+      node->value_info_ =
+          std::make_unique<ValueInfo>(member_type, true, false, false);
+    } else {
+      throw std::runtime_error("Path must be a type or enum.");
+    }
+  } else {
+    auto variable_name = getPathIndexName(node->path_.get(), 0);
+    auto variable = current_scope_->getSymbol(variable_name);
+    if (!variable ||
+        !is_instance_of<SymbolVariableInfo, SymbolInfo>(variable.get())) {
+      throw std::runtime_error("Variable " + variable_name + " not found");
+    }
+    auto variable_info =
+        std::dynamic_pointer_cast<SymbolVariableInfo>(variable);
+    auto type = variable_info->getType();
+    node->value_info_ = std::make_unique<ValueInfo>(type, true, false, false);
+  }
+}
 
 void SemanticChecker::visit(ExprFieldNode *node) {
   node->instance_->accept(*this);
@@ -464,8 +502,13 @@ void SemanticChecker::visit(ExprFieldNode *node) {
   if (!is_instance_of<TypeKindPath, TypeKind>(instance_type.get())) {
     throw std::runtime_error("Field access requires a path type");
   }
-  auto path_type = dynamic_cast<TypeKindPath *>(instance_type.get());
-  auto member_type = path_type->getTypeDef()->getMember(node->ID_);
+  auto path_type =
+      dynamic_cast<TypeKindPath *>(instance_type.get())->getTypeDef();
+  if (!path_type || !is_instance_of<StructDef, TypeDef>(path_type.get())) {
+    throw std::runtime_error("Field access requires a struct type");
+  }
+  auto member_type =
+      dynamic_shared_ptr_cast<StructDef>(path_type)->getMember(node->ID_);
   if (!member_type) {
     throw std::runtime_error("Field " + node->ID_ + " not found in type");
   }
@@ -506,10 +549,11 @@ void SemanticChecker::visit(ExprMatchNode *node) {}
 void SemanticChecker::visit(ExprStructNode *node) {
   std::string name = getPathIndexName(node->path_->path_.get(), 0);
   auto type_def = current_scope_->getType(name);
-  if (!type_def) {
+  if (!type_def ||
+      !is_instance_of<StructDef, TypeDef>(type_def->getType().get())) {
     throw std::runtime_error("Struct " + name + " not found");
   }
-  auto struct_type = type_def->getType();
+  auto struct_type = dynamic_shared_ptr_cast<StructDef>(type_def->getType());
   for (auto &field : node->fields_) {
     field.expr->accept(*this);
     auto field_type = field.expr->value_info_->getType();
