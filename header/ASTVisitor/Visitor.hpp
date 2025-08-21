@@ -15,7 +15,9 @@ class ExprArrayNode;
 class ExprArrayIndexNode;
 class ExprBlockNode;
 class ExprBlockConstNode;
+class ExprBorrowNode;
 class ExprCallNode;
+class ExprDereferNode;
 class ExprBreakNode;
 class ExprReturnNode;
 class ExprContinueNode;
@@ -32,7 +34,6 @@ class ExprOperUnaryNode;
 class ExprPathNode;
 class ExprFieldNode;
 class ExprMethodNode;
-class ExprMatchNode;
 class ExprStructNode;
 class ExprUnderScoreNode;
 
@@ -47,10 +48,12 @@ class PatternLiteralNode;
 class PatternWildNode;
 class PatternPathNode;
 class PatternIDNode;
+class PatternReferNode;
 
 class TypeNode;
 class TypeArrayNode;
 class TypePathNode;
+class TypeReferNode;
 
 class PathNode;
 
@@ -68,16 +71,13 @@ public:
   virtual void visit(ItemImplNode *node) = 0;
   virtual void visit(ItemTraitNode *node) = 0;
 
-  virtual void visit(StmtExprNode *node) = 0;
-  virtual void visit(StmtEmptyNode *node) = 0;
-  virtual void visit(StmtItemNode *node) = 0;
-  virtual void visit(StmtLetNode *node) = 0;
-
   virtual void visit(ExprArrayNode *node) = 0;
   virtual void visit(ExprArrayIndexNode *node) = 0;
   virtual void visit(ExprBlockNode *node) = 0;
   virtual void visit(ExprBlockConstNode *node) = 0;
+  virtual void visit(ExprBorrowNode *node) = 0;
   virtual void visit(ExprCallNode *node) = 0;
+  virtual void visit(ExprDereferNode *node) = 0;
   virtual void visit(ExprBreakNode *node) = 0;
   virtual void visit(ExprReturnNode *node) = 0;
   virtual void visit(ExprContinueNode *node) = 0;
@@ -94,17 +94,23 @@ public:
   virtual void visit(ExprPathNode *node) = 0;
   virtual void visit(ExprFieldNode *node) = 0;
   virtual void visit(ExprMethodNode *node) = 0;
-  virtual void visit(ExprMatchNode *node) = 0;
   virtual void visit(ExprStructNode *node) = 0;
   virtual void visit(ExprUnderScoreNode *node) = 0;
+
+  virtual void visit(StmtExprNode *node) = 0;
+  virtual void visit(StmtEmptyNode *node) = 0;
+  virtual void visit(StmtItemNode *node) = 0;
+  virtual void visit(StmtLetNode *node) = 0;
 
   virtual void visit(PatternLiteralNode *node) = 0;
   virtual void visit(PatternWildNode *node) = 0;
   virtual void visit(PatternPathNode *node) = 0;
   virtual void visit(PatternIDNode *node) = 0;
+  virtual void visit(PatternReferNode *node) = 0;
 
   virtual void visit(TypeArrayNode *node) = 0;
   virtual void visit(TypePathNode *node) = 0;
+  virtual void visit(TypeReferNode *node) = 0;
 
   virtual void visit(PathNode *node) = 0;
 };
