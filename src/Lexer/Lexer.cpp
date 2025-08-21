@@ -1,4 +1,4 @@
-#include "lexer.hpp"
+#include "Lexer.hpp"
 #include <regex>
 #include <stdexcept>
 #include <stdint.h>

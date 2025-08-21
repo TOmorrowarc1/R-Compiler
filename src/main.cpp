@@ -1,7 +1,7 @@
 #include "ASTAnnotator.hpp"
 #include "ASTRootNode.hpp"
 #include "Parser.hpp"
-#include "lexer.hpp"
+#include "Lexer.hpp"
 #include <chrono>
 #include <iostream>
 #include <sstream>

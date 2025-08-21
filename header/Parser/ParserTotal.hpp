@@ -1,6 +1,6 @@
 #pragma once
 #include "ASTNodeTotal.hpp"
-#include "token.hpp"
+#include "Token.hpp"
 
 /*
 Private interfaces of modules of the Parser.

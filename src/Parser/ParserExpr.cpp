@@ -1,6 +1,6 @@
 #include "ParserTotal.hpp"
 #include "cast.hpp"
-#include "token.hpp"
+#include "Token.hpp"
 #include <string>
 #include <unordered_map>
 /*

@@ -1,4 +1,4 @@
-#include "token.hpp"
+#include "Token.hpp"
 #include <stdexcept>
 
 TokenStream::TokenStream(const std::vector<Token> &tokens)

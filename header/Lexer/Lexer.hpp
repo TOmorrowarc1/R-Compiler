@@ -1,5 +1,5 @@
 #pragma once
-#include "token.hpp"
+#include "Token.hpp"
 
 /*
 In the Lexer, I convert the input string into a token stream and do nothing

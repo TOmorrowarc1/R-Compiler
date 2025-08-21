@@ -60,8 +60,8 @@ set(EXECUTABLE_SOURCES
   src/ASTNode/StmtLetNode.cpp
   src/ASTNode/TypeArrayNode.cpp
   src/ASTNode/TypePathNode.cpp
-  src/Lexer/lexer.cpp
-  src/Lexer/token.cpp
+  src/Lexer/Lexer.cpp
+  src/Lexer/Token.cpp
   src/Parser/Parser.cpp
   src/Parser/ParserExpr.cpp
   src/Parser/ParserItem.cpp
