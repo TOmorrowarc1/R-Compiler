@@ -1,10 +1,12 @@
 #include "ParserTotal.hpp"
+#include "exception.hpp"
 
 auto parsePathSegment(TokenStream &stream) -> PathSegment;
 
 auto parsePathNode(TokenStream &stream) -> std::unique_ptr<PathNode> {
   if (stream.peek().type != TokenType::IDENTIFIER) {
-    throw std::runtime_error("Unexpected token in path parsing");
+    throw CompilerException("Unexpected token in path parsing",
+                            stream.peek().line);
   }
   std::vector<PathSegment> segments;
   segments.push_back(parsePathSegment(stream));
@@ -26,6 +28,7 @@ auto parsePathSegment(TokenStream &stream) -> PathSegment {
     stream.next();
     return {PathSegmentType::SELF_TYPE, ""};
   }
-  throw std::runtime_error("Unexpected token in path simple node parsing");
+  throw CompilerException("Unexpected token in path simple node parsing",
+                          stream.peek().line);
   return {PathSegmentType::IDENTIFER, ""};
 }

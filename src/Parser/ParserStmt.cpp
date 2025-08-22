@@ -1,5 +1,6 @@
 #include "ParserTotal.hpp"
 #include "cast.hpp"
+#include "exception.hpp"
 
 // By Gemini.
 auto parseStmtEmptyNode(TokenStream &stream) -> std::unique_ptr<StmtEmptyNode>;
@@ -60,8 +61,9 @@ auto parseStmtExprNode(TokenStream &stream) -> std::unique_ptr<StmtExprNode> {
     stream.next();
   } else {
     if (is_instance_of<ExprBlockOutNode, ExprNode>(exprNode)) {
-      throw std::runtime_error("Every stmtExpr filled with a exprwithoutblock "
-                               "end with a semicolon.");
+      throw CompilerException("Every stmtExpr filled with a exprwithoutblock "
+                              "end with a semicolon.",
+                              stream.peek().line);
     }
   }
   return std::make_unique<StmtExprNode>(std::move(exprNode));

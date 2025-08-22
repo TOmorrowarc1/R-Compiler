@@ -1,4 +1,5 @@
 #include "ParserTotal.hpp"
+#include "exception.hpp"
 
 // Declarations by Gemini.
 auto parsePatternLiteralNode(TokenStream &stream)
@@ -6,6 +7,8 @@ auto parsePatternLiteralNode(TokenStream &stream)
 auto parsePatternIDNode(TokenStream &stream) -> std::unique_ptr<PatternIDNode>;
 auto parsePatternPathNode(TokenStream &stream)
     -> std::unique_ptr<PatternPathNode>;
+auto parsePatternReferNode(TokenStream &stream)
+    -> std::unique_ptr<PatternReferNode>;
 auto parsePatternWildcardNode(TokenStream &stream)
     -> std::unique_ptr<PatternWildNode>;
 
@@ -23,6 +26,8 @@ auto parsePatternNode(TokenStream &stream) -> std::unique_ptr<PatternNode> {
     return parsePatternLiteralNode(stream);
   case TokenType::UNDERSCORE:
     return parsePatternWildcardNode(stream);
+  case TokenType::AND:
+    return parsePatternReferNode(stream);
   case TokenType::IDENTIFIER:
     if (stream.peekNum(1).type == TokenType::COLON_COLON) {
       return parsePatternPathNode(stream);
@@ -31,7 +36,7 @@ auto parsePatternNode(TokenStream &stream) -> std::unique_ptr<PatternNode> {
       return parsePatternIDNode(stream);
     }
   }
-  throw std::runtime_error("No ID pattern.");
+  throw CompilerException("No ID pattern.", stream.peek().line);
   return nullptr;
 }
 
@@ -59,6 +64,18 @@ auto parsePatternPathNode(TokenStream &stream)
     -> std::unique_ptr<PatternPathNode> {
   auto path = parsePathNode(stream);
   return std::make_unique<PatternPathNode>(std::move(path));
+}
+
+auto parsePatternReferNode(TokenStream &stream)
+    -> std::unique_ptr<PatternReferNode> {
+  stream.next();
+  bool is_mutable = false;
+  if (stream.peek().type == TokenType::MUT) {
+    is_mutable = true;
+    stream.next();
+  }
+  auto pattern = parsePatternNode(stream);
+  return std::make_unique<PatternReferNode>(std::move(pattern), is_mutable);
 }
 
 auto parsePatternWildcardNode(TokenStream &stream)

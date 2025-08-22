@@ -21,11 +21,19 @@ struct bindPower {
   int32_t right_power = 0;
 };
 
-const std::vector<bindPower> bind_powers = {
-    /*
-    These numbers are generrated by gemini for rules are too many,
-     and I haved checked them.
-     */
+/*
+These numbers are generrated by gemini for rules are too many,
+ and I haved checked them.
+ */
+
+const std::vector<bindPower> nud_powers = {
+    {TokenType::MINUS, 0, 23},
+    {TokenType::NOT, 0, 23},
+    {TokenType::AND, 0, 23},
+    {TokenType::MUL, 0, 23},
+};
+
+const std::vector<bindPower> led_powers = {
     {TokenType::ASSIGN, 2, 1},
     {TokenType::PLUS_EQUAL, 2, 1},
     {TokenType::MINUS_EQUAL, 2, 1},
@@ -64,9 +72,6 @@ const std::vector<bindPower> bind_powers = {
 
     {TokenType::AS, 21, 22},
 
-    {TokenType::MINUS, 0, 23},
-    {TokenType::NOT, 0, 23},
-
     {TokenType::LEFT_PAREN, 0, 0},
     {TokenType::LEFT_BRACKET, 21, 0},
     {TokenType::LEFT_BRACE, 1, 0},
@@ -75,10 +80,14 @@ const std::vector<bindPower> bind_powers = {
 
 class OpPowerRecoder {
 private:
-  std::unordered_map<TokenType, bindPower> power_map;
+  std::unordered_map<TokenType, bindPower> nud_power_map;
+  std::unordered_map<TokenType, bindPower> led_power_map;
   OpPowerRecoder() {
-    for (const auto &bp : bind_powers) {
-      power_map[bp.type] = bp;
+    for (const auto &bp : nud_powers) {
+      nud_power_map[bp.type] = bp;
+    }
+    for (const auto &bp : led_powers) {
+      led_power_map[bp.type] = bp;
     }
   }
 
@@ -88,19 +97,39 @@ public:
     return instance;
   }
 
-  auto getLeft(TokenType type) const -> int32_t {
-    auto iter = power_map.find(type);
-    if (iter != power_map.end()) {
+  auto getLeftLed(TokenType type) const -> int32_t {
+    auto iter = led_power_map.find(type);
+    if (iter != led_power_map.end()) {
       return iter->second.left_power;
     }
+    throw std::runtime_error("This token is not a led operator.");
     return 0;
   }
 
-  auto getRight(TokenType type) const -> int32_t {
-    auto iter = power_map.find(type);
-    if (iter != power_map.end()) {
+  auto getRightLed(TokenType type) const -> int32_t {
+    auto iter = led_power_map.find(type);
+    if (iter != led_power_map.end()) {
       return iter->second.right_power;
     }
+    throw std::runtime_error("This token is not a led operator.");
+    return 0;
+  }
+
+  auto getLeftNud(TokenType type) const -> int32_t {
+    auto iter = nud_power_map.find(type);
+    if (iter != nud_power_map.end()) {
+      return iter->second.left_power;
+    }
+    throw std::runtime_error("This token is not a led operator.");
+    return 0;
+  }
+
+  auto getRightNud(TokenType type) const -> int32_t {
+    auto iter = nud_power_map.find(type);
+    if (iter != nud_power_map.end()) {
+      return iter->second.right_power;
+    }
+    throw std::runtime_error("This token is not a led operator.");
     return 0;
   }
 };
@@ -148,7 +177,6 @@ auto parseExprArrayNode(TokenStream &stream) -> std::unique_ptr<ExprArrayNode>;
 
 auto parseStructField(TokenStream &stream) -> ExprStructField;
 auto tokenToBinaryOp(TokenType type) -> BinaryOperator;
-auto tokenToUnaryOp(TokenType type) -> UnaryOperator;
 auto parseCondition(TokenStream &stream) -> std::unique_ptr<ExprNode>;
 
 auto parseExprNode(TokenStream &stream) -> std::unique_ptr<ExprNode> {
@@ -157,13 +185,13 @@ auto parseExprNode(TokenStream &stream) -> std::unique_ptr<ExprNode> {
 
 auto parseExprNode(TokenStream &stream, int32_t power)
     -> std::unique_ptr<ExprNode> {
-  auto result = std::move(parseNudExprNode(stream, power));
+  auto result = parseNudExprNode(stream, power);
   while (true) {
     auto token = stream.peek();
     if (token.type == TokenType::END_OF_FILE) {
       break;
     }
-    int32_t left_power = OpPowerRecoder::getInstance().getLeft(token.type);
+    int32_t left_power = OpPowerRecoder::getInstance().getLeftLed(token.type);
     if (left_power <= power) {
       break;
     }
@@ -199,6 +227,7 @@ auto parseNudExprNode(TokenStream &stream, int32_t power)
     return parseExprReturnNode(stream);
   case TokenType::MINUS:
   case TokenType::NOT:
+  case TokenType::AND:
     return parseExprOperUnaryNode(stream);
   case TokenType::LEFT_PAREN: {
     stream.next();
@@ -307,7 +336,7 @@ auto parseLedExprNode(TokenStream &stream, const Token &token,
     return std::make_unique<ExprFieldNode>(std::move(lhs), ID);
   }
   }
-  int32_t right_power = OpPowerRecoder::getInstance().getRight(token.type);
+  int32_t right_power = OpPowerRecoder::getInstance().getRightLed(token.type);
   auto rhs = parseExprNode(stream, right_power);
   return std::make_unique<ExprOperBinaryNode>(tokenToBinaryOp(token.type),
                                               std::move(lhs), std::move(rhs));
@@ -379,10 +408,6 @@ auto tokenToBinaryOp(TokenType type) -> BinaryOperator {
   }
   throw std::runtime_error("This token is not a binary operator.");
   return BinaryOperator::ASSIGN;
-}
-
-auto tokenToUnaryOp(TokenType type) -> UnaryOperator {
-  return type == TokenType::NOT ? UnaryOperator::NOT : UnaryOperator::NEGATE;
 }
 
 auto parseExprBlockInNode(TokenStream &stream)
@@ -687,9 +712,32 @@ auto parseExprLiteralStringNode(TokenStream &stream)
 
 auto parseExprOperUnaryNode(TokenStream &stream)
     -> std::unique_ptr<ExprOperUnaryNode> {
+  UnaryOperator op;
+  switch (stream.next().type) {
+  case TokenType::MINUS:
+    op = UnaryOperator::NEGATE;
+    break;
+  case TokenType::NOT:
+    op = UnaryOperator::NOT;
+    break;
+  case TokenType::AND:
+    op = UnaryOperator::REF;
+    if (stream.peek().type == TokenType::MUT) {
+      stream.next();
+      op = UnaryOperator::MUTREF;
+    }
+    break;
+  case TokenType::MUL:
+    op = UnaryOperator::DEREF;
+    break;
+  default:
+    throw CompilerException("Unexpected token in unary operator.",
+                            stream.peek().line);
+  }
   Token token = stream.next();
-  return std::make_unique<ExprOperUnaryNode>(tokenToUnaryOp(token.type),
-                                             std::move(parseExprNode(stream)));
+  return std::make_unique<ExprOperUnaryNode>(
+      op, parseExprNode(stream,
+                        OpPowerRecoder::getInstance().getRightNud(token.type)));
 }
 
 auto parseExprPathNode(TokenStream &stream) -> std::unique_ptr<ExprPathNode> {

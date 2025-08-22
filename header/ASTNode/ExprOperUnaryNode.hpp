@@ -1,7 +1,8 @@
 #pragma once
 #include "ExprOperatorNode.hpp"
 
-enum class UnaryOperator { NEGATE, NOT };
+enum class UnaryOperator { NEGATE, NOT, REF, MUTREF, DEREF };
+
 class ExprOperUnaryNode : public ExprOperatorNode {
 public:
   UnaryOperator op_;
