@@ -4,7 +4,8 @@
 
 SymbolVariableInfo::SymbolVariableInfo(const std::string &name,
                                        std::shared_ptr<TypeKind> type)
-    : SymbolInfo(), name_(std::move(name)), type_(std::move(type)) {}
+    : SymbolInfo(), name_(std::move(name)), type_(std::move(type)),
+      ref_count_(0), mut_ref_(false) {}
 SymbolVariableInfo::~SymbolVariableInfo() = default;
 auto SymbolVariableInfo::getName() const -> const std::string & {
   return name_;
@@ -44,6 +45,7 @@ auto SymbolFunctionInfo::getParametersType() const
     -> const std::vector<std::shared_ptr<TypeKind>> & {
   return parameters_;
 }
+void SymbolFunctionInfo::setFnType(FnType type) { fn_type_ = type; }
 
 SymbolTypeInfo::SymbolTypeInfo(const std::string &name,
                                std::shared_ptr<TypeDef> type)

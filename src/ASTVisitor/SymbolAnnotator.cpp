@@ -3,6 +3,7 @@
 #include "Symbol.hpp"
 #include "TypeKind.hpp"
 #include "cast.hpp"
+#include "exception.hpp"
 
 SymbolAnnotator::SymbolAnnotator(Scope *initial_scope)
     : current_scope_(initial_scope) {}
@@ -34,21 +35,22 @@ auto SymbolAnnotator::typeNodeToType(const TypeNode *type_node)
     } else {
       throw std::runtime_error("Array length must be a literal integer");
     }
-    return std::make_shared<TypeKindArray>(std::move(type), length);
+    return std::make_shared<TypeKindArray>(type, length);
   }
   throw std::runtime_error("Unsupported type node for symbol collection");
   return nullptr;
 }
 
+// Convert a function node to a new-created symbol function info.
 auto SymbolAnnotator::fnNodeToFunc(const ItemFnNode *node)
     -> std::shared_ptr<SymbolFunctionInfo> {
-  auto return_type = typeNodeToType(node->return_type_.get());
   std::vector<std::shared_ptr<TypeKind>> parameters;
+  auto return_type = typeNodeToType(node->return_type_.get());
   for (const auto &param : node->parameters_) {
     parameters.push_back(typeNodeToType(param.type.get()));
   }
-  return std::make_shared<SymbolFunctionInfo>(node->ID_, std::move(return_type),
-                                              std::move(parameters));
+  return std::make_shared<SymbolFunctionInfo>(node->ID_, return_type,
+                                              parameters);
 }
 
 auto SymbolAnnotator::getPathIndexName(const PathNode *path_node,
@@ -69,8 +71,8 @@ void SymbolAnnotator::visit(ItemConstNode *node) {
   node->type_->accept(*this);
   node->value_->accept(*this);
   auto type = typeNodeToType(node->type_.get());
-  current_scope_->addSymbol(node->ID_, std::make_shared<SymbolVariableInfo>(
-                                           node->ID_, std::move(type)));
+  current_scope_->addSymbol(
+      node->ID_, std::make_shared<SymbolVariableInfo>(node->ID_, type));
 }
 
 void SymbolAnnotator::visit(ItemFnNode *node) {
@@ -86,17 +88,14 @@ void SymbolAnnotator::visit(ItemFnNode *node) {
   current_scope_->addSymbol(node->ID_, fnNodeToFunc(node));
 }
 
+// Visit a struct item node and collect its fields.
 void SymbolAnnotator::visit(ItemStructNode *node) {
   auto type_def = current_scope_->getType(node->ID_)->getType();
-  if (type_def == nullptr ||
-      !is_instance_of<StructDef, TypeDef>(type_def.get())) {
-    throw std::runtime_error("TypeDef for struct " + node->ID_ + " not found");
-  }
   auto struct_def = std::dynamic_pointer_cast<StructDef>(type_def);
   for (const auto &field : node->fields_) {
     field.type->accept(*this);
     auto field_type = typeNodeToType(field.type.get());
-    if (!struct_def->addMember(field.identifier, std::move(field_type))) {
+    if (!struct_def->addMember(field.identifier, field_type)) {
       throw std::runtime_error("Duplicate member name: " + field.identifier);
     }
   }
@@ -104,10 +103,6 @@ void SymbolAnnotator::visit(ItemStructNode *node) {
 
 void SymbolAnnotator::visit(ItemEnumNode *node) {
   auto type_def = current_scope_->getType(node->ID_)->getType();
-  if (type_def == nullptr ||
-      !is_instance_of<EnumDef, TypeDef>(type_def.get())) {
-    throw std::runtime_error("TypeDef for enum " + node->ID_ + " not found");
-  }
   auto enum_def = std::dynamic_pointer_cast<EnumDef>(type_def);
   for (const auto &variant : node->variants_) {
     if (!enum_def->addVariant(variant)) {
@@ -120,19 +115,38 @@ void SymbolAnnotator::visit(ItemImplNode *node) {
   if (!is_instance_of<TypePathNode, TypeNode>(node->type_.get())) {
     throw std::runtime_error("Impl type must be a path type");
   }
-  const auto *type_path = dynamic_cast<const TypePathNode *>(node->type_.get());
+  const auto type_path = dynamic_cast<const TypePathNode *>(node->type_.get());
   std::string type_name = getPathIndexName(type_path->path_.get(), 0);
   auto type_def = current_scope_->getType(type_name)->getType();
   for (const auto &item : node->items_) {
     if (item.function) {
       item.function->accept(*this);
       auto func = fnNodeToFunc(item.function.get());
-      if (!type_def->addMethod(func->getName(), std::move(func))) {
-        throw std::runtime_error("Duplicate method name: " + func->getName());
+      if (item.function->fn_type_ == FnType::Fn) {
+        if (type_def->addAssociatedFunction(func->getName(), func)) {
+          throw CompilerException("Duplicate associated function name: ",
+                                  node->position_);
+        }
+      } else {
+        if (item.function->fn_type_ == FnType::MutMethod) {
+          func->setFnType(SymbolFunctionInfo::FnType::MutMethod);
+        } else {
+          func->setFnType(SymbolFunctionInfo::FnType::Method);
+        }
+        if (!type_def->addMethod(func->getName(), std::move(func))) {
+          throw CompilerException("Duplicate method name: " + func->getName(),
+                                  node->position_);
+        }
       }
     } else {
-      throw std::runtime_error(
-          "ItemImplNode currently does not support constants");
+      item.constant->accept(*this);
+      auto const_type = typeNodeToType(item.constant->type_.get());
+      auto var_info =
+          std::make_shared<SymbolVariableInfo>(item.constant->ID_, const_type);
+      if (!type_def->addTypeConst(item.constant->ID_, var_info)) {
+        throw CompilerException(
+            "Duplicate constant name: " + item.constant->ID_, node->position_);
+      }
     }
   }
 }
@@ -240,19 +254,6 @@ void SymbolAnnotator::visit(ExprMethodNode *node) {
   }
 }
 
-void SymbolAnnotator::visit(ExprMatchNode *node) {
-  node->subject_->accept(*this);
-  for (auto &arm : node->arms_) {
-    arm.pattern->accept(*this);
-    if (arm.guard) {
-      arm.guard->accept(*this);
-    }
-    if (arm.body) {
-      arm.body->accept(*this);
-    }
-  }
-}
-
 void SymbolAnnotator::visit(ExprStructNode *node) {
   node->path_->accept(*this);
   for (const auto &field : node->fields_) {
@@ -285,6 +286,8 @@ void SymbolAnnotator::visit(PatternPathNode *node) {}
 
 void SymbolAnnotator::visit(PatternIDNode *node) {}
 
+void SymbolAnnotator::visit(PatternReferNode *node) {}
+
 void SymbolAnnotator::visit(TypeArrayNode *node) {
   if (node->type_) {
     node->type_->accept(*this);
@@ -295,5 +298,11 @@ void SymbolAnnotator::visit(TypeArrayNode *node) {
 }
 
 void SymbolAnnotator::visit(TypePathNode *node) {}
+
+void SymbolAnnotator::visit(TypeReferNode *node) {
+  if (node->type_) {
+    node->type_->accept(*this);
+  }
+}
 
 void SymbolAnnotator::visit(PathNode *node) {}

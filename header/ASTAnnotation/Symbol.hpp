@@ -29,10 +29,18 @@ public:
 };
 
 class SymbolFunctionInfo : public SymbolInfo {
+public:
+  enum class FnType {
+    Normal,
+    Method,
+    MutMethod,
+  };
+
 private:
   std::string name_;
   std::shared_ptr<TypeKind> return_type_;
   std::vector<std::shared_ptr<TypeKind>> parameters_;
+  FnType fn_type_;
 
 public:
   SymbolFunctionInfo(const std::string &name,
@@ -43,6 +51,7 @@ public:
   auto getReturnType() const -> std::shared_ptr<TypeKind>;
   auto getParametersType() const
       -> const std::vector<std::shared_ptr<TypeKind>> &;
+  void setFnType(FnType type);
 };
 
 class SymbolTypeInfo : public SymbolInfo {
