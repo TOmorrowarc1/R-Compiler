@@ -22,11 +22,11 @@ public:
   Scope(Scope *parent);
   ~Scope();
   auto getParent() const -> Scope *;
-  auto addSymbol(const std::string &name, std::shared_ptr<SymbolInfo> &&symbol)
+  auto addSymbol(const std::string &name, std::shared_ptr<SymbolInfo> symbol)
       -> bool;
   auto getSymbol(const std::string &name) const -> std::shared_ptr<SymbolInfo>;
-  auto addType(const std::string &name,
-               std::shared_ptr<SymbolTypeInfo> &&symbol) -> bool;
+  auto addType(const std::string &name, std::shared_ptr<SymbolTypeInfo> symbol)
+      -> bool;
   auto getType(const std::string &name) const
       -> std::shared_ptr<SymbolTypeInfo>;
   auto addNextChildScope() -> Scope *;

@@ -10,7 +10,7 @@ TypeDef::~TypeDef() = default;
 auto TypeDef::getName() const -> const std::string & { return name_; }
 
 auto TypeDef::addMethod(const std::string &name,
-                        std::shared_ptr<SymbolFunctionInfo> &&method) -> bool {
+                        std::shared_ptr<SymbolFunctionInfo> method) -> bool {
   if (methods_.find(name) != methods_.end()) {
     return false;
   }
@@ -19,7 +19,7 @@ auto TypeDef::addMethod(const std::string &name,
 }
 
 auto TypeDef::addAssociatedFunction(
-    const std::string &name, std::shared_ptr<SymbolFunctionInfo> &&function)
+    const std::string &name, std::shared_ptr<SymbolFunctionInfo> function)
     -> bool {
   if (associated_functions_.find(name) != associated_functions_.end()) {
     return false;
@@ -50,7 +50,7 @@ StructDef::StructDef(const std::string &name) : TypeDef(name) {}
 
 StructDef::StructDef(const std::string &name,
                      const std::vector<std::string> &member_names,
-                     std::vector<std::shared_ptr<TypeKind>> &&member_types)
+                     std::vector<std::shared_ptr<TypeKind>>&& member_types)
     : TypeDef(name) {
   if (member_names.size() != member_types.size()) {
     throw std::runtime_error("Member names and types size mismatch");
@@ -65,7 +65,7 @@ StructDef::StructDef(const std::string &name,
 StructDef::~StructDef() = default;
 
 auto StructDef::addMember(const std::string &name,
-                          std::shared_ptr<TypeKind> &&type) -> bool {
+                          std::shared_ptr<TypeKind> type) -> bool {
   if (members_.find(name) != members_.end()) {
     return false;
   }

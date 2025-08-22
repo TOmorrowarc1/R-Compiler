@@ -11,7 +11,7 @@ Scope::~Scope() = default;
 auto Scope::getParent() const -> Scope * { return parent_; }
 
 auto Scope::addSymbol(const std::string &name,
-                      std::shared_ptr<SymbolInfo> &&symbol) -> bool {
+                      std::shared_ptr<SymbolInfo> symbol) -> bool {
   if (symbols_.find(name) != symbols_.end()) {
     return false;
   }
@@ -33,7 +33,7 @@ auto Scope::getSymbol(const std::string &name) const
 }
 
 auto Scope::addType(const std::string &name,
-                    std::shared_ptr<SymbolTypeInfo> &&type) -> bool {
+                    std::shared_ptr<SymbolTypeInfo> type) -> bool {
   if (types_.find(name) != types_.end()) {
     return false;
   }

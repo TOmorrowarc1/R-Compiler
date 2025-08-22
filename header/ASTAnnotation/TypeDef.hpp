@@ -12,6 +12,8 @@ class SymbolFunctionInfo;
 class TypeDef {
 private:
   std::string name_;
+  std::unordered_map<std::string, std::shared_ptr<SymbolVariableInfo>>
+      type_consts_;
   std::unordered_map<std::string, std::shared_ptr<SymbolFunctionInfo>> methods_;
   std::unordered_map<std::string, std::shared_ptr<SymbolFunctionInfo>>
       associated_functions_;
@@ -20,10 +22,14 @@ public:
   TypeDef(const std::string &name);
   virtual ~TypeDef();
   auto getName() const -> const std::string &;
+  auto addTypeConst(const std::string &name,
+                    std::shared_ptr<SymbolVariableInfo> type_const) -> bool;
+  auto getTypeConst(const std::string &name) const
+      -> std::shared_ptr<SymbolVariableInfo>;
   auto addMethod(const std::string &name,
-                 std::shared_ptr<SymbolFunctionInfo> &&method) -> bool;
+                 std::shared_ptr<SymbolFunctionInfo> method) -> bool;
   auto addAssociatedFunction(const std::string &name,
-                             std::shared_ptr<SymbolFunctionInfo> &&function)
+                             std::shared_ptr<SymbolFunctionInfo> function)
       -> bool;
   auto getMethod(const std::string &name) const
       -> std::shared_ptr<SymbolFunctionInfo>;
@@ -41,7 +47,7 @@ public:
             const std::vector<std::string> &member_names,
             std::vector<std::shared_ptr<TypeKind>> &&member_types);
   ~StructDef() override;
-  auto addMember(const std::string &name, std::shared_ptr<TypeKind> &&type)
+  auto addMember(const std::string &name, std::shared_ptr<TypeKind> type)
       -> bool;
   auto getMember(const std::string &name) const -> std::shared_ptr<TypeKind>;
 };

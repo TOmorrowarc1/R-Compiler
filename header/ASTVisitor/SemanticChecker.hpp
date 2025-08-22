@@ -74,7 +74,6 @@ public:
   void visit(ExprPathNode *node) override;
   void visit(ExprFieldNode *node) override;
   void visit(ExprMethodNode *node) override;
-  void visit(ExprMatchNode *node) override;
   void visit(ExprStructNode *node) override;
   void visit(ExprUnderScoreNode *node) override;
 
@@ -87,9 +86,11 @@ public:
   void visit(PatternWildNode *node) override;
   void visit(PatternPathNode *node) override;
   void visit(PatternIDNode *node) override;
+  void visit(PatternReferNode *node) override;
 
   void visit(TypeArrayNode *node) override;
   void visit(TypePathNode *node) override;
+  void visit(TypeReferNode *node) override;
 
   void visit(PathNode *node) override;
 };
