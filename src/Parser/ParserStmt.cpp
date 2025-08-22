@@ -27,10 +27,12 @@ auto parseStmtNode(TokenStream &stream) -> std::unique_ptr<StmtNode> {
 }
 
 auto parseStmtEmptyNode(TokenStream &stream) -> std::unique_ptr<StmtEmptyNode> {
+  Position position = stream.peek().line;
   stream.next();
-  return std::make_unique<StmtEmptyNode>();
+  return std::make_unique<StmtEmptyNode>(position);
 }
 auto parseStmtLetNode(TokenStream &stream) -> std::unique_ptr<StmtLetNode> {
+  Position position = stream.peek().line;
   stream.next();
   std::unique_ptr<PatternNode> pattern;
   std::unique_ptr<TypeNode> type;
@@ -46,15 +48,17 @@ auto parseStmtLetNode(TokenStream &stream) -> std::unique_ptr<StmtLetNode> {
     init_value = parseExprNode(stream);
   }
   return std::make_unique<StmtLetNode>(std::move(pattern), std::move(type),
-                                       std::move(init_value));
+                                       std::move(init_value), position);
 }
 
 auto parseStmtItemNode(TokenStream &stream) -> std::unique_ptr<StmtItemNode> {
+  Position position = stream.peek().line;
   auto itemNode = parseItemNode(stream);
-  return std::make_unique<StmtItemNode>(std::move(itemNode));
+  return std::make_unique<StmtItemNode>(std::move(itemNode), position);
 }
 
 auto parseStmtExprNode(TokenStream &stream) -> std::unique_ptr<StmtExprNode> {
+  Position position = stream.peek().line;
   std::unique_ptr<ExprNode> exprNode;
   exprNode = parseExprNode(stream);
   if (stream.peek().type == TokenType::SEMICOLON) {
@@ -63,8 +67,8 @@ auto parseStmtExprNode(TokenStream &stream) -> std::unique_ptr<StmtExprNode> {
     if (is_instance_of<ExprBlockOutNode, ExprNode>(exprNode)) {
       throw CompilerException("Every stmtExpr filled with a exprwithoutblock "
                               "end with a semicolon.",
-                              stream.peek().line);
+                              position);
     }
   }
-  return std::make_unique<StmtExprNode>(std::move(exprNode));
+  return std::make_unique<StmtExprNode>(std::move(exprNode), position);
 }

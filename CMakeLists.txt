@@ -38,7 +38,6 @@ set(EXECUTABLE_SOURCES
   src/ASTNode/ExprIfNode.cpp
   src/ASTNode/ExprLiteralNode.cpp
   src/ASTNode/ExprLoopNode.cpp
-  src/ASTNode/ExprMatchNode.cpp
   src/ASTNode/ExprMethodNode.cpp
   src/ASTNode/ExprOperBinaryNode.cpp
   src/ASTNode/ExprOperUnaryNode.cpp
@@ -54,12 +53,14 @@ set(EXECUTABLE_SOURCES
   src/ASTNode/PatternLiteralNode.cpp
   src/ASTNode/PatternPathNode.cpp
   src/ASTNode/PatternWildNode.cpp
+  src/ASTNode/PatternReferNode.cpp
   src/ASTNode/StmtEmptyNode.cpp
   src/ASTNode/StmtExprNode.cpp
   src/ASTNode/StmtItemNode.cpp
   src/ASTNode/StmtLetNode.cpp
   src/ASTNode/TypeArrayNode.cpp
   src/ASTNode/TypePathNode.cpp
+  src/ASTNode/TypeReferNode.cpp
   src/Lexer/Lexer.cpp
   src/Lexer/Token.cpp
   src/Parser/Parser.cpp

@@ -22,5 +22,5 @@ auto parseRootNode(TokenStream &stream) -> std::unique_ptr<ASTRootNode> {
     auto itemNode = parseItemNode(stream);
     items.push_back(std::move(itemNode));
   }
-  return std::make_unique<ASTRootNode>(std::move(items));
+  return std::make_unique<ASTRootNode>(std::move(items), Position(0));
 }

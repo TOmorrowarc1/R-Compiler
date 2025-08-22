@@ -7,40 +7,43 @@ auto parseTypeArrayNode(TokenStream &stream) -> std::unique_ptr<TypeArrayNode>;
 auto parseTypeReferNode(TokenStream &stream) -> std::unique_ptr<TypeReferNode>;
 
 auto parseTypePathNode(TokenStream &stream) -> std::unique_ptr<TypePathNode> {
-  return std::make_unique<TypePathNode>(parsePathNode(stream));
+  Position position = stream.peek().line;
+  return std::make_unique<TypePathNode>(parsePathNode(stream), position);
 }
 
 auto parseTypeArrayNode(TokenStream &stream) -> std::unique_ptr<TypeArrayNode> {
+  Position position = stream.peek().line;
   stream.next();
   bool is_array = false;
   std::unique_ptr<ExprNode> expr_node;
   std::unique_ptr<TypeNode> type_node = parseTypeNode(stream);
   if (stream.peek().type != TokenType::SEMICOLON) {
-    throw CompilerException("Expect ; after type in array type.",
-                            stream.peek().line);
+    throw CompilerException("Expect ; after type in array type.", position);
   }
   stream.next();
   expr_node = parseExprNode(stream);
   if (stream.peek().type != TokenType::RIGHT_BRACKET) {
-    throw CompilerException("Expect ] at the end of array type or slice.",
-                            stream.peek().line);
+    throw CompilerException("Expect ] at the end of array type.", position);
   }
   stream.next();
   return std::make_unique<TypeArrayNode>(std::move(type_node),
-                                         std::move(expr_node));
+                                         std::move(expr_node), position);
 }
 
 auto parseTypeReferNode(TokenStream &stream) -> std::unique_ptr<TypeReferNode> {
+  Position position = stream.peek().line;
   stream.next();
   bool is_mutable = false;
   if (stream.peek().type == TokenType::MUT) {
     is_mutable = true;
     stream.next();
   }
-  return std::make_unique<TypeReferNode>(parseTypeNode(stream), is_mutable);
+  return std::make_unique<TypeReferNode>(parseTypeNode(stream), is_mutable,
+                                         position);
 }
 
 auto parseTypeNode(TokenStream &stream) -> std::unique_ptr<TypeNode> {
+  Position position = stream.peek().line;
   switch (stream.peek().type) {
   case TokenType::IDENTIFIER:
   case TokenType::SELF_TYPE:
@@ -50,7 +53,6 @@ auto parseTypeNode(TokenStream &stream) -> std::unique_ptr<TypeNode> {
   case TokenType::AND:
     return parseTypeReferNode(stream);
   }
-  throw CompilerException("Unexpected token type for type node",
-                          stream.peek().line);
+  throw CompilerException("Unexpected token type for type node", position);
   return nullptr;
 }

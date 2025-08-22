@@ -13,6 +13,7 @@ auto parsePatternWildcardNode(TokenStream &stream)
     -> std::unique_ptr<PatternWildNode>;
 
 auto parsePatternNode(TokenStream &stream) -> std::unique_ptr<PatternNode> {
+  Position position = stream.peek().line;
   switch (stream.peek().type) {
   case TokenType::MINUS:
   case TokenType::CHARLITERAL:
@@ -36,38 +37,42 @@ auto parsePatternNode(TokenStream &stream) -> std::unique_ptr<PatternNode> {
       return parsePatternIDNode(stream);
     }
   }
-  throw CompilerException("No ID pattern.", stream.peek().line);
+  throw CompilerException("No ID pattern.", position);
   return nullptr;
 }
 
 auto parsePatternLiteralNode(TokenStream &stream)
     -> std::unique_ptr<PatternLiteralNode> {
+  Position position = stream.peek().line;
   bool minus = false;
   if (stream.peek().type == TokenType::MINUS) {
     minus = true;
     stream.next();
   }
   auto expr = parseExprLiteralNode(stream);
-  return std::make_unique<PatternLiteralNode>(std::move(expr), minus);
+  return std::make_unique<PatternLiteralNode>(std::move(expr), minus, position);
 }
 
 auto parsePatternIDNode(TokenStream &stream) -> std::unique_ptr<PatternIDNode> {
+  Position position = stream.peek().line;
   std::unique_ptr<PatternNode> pattern;
   std::string name = stream.next().content;
   if (stream.peek().type == TokenType::AT) {
     pattern = parsePatternNode(stream);
   }
-  return std::make_unique<PatternIDNode>(name, std::move(pattern));
+  return std::make_unique<PatternIDNode>(name, std::move(pattern), position);
 }
 
 auto parsePatternPathNode(TokenStream &stream)
     -> std::unique_ptr<PatternPathNode> {
+  Position position = stream.peek().line;
   auto path = parsePathNode(stream);
-  return std::make_unique<PatternPathNode>(std::move(path));
+  return std::make_unique<PatternPathNode>(std::move(path), position);
 }
 
 auto parsePatternReferNode(TokenStream &stream)
     -> std::unique_ptr<PatternReferNode> {
+  Position position = stream.peek().line;
   stream.next();
   bool is_mutable = false;
   if (stream.peek().type == TokenType::MUT) {
@@ -75,10 +80,12 @@ auto parsePatternReferNode(TokenStream &stream)
     stream.next();
   }
   auto pattern = parsePatternNode(stream);
-  return std::make_unique<PatternReferNode>(std::move(pattern), is_mutable);
+  return std::make_unique<PatternReferNode>(std::move(pattern), is_mutable,
+                                            position);
 }
 
 auto parsePatternWildcardNode(TokenStream &stream)
     -> std::unique_ptr<PatternWildNode> {
-  return std::make_unique<PatternWildNode>();
+  Position position = stream.peek().line;
+  return std::make_unique<PatternWildNode>(position);
 }
