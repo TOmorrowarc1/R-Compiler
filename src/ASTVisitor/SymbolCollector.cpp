@@ -11,15 +11,17 @@ SymbolCollector::SymbolCollector(Scope *initial_scope)
 SymbolCollector::~SymbolCollector() = default;
 
 auto SymbolCollector::addStructType(const std::string &type_name) -> bool {
-  return current_scope_->addType(
-      type_name, std::make_shared<SymbolTypeInfo>(
-                     type_name, std::make_shared<StructDef>(type_name)));
+  auto new_struct_type = std::make_shared<StructDef>(type_name);
+  auto new_symbol_type =
+      std::make_shared<SymbolTypeInfo>(type_name, new_struct_type);
+  return current_scope_->addType(type_name, new_symbol_type);
 }
 
 auto SymbolCollector::addEnumType(const std::string &type_name) -> bool {
-  return current_scope_->addType(
-      type_name, std::make_shared<SymbolTypeInfo>(
-                     type_name, std::make_shared<EnumDef>(type_name)));
+  auto new_enum_type = std::make_shared<EnumDef>(type_name);
+  auto new_symbol_type =
+      std::make_shared<SymbolTypeInfo>(type_name, new_enum_type);
+  return current_scope_->addType(type_name, new_symbol_type);
 }
 
 void SymbolCollector::visit(ASTRootNode *node) {
@@ -187,19 +189,6 @@ void SymbolCollector::visit(ExprMethodNode *node) {
   }
 }
 
-void SymbolCollector::visit(ExprMatchNode *node) {
-  node->subject_->accept(*this);
-  for (auto &arm : node->arms_) {
-    arm.pattern->accept(*this);
-    if (arm.guard) {
-      arm.guard->accept(*this);
-    }
-    if (arm.body) {
-      arm.body->accept(*this);
-    }
-  }
-}
-
 void SymbolCollector::visit(ExprStructNode *node) {
   node->path_->accept(*this);
   for (const auto &field : node->fields_) {
@@ -217,6 +206,8 @@ void SymbolCollector::visit(PatternPathNode *node) {}
 
 void SymbolCollector::visit(PatternIDNode *node) {}
 
+void SymbolCollector::visit(PatternReferNode *node) {}
+
 void SymbolCollector::visit(TypeArrayNode *node) {
   if (node->type_) {
     node->type_->accept(*this);
@@ -227,5 +218,7 @@ void SymbolCollector::visit(TypeArrayNode *node) {
 }
 
 void SymbolCollector::visit(TypePathNode *node) {}
+
+void SymbolCollector::visit(TypeReferNode *node) { node->type_->accept(*this); }
 
 void SymbolCollector::visit(PathNode *node) {}
