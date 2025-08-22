@@ -16,16 +16,12 @@ class SymbolVariableInfo : public SymbolInfo {
 private:
   std::string name_;
   std::shared_ptr<TypeKind> type_;
-  int ref_count_;
-  bool mut_ref_;
 
 public:
   SymbolVariableInfo(const std::string &name, std::shared_ptr<TypeKind> type);
   ~SymbolVariableInfo();
   auto getName() const -> const std::string &;
   auto getType() const -> std::shared_ptr<TypeKind>;
-  auto addRef() -> bool;
-  auto addMutRef() -> bool;
 };
 
 class SymbolFunctionInfo : public SymbolInfo {

@@ -34,3 +34,17 @@ public:
   auto getType() const -> const std::shared_ptr<TypeKind>;
   auto getSize() const -> uint32_t;
 };
+
+class TypeKindRefer : public TypeKind {
+private:
+  std::shared_ptr<TypeKind> type_kind_;
+  bool is_mutable_;
+
+public:
+  TypeKindRefer(std::shared_ptr<TypeKind> type_kind, bool is_mutable);
+  ~TypeKindRefer() override;
+  auto isEqual(const TypeKind *other) const -> bool override;
+  auto isTypePath(const TypeDef *typeDef) const -> bool override;
+  auto getType() const -> const std::shared_ptr<TypeKind>;
+  auto isMutable() const -> bool;
+};

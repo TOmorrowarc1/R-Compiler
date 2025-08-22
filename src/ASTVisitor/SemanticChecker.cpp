@@ -49,13 +49,26 @@ auto SemanticChecker::getPathIndexName(const PathNode *path_node,
 }
 
 auto SemanticChecker::bindPatternToType(const PatternNode *pattern_node,
-                                        std::shared_ptr<TypeKind> &type)
+                                        std::shared_ptr<TypeKind> type)
     -> bool {
   if (is_instance_of<PatternIDNode, PatternNode>(pattern_node)) {
     const auto *id_pattern = dynamic_cast<const PatternIDNode *>(pattern_node);
     return current_scope_->addSymbol(
-        id_pattern->identifier_, std::make_shared<SymbolVariableInfo>(
-                                     id_pattern->identifier_, std::move(type)));
+        id_pattern->identifier_,
+        std::make_shared<SymbolVariableInfo>(id_pattern->identifier_, type));
+  }
+  if (is_instance_of<PatternReferNode, PatternNode>(pattern_node)) {
+    const auto *refer_pattern =
+        dynamic_cast<const PatternReferNode *>(pattern_node);
+    if (!is_instance_of<TypeKindRefer, TypeKind>(type.get())) {
+      throw std::runtime_error("Pattern refer type must be a reference type");
+    }
+    auto refer_type = std::dynamic_pointer_cast<TypeKindRefer>(type);
+    if (refer_type->isMutable() != refer_pattern->is_mutable_) {
+      throw std::runtime_error("Pattern refer type mismatch");
+    }
+    return bindPatternToType(refer_pattern->pattern_.get(),
+                             refer_type->getType());
   }
   if (is_instance_of<PatternWildNode, PatternNode>(pattern_node)) {
     return true;
@@ -117,6 +130,7 @@ void SemanticChecker::visit(ItemFnNode *node) {
   }
   if (node->body_) {
     auto function_scope = std::make_unique<Scope>(current_scope_);
+    auto self_type = current_scope_->getType("self")->getType();
     current_scope_ = function_scope.get();
     for (auto &param : node->parameters_) {
       if (param.pattern) {
@@ -456,6 +470,31 @@ void SemanticChecker::visit(ExprOperUnaryNode *node) {
         std::make_unique<ValueInfo>(operand_type, false, false, false);
     break;
   }
+  case UnaryOperator::REF: {
+    node->value_info_ = std::make_unique<ValueInfo>(
+        std::make_shared<TypeKindRefer>(operand_type, false),
+        node->operand_->value_info_->isLeftValue(), false,
+        node->operand_->value_info_->isConst());
+    break;
+  }
+  case UnaryOperator::MUTREF: {
+    node->value_info_ = std::make_unique<ValueInfo>(
+        std::make_shared<TypeKindRefer>(operand_type, true),
+        node->operand_->value_info_->isLeftValue(), false,
+        node->operand_->value_info_->isConst());
+    break;
+  }
+  case UnaryOperator::DEREF: {
+    if (!is_instance_of<TypeKindRefer, TypeKind>(operand_type.get())) {
+      throw std::runtime_error(
+          "Dereference operator requires a reference type");
+    }
+    auto refer_type = std::dynamic_pointer_cast<TypeKindRefer>(operand_type);
+    node->value_info_ = std::make_unique<ValueInfo>(
+        refer_type->getType(), node->operand_->value_info_->isLeftValue(),
+        refer_type->isMutable(), node->operand_->value_info_->isConst());
+    break;
+  }
   default:
     throw std::runtime_error("Unsupported unary operator");
   }
@@ -548,8 +587,6 @@ void SemanticChecker::visit(ExprMethodNode *node) {
                                                   false, false, false);
 }
 
-void SemanticChecker::visit(ExprMatchNode *node) {}
-
 void SemanticChecker::visit(ExprStructNode *node) {
   std::string name = getPathIndexName(node->path_->path_.get(), 0);
   auto type_def = current_scope_->getType(name);
@@ -601,8 +638,10 @@ void SemanticChecker::visit(PatternLiteralNode *node) {}
 void SemanticChecker::visit(PatternWildNode *node) {}
 void SemanticChecker::visit(PatternPathNode *node) {}
 void SemanticChecker::visit(PatternIDNode *node) {}
+void SemanticChecker::visit(PatternReferNode *node) {}
 
 void SemanticChecker::visit(TypeArrayNode *node) {}
 void SemanticChecker::visit(TypePathNode *node) {}
+void SemanticChecker::visit(TypeReferNode *node) {}
 
 void SemanticChecker::visit(PathNode *node) {}

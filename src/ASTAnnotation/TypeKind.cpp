@@ -38,3 +38,30 @@ auto TypeKindArray::getType() const -> const std::shared_ptr<TypeKind> {
   return type_kind_;
 }
 auto TypeKindArray::getSize() const -> uint32_t { return size; }
+
+TypeKindRefer::TypeKindRefer(std::shared_ptr<TypeKind> type_kind,
+                             bool is_mutable)
+    : TypeKind(), type_kind_(std::move(type_kind)), is_mutable_(is_mutable) {}
+
+TypeKindRefer::~TypeKindRefer() = default;
+
+auto TypeKindRefer::isEqual(const TypeKind *other) const -> bool {
+  if (const auto *otherRefer = dynamic_cast<const TypeKindRefer *>(other)) {
+    return type_kind_->isEqual(otherRefer->getType().get()) &&
+           is_mutable_ == otherRefer->isMutable();
+  }
+  return false;
+}
+
+auto TypeKindRefer::isTypePath(const TypeDef *typeDef) const -> bool {
+  return type_kind_->isTypePath(typeDef);
+}
+
+auto TypeKindRefer::getType() const -> const std::shared_ptr<TypeKind> {
+  if (type_kind_ == nullptr) {
+    throw std::runtime_error("TypeKindRefer type_kind_ is null");
+  }
+  return type_kind_;
+}
+
+auto TypeKindRefer::isMutable() const -> bool { return is_mutable_; }

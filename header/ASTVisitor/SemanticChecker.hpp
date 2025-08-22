@@ -34,7 +34,7 @@ private:
   auto typeNodeToType(const TypeNode *type_node) -> std::shared_ptr<TypeKind>;
 
   auto bindPatternToType(const PatternNode *pattern_node,
-                         std::shared_ptr<TypeKind> &type) -> bool;
+                         std::shared_ptr<TypeKind> type) -> bool;
 
   auto judgeU32(const ExprNode *node) -> bool;
   auto judgeI32(const ExprNode *node) -> bool;

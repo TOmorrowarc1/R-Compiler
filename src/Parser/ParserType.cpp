@@ -43,6 +43,7 @@ auto parseTypeReferNode(TokenStream &stream) -> std::unique_ptr<TypeReferNode> {
 auto parseTypeNode(TokenStream &stream) -> std::unique_ptr<TypeNode> {
   switch (stream.peek().type) {
   case TokenType::IDENTIFIER:
+  case TokenType::SELF_TYPE:
     return parseTypePathNode(stream);
   case TokenType::LEFT_BRACKET:
     return parseTypeArrayNode(stream);

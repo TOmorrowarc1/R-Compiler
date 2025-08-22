@@ -4,29 +4,13 @@
 
 SymbolVariableInfo::SymbolVariableInfo(const std::string &name,
                                        std::shared_ptr<TypeKind> type)
-    : SymbolInfo(), name_(std::move(name)), type_(std::move(type)),
-      ref_count_(0), mut_ref_(false) {}
+    : SymbolInfo(), name_(std::move(name)), type_(std::move(type)){}
 SymbolVariableInfo::~SymbolVariableInfo() = default;
 auto SymbolVariableInfo::getName() const -> const std::string & {
   return name_;
 }
 auto SymbolVariableInfo::getType() const -> std::shared_ptr<TypeKind> {
   return type_;
-}
-auto SymbolVariableInfo::addRef() -> bool {
-  if (mut_ref_) {
-    return false;
-  }
-  ref_count_++;
-  return true;
-}
-auto SymbolVariableInfo::addMutRef() -> bool {
-  if (ref_count_ > 0) {
-    return false;
-  }
-  mut_ref_ = true;
-  ref_count_++;
-  return true;
 }
 
 SymbolFunctionInfo::SymbolFunctionInfo(
