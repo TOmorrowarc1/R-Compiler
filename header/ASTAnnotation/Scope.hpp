@@ -8,6 +8,7 @@
 class SymbolInfo;
 class SymbolTypeInfo;
 class SymbolFunctionInfo;
+class SymbolVariableInfo;
 
 class Scope {
 private:
@@ -22,8 +23,10 @@ public:
   Scope(Scope *parent);
   ~Scope();
   auto getParent() const -> Scope *;
-  auto addSymbol(const std::string &name, std::shared_ptr<SymbolInfo> symbol)
-      -> bool;
+  auto addFunction(const std::string &name,
+                   std::shared_ptr<SymbolFunctionInfo> function) -> bool;
+  auto addVarible(const std::string &name,
+                  std::shared_ptr<SymbolVariableInfo> symbol) -> bool;
   auto getSymbol(const std::string &name) const -> std::shared_ptr<SymbolInfo>;
   auto addType(const std::string &name, std::shared_ptr<SymbolTypeInfo> symbol)
       -> bool;

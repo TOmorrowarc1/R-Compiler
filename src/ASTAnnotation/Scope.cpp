@@ -1,5 +1,6 @@
 #include "Scope.hpp"
 #include "Symbol.hpp"
+#include "cast.hpp"
 #include <stdexcept>
 
 Scope::Scope() : parent_(nullptr), index_now(0) {}
@@ -10,10 +11,26 @@ Scope::~Scope() = default;
 
 auto Scope::getParent() const -> Scope * { return parent_; }
 
-auto Scope::addSymbol(const std::string &name,
-                      std::shared_ptr<SymbolInfo> symbol) -> bool {
+auto Scope::addFunction(const std::string &name,
+                        std::shared_ptr<SymbolFunctionInfo> function) -> bool {
   if (symbols_.find(name) != symbols_.end()) {
     return false;
+  }
+  symbols_[name] = std::move(function);
+  return true;
+}
+
+auto Scope::addVarible(const std::string &name,
+                       std::shared_ptr<SymbolVariableInfo> symbol) -> bool {
+  if (symbols_.find(name) != symbols_.end()) {
+    auto existing = symbols_[name];
+    if (is_instance_of<SymbolVariableInfo, SymbolInfo>(existing)) {
+      auto existing_var =
+          std::dynamic_pointer_cast<SymbolVariableInfo>(existing);
+      if (existing_var->getIsConst()) {
+        return false;
+      }
+    }
   }
   symbols_[name] = std::move(symbol);
   return true;

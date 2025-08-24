@@ -3,8 +3,9 @@
 #include "TypeKind.hpp"
 
 SymbolVariableInfo::SymbolVariableInfo(const std::string &name,
-                                       std::shared_ptr<TypeKind> type)
-    : SymbolInfo(), name_(std::move(name)), type_(std::move(type)){}
+                                       std::shared_ptr<TypeKind> type,
+                                       bool is_const)
+    : SymbolInfo(), name_(name), type_(std::move(type)), is_const_(is_const) {}
 SymbolVariableInfo::~SymbolVariableInfo() = default;
 auto SymbolVariableInfo::getName() const -> const std::string & {
   return name_;
@@ -12,6 +13,7 @@ auto SymbolVariableInfo::getName() const -> const std::string & {
 auto SymbolVariableInfo::getType() const -> std::shared_ptr<TypeKind> {
   return type_;
 }
+auto SymbolVariableInfo::getIsConst() const -> bool { return is_const_; }
 
 SymbolFunctionInfo::SymbolFunctionInfo(
     const std::string &name, std::shared_ptr<TypeKind> returnType,
