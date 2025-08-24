@@ -120,18 +120,18 @@ void SemanticChecker::visit(ItemFnNode *node) {
   for (const auto &param : node->parameters_) {
     param.type->accept(*this);
   }
-  for (const auto &param : node->parameters_) {
-    if (param.type) {
-      param.type->accept(*this);
-    }
-  }
   if (node->return_type_) {
     node->return_type_->accept(*this);
   }
   if (node->body_) {
     auto function_scope = std::make_unique<Scope>(current_scope_);
-    auto self_type = current_scope_->getType("self")->getType();
     current_scope_ = function_scope.get();
+    if (node->fn_type_ != FnType::Fn) {
+      auto self_type = std::make_shared<TypeKindPath>(current_impl_type_);
+      auto var_info =
+          std::make_shared<SymbolVariableInfo>("self", self_type, false);
+      current_scope_->addVarible("self", var_info);
+    }
     for (auto &param : node->parameters_) {
       if (param.pattern) {
         auto type = typeNodeToType(param.type.get());
@@ -159,6 +159,12 @@ void SemanticChecker::visit(ItemStructNode *node) {
 void SemanticChecker::visit(ItemEnumNode *node) {}
 
 void SemanticChecker::visit(ItemImplNode *node) {
+  auto impl_type = typeNodeToType(node->type_.get());
+  if (!is_instance_of<TypeKindPath, TypeKind>(impl_type.get())) {
+    throw std::runtime_error("Impl type must be a path type");
+  }
+  auto impl_type_path = std::dynamic_pointer_cast<TypeKindPath>(impl_type);
+  current_impl_type_ = impl_type_path->getTypeDef().get();
   for (const auto &item : node->items_) {
     if (item.function) {
       item.function->accept(*this);
@@ -167,6 +173,7 @@ void SemanticChecker::visit(ItemImplNode *node) {
           "ItemImplNode currently does not support constants");
     }
   }
+  current_impl_type_ = nullptr;
 }
 
 void SemanticChecker::visit(ItemTraitNode *node) {}

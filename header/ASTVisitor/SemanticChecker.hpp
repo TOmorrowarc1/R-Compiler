@@ -24,10 +24,12 @@ well-formed and not lead to infinite recursion.
 */
 
 class TypeKind;
+class TypeDef;
 
 class SemanticChecker : public Visitor {
 private:
   Scope *current_scope_;
+  TypeDef *current_impl_type_;
 
   auto getPathIndexName(const PathNode *path_node, uint32_t index)
       -> std::string;
