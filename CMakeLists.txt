@@ -83,7 +83,7 @@ set(EXECUTABLE_SOURCES
   src/utils/exception.cpp
 )
 
-# 将以上文档编译为.so准备用于静态链接。
+# 将以上文档编译为.a准备用于静态链接。
 add_library(compiler_lib STATIC ${EXECUTABLE_SOURCES})
 target_include_directories(compiler_lib PUBLIC ${HEADER_ALL})
 

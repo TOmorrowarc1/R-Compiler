@@ -283,10 +283,13 @@ Type →
     | PathExprSegment
     | ArrayType
     | ReferenceType
+    | UnitType
 
 ArrayType → [ Type ; Expression ]
 
 ReferenceType → & mut? Type
+
+UnitType -> ()
 
 /*
 Every path(maybe contains identifier) in syntax is a handle to a "object" in 

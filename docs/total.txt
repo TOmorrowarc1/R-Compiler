@@ -301,12 +301,13 @@ TypeNoBounds →
       TypePath
     | ReferenceType
     | ArrayType
+    | UnitType
 
 ArrayType → [ Type ; Expression ]
 
 ReferenceType → & mut? TypeNoBounds
 
-InferredType → _
+UnitType -> ()
 
 
 Paths summary
