@@ -29,7 +29,7 @@ class TypeDef;
 class SemanticChecker : public Visitor {
 private:
   Scope *current_scope_;
-  TypeDef *current_impl_type_;
+  std::shared_ptr<TypeDef> current_impl_type_;
 
   auto getPathIndexName(const PathNode *path_node, uint32_t index)
       -> std::string;

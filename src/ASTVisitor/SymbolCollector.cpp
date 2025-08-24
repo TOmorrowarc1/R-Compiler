@@ -3,7 +3,6 @@
 #include "Symbol.hpp"
 #include "TypeKind.hpp"
 #include "cast.hpp"
-#include <stdexcept>
 
 SymbolCollector::SymbolCollector(Scope *initial_scope)
     : current_scope_(initial_scope) {}

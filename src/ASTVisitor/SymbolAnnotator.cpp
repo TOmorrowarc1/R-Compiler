@@ -141,8 +141,8 @@ void SymbolAnnotator::visit(ItemImplNode *node) {
     } else {
       item.constant->accept(*this);
       auto const_type = typeNodeToType(item.constant->type_.get());
-      auto var_info =
-          std::make_shared<SymbolVariableInfo>(item.constant->ID_, const_type);
+      auto var_info = std::make_shared<SymbolVariableInfo>(item.constant->ID_,
+                                                           const_type, true);
       if (!type_def->addTypeConst(item.constant->ID_, var_info)) {
         throw CompilerException(
             "Duplicate constant name: " + item.constant->ID_, node->position_);

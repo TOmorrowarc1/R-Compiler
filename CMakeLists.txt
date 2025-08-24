@@ -78,6 +78,7 @@ set(EXECUTABLE_SOURCES
   src/ASTVisitor/SemanticChecker.cpp
   src/ASTVisitor/SymbolCollector.cpp
   src/ASTVisitor/SymbolAnnotator.cpp
+  src/ASTVisitor/ScopeBuiltInInit.cpp
   src/ASTAnnotator/ASTAnnotator.cpp
   src/utils/position.cpp
   src/utils/exception.cpp

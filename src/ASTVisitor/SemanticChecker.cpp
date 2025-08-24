@@ -164,7 +164,7 @@ void SemanticChecker::visit(ItemImplNode *node) {
     throw std::runtime_error("Impl type must be a path type");
   }
   auto impl_type_path = std::dynamic_pointer_cast<TypeKindPath>(impl_type);
-  current_impl_type_ = impl_type_path->getTypeDef().get();
+  current_impl_type_ = impl_type_path->getTypeDef();
   for (const auto &item : node->items_) {
     if (item.function) {
       item.function->accept(*this);
