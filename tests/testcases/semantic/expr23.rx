@@ -1,0 +1,10 @@
+fn main() {
+    let condition = true;
+    let x = if condition { 10 } else { 20 };
+    let arr = [x, x + 1, x + 2];
+    let result = (x + arr[1]) *;
+    printInt(result);
+    if result != 0 {
+        printInt(result / 2);
+    }
+}

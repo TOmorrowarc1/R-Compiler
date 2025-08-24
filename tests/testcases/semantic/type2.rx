@@ -1,0 +1,4 @@
+// Type error: string cannot be used in arithmetic operation
+fn main() {
+    let result = "hello" + 5;
+}

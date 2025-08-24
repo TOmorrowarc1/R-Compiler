@@ -1,0 +1,7 @@
+// Error: Invalid loop expression - missing opening brace in while loop
+fn main() {
+    let mut i = 0;
+    while i < 5  // Missing opening brace {
+        i += 1;
+    }
+}

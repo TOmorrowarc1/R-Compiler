@@ -1,0 +1,7 @@
+// Type error: unit type cannot be used in comparison
+fn main() {
+    let unit_val = ();
+    if unit_val == 5 {
+        printInt(1);
+    }
+}

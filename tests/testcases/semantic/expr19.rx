@@ -1,0 +1,11 @@
+fn add(a: i32, b: i32) -> i32 {
+    a + b
+}
+
+fn main() {
+    let x = 5;
+    let y = 10;
+    let result = add(x, y,);
+    let doubled = result * 2;
+    printInt((doubled + 1) / 3);
+}

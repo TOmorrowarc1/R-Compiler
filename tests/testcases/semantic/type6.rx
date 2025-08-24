@@ -1,0 +1,6 @@
+// Type error: pointer dereference type mismatch
+fn main() {
+    let x: i32 = 42;
+    let ptr: *const i32 = &x;
+    let value: bool = *ptr;
+}

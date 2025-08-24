@@ -1,0 +1,4 @@
+// Error: Invalid operator expression - consecutive operators
+fn main() {
+    let x = 5 + * 3;  // Invalid: + followed by * without operand
+}

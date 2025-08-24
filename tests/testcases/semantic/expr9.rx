@@ -1,0 +1,15 @@
+// Error: Invalid method call expression - missing dot before method name
+struct Calculator {
+    value: i32,
+}
+
+impl Calculator {
+    fn add(&mut self, n: i32) {
+        self.value += n;
+    }
+}
+
+fn main() {
+    let mut calc: Calculator = Calculator { value: 0 };
+    calc add(5);  // Missing dot before method name
+}

@@ -1,0 +1,5 @@
+// Error: Invalid literal expression - missing semicolon after literal
+fn main() {
+    42  // Missing semicolon - LL(1) can detect this as unexpected token
+    printInt(1);
+}

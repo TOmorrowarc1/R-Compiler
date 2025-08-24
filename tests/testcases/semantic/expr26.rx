@@ -1,0 +1,17 @@
+struct Data {
+    value: i32,
+    multiplier: i32,
+}
+
+fn main() {
+    let data = Data { value: 10, multiplier: 3 };
+    let computed = {
+        let temp = data.value * data.multiplier;
+        temp + 5
+    };
+    let condition = computed > 30;
+    if condition {
+        printInt(computed);
+    }
+    let final_val = computed data.value;
+}

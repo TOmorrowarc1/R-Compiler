@@ -2,7 +2,7 @@
 #include "utils.hpp"
 
 TEST(LexerTest, VaildToken) {
-  std::string input_path = test_cases_dir + "/lexer_1.in";
+  std::string input_path = test_cases_dir + "/lexer/lexer_1.in";
   std::string text = readFileToString(input_path);
   auto lex_result = lex(text);
 
@@ -129,7 +129,7 @@ TEST(LexerTest, VaildToken) {
 }
 
 TEST(LexerTest, COMMENT) {
-  std::string input_path = test_cases_dir + "/lexer_2.in";
+  std::string input_path = test_cases_dir + "/lexer/lexer_2.in";
   std::string text = readFileToString(input_path);
   auto lex_result = lex(text);
 
@@ -157,7 +157,7 @@ TEST(LexerTest, COMMENT) {
 }
 
 TEST(LexerTest, STRING) {
-  std::string input_path = test_cases_dir + "/lexer_3.in";
+  std::string input_path = test_cases_dir + "/lexer/lexer_3.in";
   std::string text = readFileToString(input_path);
   auto lex_result = lex(text);
 
@@ -200,7 +200,7 @@ TEST(LexerTest, STRING) {
 }
 
 TEST(LexerTest, COMMENT_ERROR) {
-  std::string input_path = test_cases_dir + "/lexer_4.in";
+  std::string input_path = test_cases_dir + "/lexer/lexer_4.in";
   std::string text = readFileToString(input_path);
   try {
     auto lex_result = lex(text);

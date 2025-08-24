@@ -1,0 +1,5 @@
+// Error: Mixed expression syntax error - array literal with missing comma
+fn main() {
+    let numbers = [1 2 3];  // Missing commas between array elements
+    printInt(numbers[0]);
+}

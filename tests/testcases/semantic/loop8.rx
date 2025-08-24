@@ -1,0 +1,7 @@
+fn main() {
+    let mut i: u32 = 0u32;
+    while i < 3
+        let val: u32 = i * 2;
+        i += 1;
+    }
+}

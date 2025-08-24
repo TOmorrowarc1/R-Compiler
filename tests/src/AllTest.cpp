@@ -6,7 +6,7 @@
 #include "utils.hpp"
 
 TEST(AllTest, VaildAll) {
-  std::string input_path = test_cases_dir + "/all_1.in";
+  std::string input_path = test_cases_dir + "/lexer/all_1.in";
   std::string text = readFileToString(input_path);
   try {
     auto lex_result = lex(text);

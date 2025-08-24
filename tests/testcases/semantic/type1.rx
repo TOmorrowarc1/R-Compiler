@@ -1,0 +1,4 @@
+// Type error: boolean cannot be assigned to integer
+fn main() {
+    let x: i32 = true;
+}
