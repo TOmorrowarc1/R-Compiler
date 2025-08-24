@@ -14,7 +14,7 @@ auto SymbolAnnotator::typeNodeToType(const TypeNode *type_node)
     -> std::shared_ptr<TypeKind> {
   if (type_node == nullptr) {
     return std::make_shared<TypeKindPath>(
-        current_scope_->getType("super")->getType());
+        current_scope_->getType("unit")->getType());
   }
   if (is_instance_of<TypePathNode, TypeNode>(type_node)) {
     const auto *type_path = dynamic_cast<const TypePathNode *>(type_node);

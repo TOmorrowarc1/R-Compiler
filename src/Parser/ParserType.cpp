@@ -14,7 +14,6 @@ auto parseTypePathNode(TokenStream &stream) -> std::unique_ptr<TypePathNode> {
 auto parseTypeArrayNode(TokenStream &stream) -> std::unique_ptr<TypeArrayNode> {
   Position position = stream.peek().line;
   stream.next();
-  bool is_array = false;
   std::unique_ptr<ExprNode> expr_node;
   std::unique_ptr<TypeNode> type_node = parseTypeNode(stream);
   if (stream.peek().type != TokenType::SEMICOLON) {

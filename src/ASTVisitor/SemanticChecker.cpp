@@ -11,9 +11,8 @@ SemanticChecker::~SemanticChecker() = default;
 auto SemanticChecker::typeNodeToType(const TypeNode *type_node)
     -> std::shared_ptr<TypeKind> {
   if (type_node == nullptr) {
-    /*Super means "unit", as there is no "null" keyword in Rust.*/
     return std::make_shared<TypeKindPath>(
-        current_scope_->getType("super")->getType());
+        current_scope_->getType("unit")->getType());
   }
   if (is_instance_of<TypePathNode, TypeNode>(type_node)) {
     const auto *type_path = dynamic_cast<const TypePathNode *>(type_node);
@@ -195,7 +194,8 @@ void SemanticChecker::visit(ExprArrayNode *node) {
           "All elements in an array must have the same type");
     }
   }
-  auto array_type = std::make_shared<TypeKindArray>(std::move(element_type), 5);
+  auto array_type =
+      std::make_shared<TypeKindArray>(element_type, node->elements_.size());
   // The array expr is not a left value, not mutable, and not const.
   node->value_info_ =
       std::make_unique<ValueInfo>(array_type, false, false, false);
@@ -232,7 +232,7 @@ void SemanticChecker::visit(ExprBlockNode *node) {
                                                     false, false, false);
   } else {
     auto unit_type = std::make_shared<TypeKindPath>(
-        current_scope_->getType("super")->getType());
+        current_scope_->getType("unit")->getType());
     node->value_info_ =
         std::make_unique<ValueInfo>(std::move(unit_type), false, false, false);
   }
@@ -308,7 +308,7 @@ void SemanticChecker::visit(ExprReturnNode *node) {
 void SemanticChecker::visit(ExprContinueNode *node) {
   node->value_info_ = std::make_unique<ValueInfo>(
       std::make_shared<TypeKindPath>(
-          current_scope_->getType("super")->getType()),
+          current_scope_->getType("unit")->getType()),
       false, false, false);
 }
 
@@ -334,7 +334,7 @@ void SemanticChecker::visit(ExprIfNode *node) {
     }
   } else {
     if (!then_type->isTypePath(
-            current_scope_->getType("super")->getType().get())) {
+            current_scope_->getType("unit")->getType().get())) {
       throw std::runtime_error("Then and else blocks must have the same type");
     }
   }
@@ -619,7 +619,7 @@ void SemanticChecker::visit(ExprStructNode *node) {
 void SemanticChecker::visit(ExprUnderScoreNode *node) {
   node->value_info_ = std::make_unique<ValueInfo>(
       std::make_shared<TypeKindPath>(
-          current_scope_->getType("super")->getType()),
+          current_scope_->getType("unit")->getType()),
       false, false, false);
 }
 

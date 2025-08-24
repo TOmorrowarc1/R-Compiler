@@ -28,9 +28,12 @@ auto parseStmtNode(TokenStream &stream) -> std::unique_ptr<StmtNode> {
 
 auto parseStmtEmptyNode(TokenStream &stream) -> std::unique_ptr<StmtEmptyNode> {
   Position position = stream.peek().line;
-  stream.next();
+  if (stream.next().type != TokenType::SEMICOLON) {
+    throw CompilerException("Empty stmt ends with a semicolon.", position);
+  }
   return std::make_unique<StmtEmptyNode>(position);
 }
+
 auto parseStmtLetNode(TokenStream &stream) -> std::unique_ptr<StmtLetNode> {
   Position position = stream.peek().line;
   stream.next();
@@ -43,9 +46,12 @@ auto parseStmtLetNode(TokenStream &stream) -> std::unique_ptr<StmtLetNode> {
     stream.next();
     type = parseTypeNode(stream);
   }
-  if (stream.peek().type == TokenType::EQUAL) {
+  if (stream.peek().type == TokenType::ASSIGN) {
     stream.next();
     init_value = parseExprNode(stream);
+  }
+  if (stream.next().type != TokenType::SEMICOLON) {
+    throw CompilerException("Let stmt ends with a semicolon.", position);
   }
   return std::make_unique<StmtLetNode>(std::move(pattern), std::move(type),
                                        std::move(init_value), position);

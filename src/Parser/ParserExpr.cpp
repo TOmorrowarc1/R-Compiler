@@ -75,7 +75,12 @@ const std::vector<bindPower> led_powers = {
     {TokenType::LEFT_PAREN, 0, 0},
     {TokenType::LEFT_BRACKET, 21, 0},
     {TokenType::LEFT_BRACE, 1, 0},
+
+    {TokenType::RIGHT_PAREN, 0, 0},
+    {TokenType::RIGHT_BRACKET, 0, 0},
+    {TokenType::RIGHT_BRACE, 0, 0},
     {TokenType::SEMICOLON, 0, 0},
+    {TokenType::COMMA, 0, 0},
 };
 
 class OpPowerRecoder {
@@ -463,6 +468,7 @@ auto parseExprBlockNode(TokenStream &stream) -> std::unique_ptr<ExprBlockNode> {
     case TokenType::ENUM:
     case TokenType::IMPL:
       statements.push_back(parseStmtNode(stream));
+      break;
     default:
       auto expr = parseExprNode(stream);
       if (is_instance_of<ExprBlockOutNode, ExprNode>(expr) &&
@@ -583,7 +589,7 @@ auto parseExprLiteralIntNode(TokenStream &stream)
       str[i] = std::tolower(c);
       if (str[i] != 'b' && str[i] != 'o' && str[i] != 'x') {
         end_pos = i;
-        switch (c) {
+        switch (str[i]) {
         case 'i':
           sign = true;
           break;
@@ -598,8 +604,7 @@ auto parseExprLiteralIntNode(TokenStream &stream)
   }
   std::string_view numberic_part = std::string_view(str).substr(0, end_pos);
   std::string cleaned_literal;
-  cleaned_literal.reserve(numberic_part.length());
-  for (char c : cleaned_literal) {
+  for (char c : numberic_part) {
     if (c != '_') {
       cleaned_literal += c;
     }
@@ -607,8 +612,8 @@ auto parseExprLiteralIntNode(TokenStream &stream)
   if (cleaned_literal.empty()) {
     throw CompilerException("Literal contains no digits.", position);
   }
-  int32_t base;
-  size_t pos;
+  int32_t base = 10;
+  size_t pos = 0;
   if (cleaned_literal.length() > 2) {
     if (cleaned_literal[0] == '0' && cleaned_literal[1] == 'x') {
       base = 16;
@@ -619,9 +624,6 @@ auto parseExprLiteralIntNode(TokenStream &stream)
     } else if (cleaned_literal[0] == '0' && cleaned_literal[1] == 'b') {
       base = 2;
       pos = 2;
-    } else {
-      base = 10;
-      pos = 0;
     }
   }
   int32_t value = std::stoi(cleaned_literal.substr(pos), &pos, base);

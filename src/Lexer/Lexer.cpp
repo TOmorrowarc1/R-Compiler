@@ -13,8 +13,6 @@ private:
 public:
   LineFinder(const std::string &target) : line_count_(0), cursor_(0) {
     line_starts_.push_back(0);
-    line_count_ = 0;
-    cursor_ = 0;
     int32_t length = target.length();
     for (int32_t i = 0; i < length; ++i) {
       if (target[i] == '\n') {
@@ -26,7 +24,7 @@ public:
     }
   }
 
-  auto getLine() -> int32_t { return line_count_; }
+  auto getLine() -> int32_t { return line_count_ + 1; }
 
   void forward(int32_t length) {
     cursor_ += length;

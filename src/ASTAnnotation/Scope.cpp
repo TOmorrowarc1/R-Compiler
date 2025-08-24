@@ -74,7 +74,7 @@ auto Scope::getType(const std::string &name) const
 auto Scope::addNextChildScope() -> Scope * {
   auto child = std::make_unique<Scope>(this);
   children_.push_back(std::move(child));
-  return child.get();
+  return children_.back().get();
 }
 
 auto Scope::getNextChildScope() -> Scope * {

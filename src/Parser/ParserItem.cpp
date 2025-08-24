@@ -67,7 +67,6 @@ auto parseItemFnNode(TokenStream &stream) -> std::unique_ptr<ItemFnNode> {
     returnType = nullptr;
   }
   if (stream.peek().type == TokenType::LEFT_BRACE) {
-    stream.next();
     body = parseExprBlockNode(stream);
   } else if (stream.peek().type == TokenType::SEMICOLON) {
     stream.next();
