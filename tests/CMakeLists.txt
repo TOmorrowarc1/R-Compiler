@@ -1,10 +1,13 @@
-file(GLOB TEST_SOURCES "*.cpp")
+file(GLOB TEST_SOURCES "src/*.cpp")
 add_executable(run_tests ${TEST_SOURCES})
 
 set(SOURCES_TEST
-  ${CMAKE_SOURCE_DIR}/header/Lexer
+  header
+  ${CMAKE_SOURCE_DIR}/header/ASTAnnotation
+  ${CMAKE_SOURCE_DIR}/header/ASTAnnotator
   ${CMAKE_SOURCE_DIR}/header/ASTNode
   ${CMAKE_SOURCE_DIR}/header/ASTVisitor
+  ${CMAKE_SOURCE_DIR}/header/Lexer
   ${CMAKE_SOURCE_DIR}/header/Parser
   ${CMAKE_SOURCE_DIR}/header/utils
 )
