@@ -1,6 +1,3 @@
-#include "Parser.hpp"
-#include "Lexer.hpp"
-#include "exception.hpp"
 #include "utils.hpp"
 
 TEST(ParserTest, VaildParse) {

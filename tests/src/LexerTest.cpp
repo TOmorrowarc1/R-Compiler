@@ -1,4 +1,3 @@
-#include "Lexer.hpp"
 #include "utils.hpp"
 
 TEST(LexerTest, VaildToken) {

@@ -60,10 +60,6 @@ auto parseItemFnNode(TokenStream &stream) -> std::unique_ptr<ItemFnNode> {
   stream.next();
   fn_type = parseSelfPara(stream);
   parameters = parseFnParameters(stream);
-  if (stream.peek().type != TokenType::RIGHT_PAREN) {
-    throw CompilerException("Expected ')' after function parameters", position);
-  }
-  stream.next();
   if (stream.peek().type == TokenType::ARROW) {
     stream.next();
     returnType = parseTypeNode(stream);
@@ -123,8 +119,7 @@ auto parseFnParameters(TokenStream &stream) -> std::vector<ItemFnPara> {
     }
   }
   if (stream.peek().type != TokenType::RIGHT_PAREN) {
-    throw CompilerException("Unexpected token in function parameters",
-                            position);
+    throw CompilerException("Expected ')' after function parameters", position);
   }
   stream.next();
   return parameters;
