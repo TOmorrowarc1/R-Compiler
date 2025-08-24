@@ -14,7 +14,7 @@ auto parsePathNode(TokenStream &stream) -> std::unique_ptr<PathNode> {
     stream.next();
     segments.push_back(parsePathSegment(stream));
   }
-  return std::make_unique<PathNode>(std::move(segments));
+  return std::make_unique<PathNode>(std::move(segments), position);
 }
 
 auto parsePathSegment(TokenStream &stream) -> PathSegment {

@@ -79,6 +79,8 @@ set(EXECUTABLE_SOURCES
   src/ASTVisitor/SymbolCollector.cpp
   src/ASTVisitor/SymbolAnnotator.cpp
   src/ASTAnnotator/ASTAnnotator.cpp
+  src/utils/position.cpp
+  src/utils/exception.cpp
 )
 
 # 将以上文档编译为.so准备用于静态链接。

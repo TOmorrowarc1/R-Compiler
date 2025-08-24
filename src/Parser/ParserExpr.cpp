@@ -471,7 +471,8 @@ auto parseExprBlockNode(TokenStream &stream) -> std::unique_ptr<ExprBlockNode> {
             dynamic_unique_ptr_cast<ExprBlockOutNode, ExprNode>(expr));
         end_flag = true;
       } else {
-        statements.push_back(std::make_unique<StmtExprNode>(std::move(expr)));
+        statements.push_back(
+            std::make_unique<StmtExprNode>(std::move(expr), position));
       }
     }
     if (end_flag) {

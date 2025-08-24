@@ -10,6 +10,7 @@ auto parseItemStructNode(TokenStream &stream)
 auto parseItemEnumNode(TokenStream &stream) -> std::unique_ptr<ItemEnumNode>;
 auto parseItemImplNode(TokenStream &stream) -> std::unique_ptr<ItemImplNode>;
 auto parseFnParameters(TokenStream &stream) -> std::vector<ItemFnPara>;
+auto parseSelfPara(TokenStream &stream) -> FnType;
 auto parseItemFnPara(TokenStream &stream) -> ItemFnPara;
 auto parseItemStructField(TokenStream &stream) -> ItemStructField;
 auto parseItemAssociatedItem(TokenStream &stream) -> ItemAssociatedItem;
@@ -79,7 +80,7 @@ auto parseItemFnNode(TokenStream &stream) -> std::unique_ptr<ItemFnNode> {
   }
   return std::make_unique<ItemFnNode>(ID, std::move(returnType),
                                       std::move(parameters), std::move(body),
-                                      position);
+                                      fn_type, const_flag, position);
 }
 
 auto parseSelfPara(TokenStream &stream) -> FnType {

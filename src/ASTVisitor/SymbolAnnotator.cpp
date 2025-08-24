@@ -50,7 +50,7 @@ auto SymbolAnnotator::fnNodeToFunc(const ItemFnNode *node)
     parameters.push_back(typeNodeToType(param.type.get()));
   }
   return std::make_shared<SymbolFunctionInfo>(node->ID_, return_type,
-                                              parameters);
+                                              std::move(parameters));
 }
 
 auto SymbolAnnotator::getPathIndexName(const PathNode *path_node,

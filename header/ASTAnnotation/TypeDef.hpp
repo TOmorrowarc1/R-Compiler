@@ -8,6 +8,7 @@
 
 class TypeKind;
 class SymbolFunctionInfo;
+class SymbolVariableInfo;
 
 class TypeDef {
 private:
