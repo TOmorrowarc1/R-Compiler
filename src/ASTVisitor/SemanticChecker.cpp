@@ -53,9 +53,9 @@ auto SemanticChecker::bindPatternToType(const PatternNode *pattern_node,
     -> bool {
   if (is_instance_of<PatternIDNode, PatternNode>(pattern_node)) {
     const auto *id_pattern = dynamic_cast<const PatternIDNode *>(pattern_node);
-    return current_scope_->addSymbol(
-        id_pattern->identifier_,
-        std::make_shared<SymbolVariableInfo>(id_pattern->identifier_, type));
+    auto var_info = std::make_shared<SymbolVariableInfo>(
+        id_pattern->identifier_, type, false);
+    return current_scope_->addVarible(id_pattern->identifier_, var_info);
   }
   if (is_instance_of<PatternReferNode, PatternNode>(pattern_node)) {
     const auto *refer_pattern =

@@ -71,8 +71,8 @@ void SymbolAnnotator::visit(ItemConstNode *node) {
   node->type_->accept(*this);
   node->value_->accept(*this);
   auto type = typeNodeToType(node->type_.get());
-  current_scope_->addSymbol(
-      node->ID_, std::make_shared<SymbolVariableInfo>(node->ID_, type));
+  auto var_info = std::make_shared<SymbolVariableInfo>(node->ID_, type, true);
+  current_scope_->addVarible(node->ID_, std::move(var_info));
 }
 
 void SymbolAnnotator::visit(ItemFnNode *node) {
@@ -85,7 +85,7 @@ void SymbolAnnotator::visit(ItemFnNode *node) {
   if (node->body_) {
     node->body_->accept(*this);
   }
-  current_scope_->addSymbol(node->ID_, fnNodeToFunc(node));
+  current_scope_->addFunction(node->ID_, fnNodeToFunc(node));
 }
 
 // Visit a struct item node and collect its fields.
