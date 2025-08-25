@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: misc
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Success
+Comment: misc test, simple linked list node operations
+*/
+
 // Simple linked list node operations
 // Basic linked list implementation with array simulation
 struct ListNode {
@@ -84,4 +93,5 @@ fn main() {
         
         i += 1;
     }
+    exit(0);
 }

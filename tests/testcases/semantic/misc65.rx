@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: misc
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Fail
+Comment: Fast Walsh-Hadamard Transform with subset sum convolution with recursive parameter type mismatch error
+*/
+
 // Fast Walsh-Hadamard Transform with XOR/OR/AND Convolutions
 // Advanced number-theoretic transform for subset sum convolution and bit manipulation
 
@@ -375,4 +384,5 @@ fn perform_complex_walsh_operations() -> i64 {
 fn main() {
     let result = perform_complex_walsh_operations();
     printInt(result);
+    exit(0);
 }

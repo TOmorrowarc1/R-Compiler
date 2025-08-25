@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: expr
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Fail
+Comment: Complex expression error: Missing semicolon after statement - Fenwick tree with coordinate compression, range frequency queries, and statistical analysis
+*/
+
 struct FenwickTreeNode {
     value: i32,
     frequency: i32,
@@ -423,4 +432,5 @@ fn main() {
         let rescue_calc = absolute_fallback + (comprehensive_analysis % 100);
         printInt(rescue_calc)
     }
+    exit(0);
 }

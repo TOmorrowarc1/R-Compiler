@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: misc
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Success
+Comment: Bellman-Ford Algorithm for Single Source Shortest Path with negative weights
+*/
+
 // Bellman-Ford Algorithm for Single Source Shortest Path
 // Handles negative weight edges and detects negative cycles
 struct Edge {
@@ -243,4 +252,5 @@ fn main() {
             printInt(0);
         }
     }
+    exit(0);
 }

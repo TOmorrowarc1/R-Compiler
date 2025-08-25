@@ -41,6 +41,12 @@ auto parseStmtLetNode(TokenStream &stream) -> std::unique_ptr<StmtLetNode> {
   std::unique_ptr<TypeNode> type;
   std::unique_ptr<ExprNode> init_value;
   std::unique_ptr<ExprBlockNode> else_body;
+  if(stream.peek().type == TokenType::REF) {
+    stream.next();
+  }
+  if(stream.peek().type == TokenType::MUT) {
+    stream.next();
+  }
   pattern = parsePatternNode(stream);
   if (stream.peek().type == TokenType::COLON) {
     stream.next();

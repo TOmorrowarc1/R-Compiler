@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: misc
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Success
+Comment: Topological Sort using Kahn's algorithm (BFS-based)
+*/
+
 // Topological Sort using Kahn's algorithm (BFS-based)
 // For Directed Acyclic Graph (DAG) ordering
 struct Graph {
@@ -205,4 +214,5 @@ fn main() {
             printInt(0);
         }
     }
+    exit(0);
 }

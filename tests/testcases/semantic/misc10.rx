@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: misc
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Success
+Comment: misc test, stack implementation with array
+*/
+
 // Stack implementation using array
 // Basic stack operations: push, pop, peek, is_empty
 struct Stack {
@@ -67,4 +76,5 @@ fn main() {
         
         i += 1;
     }
+    exit(0);
 }

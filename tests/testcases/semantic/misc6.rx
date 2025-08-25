@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: misc
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Success
+Comment: misc test, prime number checker
+*/
+
 // Prime number checker
 // Check if a given number is prime
 fn is_prime(n: i32) -> bool {
@@ -29,4 +38,5 @@ fn main() {
     } else {
         printInt(0); // Not prime
     }
+    exit(0);
 }

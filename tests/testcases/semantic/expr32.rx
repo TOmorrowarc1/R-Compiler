@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: expr
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Fail
+Comment: Complex expression error: Missing closing parenthesis in function call - recursive fibonacci with memoization, binary tree operations, and complex nested expressions
+*/
+
 struct BinaryTreeNode {
     value: i32,
     left_child: bool,
@@ -120,4 +129,5 @@ fn main() {
     } else {
         printInt(0);
     }
+    exit(0);
 }

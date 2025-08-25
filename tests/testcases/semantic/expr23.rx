@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: expr
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Fail
+Comment: Expression error: Incomplete operator expression - combines if, array, index, grouped, operator, and literal expressions
+*/
+
 fn main() {
     let condition = true;
     let x = if condition { 10 } else { 20 };
@@ -7,4 +16,5 @@ fn main() {
     if result != 0 {
         printInt(result / 2);
     }
+    exit(0);
 }

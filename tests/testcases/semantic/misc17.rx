@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: misc
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Success
+Comment: Min Heap implementation using array
+*/
+
 // Min Heap implementation using array
 // Complete binary tree stored in array format
 struct MinHeap {
@@ -125,4 +134,5 @@ fn main() {
         
         i += 1;
     }
+    exit(0);
 }

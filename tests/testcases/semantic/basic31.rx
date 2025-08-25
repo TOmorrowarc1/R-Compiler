@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: basic
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Fail
+Comment: basic test, quicksort function missing return statement
+*/
+
 const N: usize = 16;
 
 fn quicksort(data: &mut [i32; N], l: i32, r: i32) -> i32 {
@@ -51,4 +60,5 @@ fn main() {
     } else {
         let f: i32 = 0;
     }
+    exit(0);
 }

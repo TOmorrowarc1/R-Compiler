@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: type
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Fail
+Comment: Type error: function parameter type mismatch in distance calculation
+*/
+
 // Complete program with type error: function parameter type mismatch in calculation
 struct Point {
     x: i32,
@@ -17,4 +26,5 @@ fn main() {
     // Type error: passing string instead of Point
     let distance = calculate_distance(point1, "invalid");
     printInt(distance);
+    exit(0);
 }

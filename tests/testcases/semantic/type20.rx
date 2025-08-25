@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: type
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Fail
+Comment: Type error: array size mismatch in task queue assignment
+*/
+
 // Complete program with type error: array size mismatch in assignment
 enum Priority {
     Low,
@@ -37,4 +46,5 @@ fn main() {
     let small_queue: [Task; 2] = task_queue;
     
     printInt(1);
+    exit(0);
 }

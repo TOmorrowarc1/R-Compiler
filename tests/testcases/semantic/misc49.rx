@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: misc
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Success
+Comment: Josephus problem recursive solution with iterative variations
+*/
+
 // Josephus problem: find the survivor position in a circle elimination game
 // Classic recursion problem with historical significance from ancient Rome
 fn josephus_recursive(n: i32, k: i32) -> i32 {
@@ -29,4 +38,5 @@ fn josephus_variations() -> i32 {
 fn main() {
     let result = josephus_variations();
     printInt(result);
+    exit(0);
 }

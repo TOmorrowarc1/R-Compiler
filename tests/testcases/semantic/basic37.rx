@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: basic
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Success
+Comment: basic test, binary search and array statistical operations
+*/
+
 fn binary_search(arr: &[i32; 20], target: i32) -> i32 {
     let mut low: usize = 0usize;
     let mut high: usize = 19usize;
@@ -69,4 +78,5 @@ fn main() {
         j += 1;
     }
     let final_result: i32 = extra;
+    exit(0);
 }

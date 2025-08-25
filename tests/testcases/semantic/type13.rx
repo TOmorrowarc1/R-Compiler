@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: type
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Fail
+Comment: Type error: string assigned to pointer field in linked list structure
+*/
+
 // Complete program with type error: pointer arithmetic with wrong types
 struct Node {
     value: i32,
@@ -23,4 +32,5 @@ fn main() {
     // Type error: trying to assign string to pointer field
     let invalid_node = Node { value: 30, next: "not a pointer" };
     traverse_list(node1);
+    exit(0);
 }

@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: misc
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Success
+Comment: Solovay-Strassen primality test with Jacobi symbol computation
+*/
+
 // Solovay-Strassen primality test with Jacobi symbol computation
 // Probabilistic primality test using quadratic residues and Jacobi symbols
 fn jacobi_symbol(mut a: i32, mut n: i32) -> i32 {
@@ -156,4 +165,5 @@ fn main() {
         let factor = factorization_check_recursive(n, 2);
         printInt(factor); // Show a factor
     }
+    exit(0);
 }

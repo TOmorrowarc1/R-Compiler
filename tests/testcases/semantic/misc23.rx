@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: misc
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Success
+Comment: Queue implementation using circular array
+*/
+
 // Queue implementation using circular array
 // FIFO (First In First Out) data structure
 struct Queue {
@@ -252,4 +261,5 @@ fn main() {
         
         i += 1;
     }
+    exit(0);
 }

@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: expr
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Fail
+Comment: Complex expression error: Missing semicolon after statement - segment tree with lazy propagation, range updates, and complex query processing
+*/
+
 struct SegmentTreeNode {
     left_bound: i32,
     right_bound: i32,
@@ -378,4 +387,5 @@ fn main() {
         let backup_calc = emergency + (final_benchmark % 100);
         printInt(backup_calc)
     }
+    exit(0);
 }

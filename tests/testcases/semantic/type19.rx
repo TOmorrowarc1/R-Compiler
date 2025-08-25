@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: type
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Fail
+Comment: Type error: using unit type return value in arithmetic expression
+*/
+
 // Complete program with type error: unit type in arithmetic expression
 fn perform_operation() {
     // This function returns unit type (nothing)
@@ -22,4 +31,5 @@ fn complex_calculation() -> i32 {
 fn main() {
     let final_result = complex_calculation();
     printInt(final_result);
+    exit(0);
 }

@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: misc
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Success
+Comment: misc test, matrix transpose operation
+*/
+
 // Matrix transpose operation
 // Read a matrix and output its transpose
 struct Matrix {
@@ -66,4 +75,5 @@ fn main() {
         }
         i += 1;
     }
+    exit(0);
 }

@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: misc
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Success
+Comment: Merge Sort implementation
+*/
+
 // Merge Sort implementation
 // Stable divide-and-conquer sorting algorithm
 struct MergeSort {
@@ -99,4 +108,5 @@ fn main() {
     
     sorter.sort();
     sorter.print_array();
+    exit(0);
 }

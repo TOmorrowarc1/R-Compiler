@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: misc
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Success
+Comment: misc test, Fibonacci sequence calculation using struct
+*/
+
 // Fibonacci sequence calculation using struct
 // Calculate the nth Fibonacci number
 struct FibState {
@@ -39,4 +48,5 @@ fn main() {
     }
     
     printInt(fib.curr);
+    exit(0);
 }

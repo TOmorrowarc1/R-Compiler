@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: misc
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Fail
+Comment: Suffix Array with LCP array construction using Karp-Miller-Rosenberg algorithm with variable redeclaration error
+*/
+
 // Suffix Array construction with LCP (Longest Common Prefix) array
 // Using Karp-Miller-Rosenberg algorithm with nested recursive optimization
 
@@ -392,4 +401,5 @@ fn perform_suffix_analysis() -> i32 {
 fn main() {
     let result = perform_suffix_analysis();
     printInt(result);
+    exit(0);
 }

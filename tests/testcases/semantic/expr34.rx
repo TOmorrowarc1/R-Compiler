@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: expr
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Fail
+Comment: Complex expression error: Missing semicolon after statement - hash table with quadratic probing, collision resolution, and load factor analysis
+*/
+
 struct HashTableEntry {
     key: i32,
     value: i32,
@@ -227,4 +236,5 @@ fn main() {
             printInt(fallback + final_result)
         }
     }
+    exit(0);
 }

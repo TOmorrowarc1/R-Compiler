@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: expr
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Fail
+Comment: Expression error: Missing closing parenthesis in grouped expression - combines struct, method call, array, index, grouped, if, and operator expressions
+*/
+
 struct Point {
     x: i32,
     y: i32,
@@ -18,4 +27,5 @@ fn main() {
     if distance > 20 {
         printInt(distance);
     }
+    exit(0);
 }

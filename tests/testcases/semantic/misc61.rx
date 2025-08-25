@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: misc
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Fail
+Comment: Hybrid Z-algorithm and Manacher's algorithm with struct-int comparison error in complex string analysis
+*/
+
 // Hybrid Z-algorithm and Manacher's algorithm for palindrome-aware string matching
 // This combines Z-array computation with palindrome detection for advanced pattern analysis
 
@@ -323,4 +332,5 @@ fn perform_hybrid_analysis() -> i32 {
 fn main() {
     let result = perform_hybrid_analysis();
     printInt(result);
+    exit(0);
 }

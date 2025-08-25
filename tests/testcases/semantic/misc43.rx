@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: misc
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Success
+Comment: Elliptic curve point addition and scalar multiplication over finite fields
+*/
+
 // Elliptic curve point addition and scalar multiplication
 // Implements elliptic curve operations over finite fields
 struct EllipticPoint {
@@ -139,4 +148,5 @@ fn main() {
     } else {
         printInt(result.x);
     }
+    exit(0);
 }

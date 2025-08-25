@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: expr
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Fail
+Comment: Complex expression error: Missing semicolon after statement - disjoint set with path compression, union by rank, and Kruskal's algorithm simulation
+*/
+
 struct DisjointSetNode {
     parent: i32,
     rank: i32,
@@ -295,4 +304,5 @@ fn main() {
         let backup = emergency_value + (performance_metrics % 1000);
         printInt(backup);
     }
+    exit(0);
 }

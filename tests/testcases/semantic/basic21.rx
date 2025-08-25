@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: basic
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Fail
+Comment: basic test, quicksort implementation using Vec type (not supported)
+*/
+
 fn partition(arr: &mut [i32; SIZE], l: usize, r: usize) -> usize {
     let pivot: i32 = arr[r - 1];
     let mut i: usize = l;
@@ -42,6 +51,7 @@ fn main() {
         idx += 1;
     }
     let hold: i32 = xor;
+    exit(0);
 }
 
 const SIZE: usize = 20;

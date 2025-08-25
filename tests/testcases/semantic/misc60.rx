@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: misc
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Fail
+Comment: Aho-Corasick string matching algorithm with uninitialized struct field error
+*/
+
 // Aho-Corasick algorithm for multiple string pattern matching
 // Builds trie with failure links for efficient pattern searching
 
@@ -237,4 +246,5 @@ fn comprehensive_pattern_search() -> i32 {
 fn main() {
     let search_result = comprehensive_pattern_search();
     printInt(search_result);
+    exit(0);
 }

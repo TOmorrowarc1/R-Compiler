@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: expr
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Fail
+Comment: Complex expression error: Missing closing parenthesis in expression - suffix array construction with doubling algorithm, LCP array computation, and string analysis
+*/
+
 struct SuffixArrayNode {
     original_index: i32,
     rank: i32,
@@ -447,4 +456,5 @@ fn main() {
         let rescue_value = absolute_fallback + (comprehensive_evaluation % 10000);
         printInt(rescue_value);
     }
+    exit(0);
 }

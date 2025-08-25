@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: misc
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Success
+Comment: Red-Black Tree implementation (self-balancing BST)
+*/
+
 // Red-Black Tree implementation (self-balancing BST)
 // Maintains balance through color properties and rotations
 struct RBNode {
@@ -276,4 +285,5 @@ fn main() {
         
         i += 1;
     }
+    exit(0);
 }

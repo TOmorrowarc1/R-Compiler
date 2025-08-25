@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: misc
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Success
+Comment: KMP string matching algorithm
+*/
+
 // KMP (Knuth-Morris-Pratt) string matching algorithm
 // Efficient pattern matching with preprocessing
 struct KMPMatcher {
@@ -124,4 +133,5 @@ fn main() {
     
     let total_matches = matcher.search();
     printInt(total_matches);
+    exit(0);
 }

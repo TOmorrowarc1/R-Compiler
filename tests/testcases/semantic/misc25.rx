@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: misc
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Success
+Comment: Graph implementation with DFS and BFS traversal
+*/
+
 // Graph implementation with DFS and BFS traversal
 // Adjacency matrix representation for undirected graph
 struct Graph {
@@ -203,4 +212,5 @@ fn main() {
         
         i += 1;
     }
+    exit(0);
 }

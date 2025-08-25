@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: misc
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Success
+Comment: Moser circle problem with recursive combinations and iterative analysis
+*/
+
 // Moser's circle problem: maximum regions formed by n chords in a circle
 // Rare combinatorial problem: M(n) = C(n,4) + C(n,2) + 1
 fn combination_recursive(n: i32, r: i32) -> i32 {
@@ -44,4 +53,5 @@ fn sum_moser_numbers() -> i32 {
 fn main() {
     let result = sum_moser_numbers();
     printInt(result);
+    exit(0);
 }

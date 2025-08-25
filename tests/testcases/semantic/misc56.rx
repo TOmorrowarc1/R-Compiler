@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: misc
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Fail
+Comment: Pollard's Rho factorization algorithm with struct-integer comparison error
+*/
+
 // Pollard's Rho algorithm for integer factorization
 // Uses Floyd's cycle detection algorithm to find factors
 
@@ -109,4 +118,5 @@ fn main() {
     let number = readInt();
     let result = comprehensive_factorization(number);
     printInt(result);
+    exit(0);
 }

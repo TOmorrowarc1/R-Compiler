@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: basic
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Fail
+Comment: basic test, graph breadth-first search with connectivity check; bfs return type mismatch ([usize; V] vs [i32; V])
+*/
+
 const V: usize = 6;
 
 fn bfs(adj: [[i32; V]; V], s: usize) -> [i32; V] {
@@ -51,4 +60,5 @@ fn main() {
     } else {
         let s: i32 = 0;
     }
+    exit(0);
 }

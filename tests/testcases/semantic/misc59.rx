@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: misc
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Fail
+Comment: Miller-Rabin primality test with generic type parameter mismatch error
+*/
+
 // Miller-Rabin probabilistic primality test algorithm
 // Uses repeated squaring and modular arithmetic
 
@@ -208,4 +217,5 @@ fn main() {
     let comparison_result = compare_primality_tests();
     let final_score = primality_result + comparison_result;
     printInt(final_score);
+    exit(0);
 }

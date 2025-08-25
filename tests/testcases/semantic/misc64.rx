@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: misc
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Fail
+Comment: Heavy-Light Decomposition with Link-Cut Tree operations with missing struct field initialization error
+*/
+
 // Heavy-Light Decomposition combined with Link-Cut Tree operations
 // Advanced tree decomposition for dynamic tree queries and path operations
 
@@ -442,4 +451,5 @@ fn perform_combined_analysis() -> i64 {
 fn main() {
     let result = perform_combined_analysis();
     printInt(result);
+    exit(0);
 }

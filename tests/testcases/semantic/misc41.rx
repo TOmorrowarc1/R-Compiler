@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: misc
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Success
+Comment: Baby-step Giant-step algorithm for discrete logarithm computation
+*/
+
 // Baby-step Giant-step algorithm for discrete logarithm
 // Finds x such that g^x ≡ h (mod p) using time-space tradeoff
 struct HashEntry {
@@ -123,4 +132,5 @@ fn main() {
     
     let result = discrete_log_recursive(g, h, p, 0);
     printInt(result);
+    exit(0);
 }

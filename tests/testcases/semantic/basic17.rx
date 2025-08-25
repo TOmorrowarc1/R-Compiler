@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: basic
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Success
+Comment: basic test, complex Fibonacci calculation with even sum and bitwise operations
+*/
+
 fn main() {
     const N: usize = 24;
     let mut fib: [usize; 25] = [0usize; N + 1];
@@ -26,4 +35,5 @@ fn main() {
         p += 1;
     }
     let final_value: usize = acc ^ even_sum;
+    exit(0);
 }

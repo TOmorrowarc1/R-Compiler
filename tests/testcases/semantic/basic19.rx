@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: basic
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Success
+Comment: basic test, sieve of Eratosthenes with prime sum calculation
+*/
+
 fn main() {
     const LIMIT: usize = 120;
     let mut is_prime: [bool; 121] = [true; LIMIT + 1];
@@ -23,4 +32,5 @@ fn main() {
         n += 1;
     }
     let prime_sum: usize = total;
+    exit(0);
 }

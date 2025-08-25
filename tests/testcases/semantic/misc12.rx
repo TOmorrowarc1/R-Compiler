@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: misc
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Success
+Comment: misc test, palindrome number checker
+*/
+
 // Palindrome number checker
 // Check if a number reads the same forwards and backwards
 fn reverse_number(mut n: i32) -> i32 {
@@ -45,4 +54,5 @@ fn main() {
         printInt(0); // Not palindrome
         printInt(-1);
     }
+    exit(0);
 }

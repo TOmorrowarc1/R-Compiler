@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: misc
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Fail
+Comment: Tarjan's strongly connected components algorithm with function redefinition error
+*/
+
 // Tarjan's algorithm for finding strongly connected components
 // Uses DFS with low-link values and explicit stack management
 
@@ -242,4 +251,5 @@ fn main() {
     let cycle_result = verify_with_cycle_detection();
     let final_result = scc_result + cycle_result;
     printInt(final_result);
+    exit(0);
 }

@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: expr
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Fail
+Comment: Expression error: Missing semicolon after if expression - combines call, array, if, operator, and literal expressions
+*/
+
 fn process_array(arr: [i32; 3]) -> i32 {
     arr[0] + arr[1] + arr[2]
 }
@@ -12,4 +21,5 @@ fn main() {
     if final_check {
         printInt(1);
     }
+    exit(0);
 }

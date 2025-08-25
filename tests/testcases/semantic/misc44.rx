@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: misc
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Success
+Comment: Lenstra elliptic curve factorization method for composite numbers
+*/
+
 // Lenstra elliptic curve factorization method
 // Uses elliptic curves to find factors of composite numbers
 struct ECPoint {
@@ -166,4 +175,5 @@ fn main() {
     let n = readInt();
     let factor = lenstra_factorization_recursive(n, 1, 10);
     printInt(factor);
+    exit(0);
 }

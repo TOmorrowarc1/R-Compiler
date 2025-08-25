@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: type
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Fail
+Comment: Type error: string used as array index in matrix operations
+*/
+
 // Complete program with type error: array indexing with wrong type
 struct Matrix {
     data: [i32; 9],  // 3x3 matrix
@@ -31,4 +40,5 @@ fn main() {
     // Type error: using string as array index
     let element = mat.data["invalid_index"];
     printInt(element);
+    exit(0);
 }

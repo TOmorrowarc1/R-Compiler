@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: misc
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Success
+Comment: Quick Sort implementation
+*/
+
 // Quick Sort implementation
 // Divide and conquer sorting algorithm
 struct QuickSort {
@@ -80,4 +89,5 @@ fn main() {
     
     sorter.sort();
     sorter.print_array();
+    exit(0);
 }

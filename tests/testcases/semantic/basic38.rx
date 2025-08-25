@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: basic
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Fail
+Comment: basic test, merge sort with type mismatch in division (i32 / usize)
+*/
+
 const LEN: usize = 12;
 
 fn merge_sort(a: &mut [i32; LEN], l: usize, r: usize) {
@@ -68,4 +77,5 @@ fn main() {
     let s: i32 = checksum(arr);
     let ratio: i32 = mid / LEN;
     let final_value: i32 = s + ratio;
+    exit(0);
 }

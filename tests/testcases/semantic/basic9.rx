@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: basic
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Fail
+Comment: basic test, type mismatch in trait implementation - i32 vs bool
+*/
+
 fn main() {
     let mut board: Board = Board::new();
     let mut turn: usize = 0;
@@ -9,6 +18,7 @@ fn main() {
     }
     let outcome: Cell = board.winner();
     let holder: Cell = outcome;
+    exit(0);
 }
 
 enum Cell { Empty, X, O }

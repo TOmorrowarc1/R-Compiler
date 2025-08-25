@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: misc
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Success
+Comment: AVL Tree implementation (self-balancing binary search tree)
+*/
+
 // AVL Tree implementation (self-balancing binary search tree)
 // Maintains balance through rotations to ensure O(log n) operations
 struct AVLNode {
@@ -214,4 +223,5 @@ fn main() {
         
         i += 1;
     }
+    exit(0);
 }

@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: misc
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Success
+Comment: Tonelli-Shanks algorithm for computing modular square roots
+*/
+
 // Tonelli-Shanks algorithm for computing modular square roots
 // Finds x such that x² ≡ n (mod p) using quadratic reciprocity
 fn power_mod(mut base: i32, mut exp: i32, modulus: i32) -> i32 {
@@ -125,4 +134,5 @@ fn main() {
     
     let sqrt_result = modular_sqrt(n, p);
     printInt(sqrt_result);
+    exit(0);
 }

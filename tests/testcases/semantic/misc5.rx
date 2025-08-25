@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: misc
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Success
+Comment: misc test, simple sorting and processing with structs
+*/
+
 // Simple sorting and number processing
 // Bubble sort implementation with struct methods
 struct NumberProcessor {
@@ -61,4 +70,5 @@ fn main() {
         printInt(processors[i].get_value());
         i += 1;
     }
+    exit(0);
 }

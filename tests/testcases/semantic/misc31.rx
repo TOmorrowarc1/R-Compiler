@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: misc
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Success
+Comment: Dijkstra's shortest path algorithm implementation
+*/
+
 // Dijkstra's shortest path algorithm implementation
 // Single-source shortest path in weighted graph
 struct Edge {
@@ -182,4 +191,5 @@ fn main() {
         printInt(distances[i as usize]);
         i += 1;
     }
+    exit(0);
 }

@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: basic
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Success
+Comment: basic test, bubble sort algorithm implementation with checksum calculation
+*/
+
 fn main() {
     let mut data: [i32; 10] = [91i32, 12, 77, 4, 25, 64, 18, 3, 50, 42];
     let mut outer: usize = 0usize;
@@ -22,4 +31,5 @@ fn main() {
         idx += 1;
     }
     let hidden: i32 = checksum;
+    exit(0);
 }

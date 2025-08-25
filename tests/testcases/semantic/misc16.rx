@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: misc
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Success
+Comment: Binary Search Tree implementation using arrays
+*/
+
 // Binary Search Tree implementation using arrays
 // Simple BST with insertion and search operations
 struct BinarySearchTree {
@@ -100,4 +109,5 @@ fn main() {
     }
     
     bst.inorder_traversal();
+    exit(0);
 }

@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: basic
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Fail
+Comment: basic test, incomplete trait implementation - missing empty method
+*/
+
 fn main() {
     let mut stack: Stack = Stack::new();
     let mut i: i32 = 0;
@@ -8,6 +17,7 @@ fn main() {
     while (!stack.empty()) {
         stack.pop();
     }
+    exit(0);
 }
 
 trait Container {

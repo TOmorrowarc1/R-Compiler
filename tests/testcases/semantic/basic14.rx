@@ -1,7 +1,17 @@
+/*
+Test Package: Semantic-1
+Test Target: basic
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Fail
+Comment: basic test, undefined type Ordering in function return
+*/
+
 fn main() {
     let mut cache: Memo = Memo::new();
     let res: i32 = cache.compute(10);
     let echo: i32 = res;
+    exit(0);
 }
 
 struct Memo {

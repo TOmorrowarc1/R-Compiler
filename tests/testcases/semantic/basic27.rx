@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: basic
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Success
+Comment: basic test, Horner's method and polynomial derivative calculation
+*/
+
 fn horner(coeff: &[i32; 8], x: i32) -> i32 {
     let mut result: i32 = coeff[7];
     let mut idx: i32 = 6i32;
@@ -19,4 +28,5 @@ fn main() {
     let deriv: &mut [i32; 7] = &mut [0; 7];
     derivative(&poly, deriv);
     let value_at_two: i32 = horner(&poly, 2);
+    exit(0);
 }

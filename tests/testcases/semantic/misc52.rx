@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: misc
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Success
+Comment: Tower of Hanoi recursive solution with iterative move counting
+*/
+
 // Tower of Hanoi recursive solution with move counting
 // Classic recursive problem from ancient Indian mathematical puzzle
 fn hanoi_moves(n: i32) -> i32 {
@@ -35,4 +44,5 @@ fn total_hanoi_moves() -> i32 {
 fn main() {
     let result = total_hanoi_moves();
     printInt(result);
+    exit(0);
 }

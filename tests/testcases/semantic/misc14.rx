@@ -1,3 +1,12 @@
+/*
+Test Package: Semantic-1
+Test Target: misc
+Author: Wenxin Zheng
+Time: 2025-08-08
+Verdict: Success
+Comment: misc test, power calculation with iterative and recursive methods
+*/
+
 // Power calculation using iterative method
 // Calculate base^exponent efficiently
 fn power_iterative(base: i32, mut exp: i32) -> i32 {
@@ -54,4 +63,5 @@ fn main() {
     }
     
     printInt(result);
+    exit(0);
 }
