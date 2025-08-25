@@ -8,8 +8,8 @@ Comment: if statement test, undefined variable in assignment
 */
 
 fn main() {
-    let mut data = 4;
-    if data > 2 {
+    let mut data : i32 = 4;
+    if (data > 2) {
         let data = data + 1;
         let _ = data;
     } else {

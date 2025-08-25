@@ -87,5 +87,6 @@ auto parsePatternReferNode(TokenStream &stream)
 auto parsePatternWildcardNode(TokenStream &stream)
     -> std::unique_ptr<PatternWildNode> {
   Position position = stream.peek().line;
+  stream.next();
   return std::make_unique<PatternWildNode>(position);
 }

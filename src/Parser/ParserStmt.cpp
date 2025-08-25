@@ -47,11 +47,10 @@ auto parseStmtLetNode(TokenStream &stream) -> std::unique_ptr<StmtLetNode> {
     stream.next();
   }
   pattern = parsePatternNode(stream);
-  if (stream.peek().type != TokenType::COLON) {
-    throw CompilerException("No type infer.", position);
+  if (stream.peek().type == TokenType::COLON) {
+    stream.next();
+    type = parseTypeNode(stream);
   }
-  stream.next();
-  type = parseTypeNode(stream);
   if (stream.peek().type == TokenType::ASSIGN) {
     stream.next();
     init_value = parseExprNode(stream);

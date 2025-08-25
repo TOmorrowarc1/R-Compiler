@@ -631,14 +631,25 @@ void SemanticChecker::visit(StmtEmptyNode *node) {}
 void SemanticChecker::visit(StmtItemNode *node) { node->item_->accept(*this); }
 
 void SemanticChecker::visit(StmtLetNode *node) {
-  node->type_->accept(*this);
-  auto type = typeNodeToType(node->type_.get());
-  bindPatternToType(node->pattern_.get(), type);
-  if (node->init_value_) {
-    node->init_value_->accept(*this);
-  }
-  if (!node->init_value_->value_info_->getType()->isEqual(type.get())) {
-    throw std::runtime_error("Type mismatch in let statement initialization");
+  if (is_instance_of<PatternWildNode, PatternNode>(node->pattern_)) {
+    if (node->init_value_) {
+      node->init_value_->accept(*this);
+    }
+  } else if (is_instance_of<PatternIDNode, PatternNode>(node->pattern_)) {
+    if (!node->type_) {
+      throw std::runtime_error("ID pattern no type infer.");
+    }
+    node->type_->accept(*this);
+    auto type = typeNodeToType(node->type_.get());
+    bindPatternToType(node->pattern_.get(), type);
+    if (node->init_value_) {
+      node->init_value_->accept(*this);
+    }
+    if (!node->init_value_->value_info_->getType()->isEqual(type.get())) {
+      throw std::runtime_error("Type mismatch in let statement initialization");
+    }
+  } else {
+    throw std::runtime_error("Only ID and _ are supported in let stmt.");
   }
 }
 

@@ -8,8 +8,8 @@ Comment: if statement test, empty branch with comments
 */
 
 fn main() {
-    let x = true;
-    if x {
+    let x : bool = true;
+    if (x) {
         // Empty branch
     }
     exit(0);
