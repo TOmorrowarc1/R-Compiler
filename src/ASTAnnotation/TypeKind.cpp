@@ -9,6 +9,9 @@ auto TypeKindPath::isEqual(const TypeKind *other) const -> bool {
   if (const auto *otherPath = dynamic_cast<const TypeKindPath *>(other)) {
     return typeDef == otherPath->typeDef;
   }
+  if (const auto *otherPossi = dynamic_cast<const TypeKindPossi *>(other)) {
+    return otherPossi->isTypePath(typeDef.get());
+  }
   return false;
 }
 auto TypeKindPath::isTypePath(const TypeDef *typeDef) const -> bool {
