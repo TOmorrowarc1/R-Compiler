@@ -91,7 +91,6 @@ target_include_directories(compiler_lib PUBLIC ${HEADER_ALL})
 # 创建编译目标：可执行文件code 并链接对应的静态库。
 add_executable(code src/main.cpp)
 target_link_libraries(code PRIVATE compiler_lib)
-target_include_directories(code PUBLIC ${HEADER_ALL})
 
 # 开启测试功能
 enable_testing()
