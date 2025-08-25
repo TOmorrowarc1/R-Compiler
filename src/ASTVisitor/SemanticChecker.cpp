@@ -178,13 +178,7 @@ void SemanticChecker::visit(ItemImplNode *node) {
 void SemanticChecker::visit(ItemTraitNode *node) {}
 
 void SemanticChecker::visit(ExprArrayNode *node) {
-  if (node->length_) {
-    node->length_->accept(*this);
-    auto length_type = node->length_->value_info_->getType();
-    if (!judgeU32(node->length_.get())) {
-      throw std::runtime_error("Array length must be U32.");
-    }
-  }
+  int32_t length = 0;
   node->elements_[0]->accept(*this);
   auto element_type = node->elements_[0]->value_info_->getType();
   for (const auto &element : node->elements_) {
@@ -194,8 +188,16 @@ void SemanticChecker::visit(ExprArrayNode *node) {
           "All elements in an array must have the same type");
     }
   }
-  auto array_type =
-      std::make_shared<TypeKindArray>(element_type, node->elements_.size());
+  if (node->length_) {
+    node->length_->accept(*this);
+    auto length_type = node->length_->value_info_->getType();
+    if (!judgeU32(node->length_.get())) {
+      throw std::runtime_error("Array length must be U32.");
+    }
+    length = dynamic_cast<ExprLiteralIntNode *>(node->length_.get())->value_;
+  }
+  length = length == 0 ? node->elements_.size() : length;
+  auto array_type = std::make_shared<TypeKindArray>(element_type, length);
   // The array expr is not a left value, not mutable, and not const.
   node->value_info_ =
       std::make_unique<ValueInfo>(array_type, false, false, false);
@@ -216,8 +218,9 @@ void SemanticChecker::visit(ExprArrayIndexNode *node) {
   auto element_type =
       std::dynamic_pointer_cast<TypeKindArray>(array_type)->getType();
   node->value_info_ = std::make_unique<ValueInfo>(
-      std::move(array_type), node->array_->value_info_->isLeftValue(),
-      node->array_->value_info_->isMutable(), node->value_info_->isConst());
+      std::move(element_type), node->array_->value_info_->isLeftValue(),
+      node->array_->value_info_->isMutable(),
+      node->array_->value_info_->isConst());
 }
 
 void SemanticChecker::visit(ExprBlockNode *node) {
