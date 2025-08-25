@@ -8,14 +8,14 @@ Comment: loop test, nested while loops with conditional logic
 */
 
 fn main() {
-    let mut combos = 0u32;
-    let mut x = 0u32;
-    while x < 4 {
-        let mut y = 0u32;
-        while y < 4 {
-            let mut z = 0u32;
-            while z < 4 {
-                if x + y + z == 3 {
+    let mut combos:u32 = 0u32;
+    let mut x:u32 = 0u32;
+    while (x < 4) {
+        let mut y:u32 = 0u32;
+        while (y < 4) {
+            let mut z:u32 = 0u32;
+            while (z < 4) {
+                if (x + y + z == 3) {
                     combos += 1;
                 }
                 z += 1;

@@ -8,8 +8,8 @@ Comment: loop test, break statement outside of loop context
 */
 
 fn main() {
-    let mut i = 0u32;
-    while i < 3 {
+    let mut i:u32 = 0u32;
+    while (i < 3) {
         let _ = i;
         i += 1;
     }
