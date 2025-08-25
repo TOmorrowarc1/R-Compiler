@@ -5,7 +5,7 @@
 
 ExprIfNode::ExprIfNode(std::unique_ptr<ExprNode> &&condition,
                        std::unique_ptr<ExprBlockNode> &&then_block,
-                       std::unique_ptr<ExprBlockNode> &&else_block,
+                       std::unique_ptr<ExprNode> &&else_block,
                        Position position)
     : ExprBlockInNode(position), condition_(std::move(condition)),
       then_block_(std::move(then_block)), else_block_(std::move(else_block)) {}

@@ -517,10 +517,14 @@ auto parseExprIfNode(TokenStream &stream) -> std::unique_ptr<ExprIfNode> {
   stream.next();
   auto condition = parseCondition(stream);
   auto then_block = parseExprBlockNode(stream);
-  std::unique_ptr<ExprBlockNode> else_block;
+  std::unique_ptr<ExprNode> else_block;
   if (stream.peek().type == TokenType::ELSE) {
     stream.next();
-    else_block = parseExprBlockNode(stream);
+    if (stream.peek().type == TokenType::IF) {
+      else_block = parseExprIfNode(stream);
+    } else {
+      else_block = parseExprBlockNode(stream);
+    }
   }
   return std::make_unique<ExprIfNode>(std::move(condition),
                                       std::move(then_block),
@@ -674,6 +678,7 @@ auto parseExprLiteralStringNode(TokenStream &stream)
   case TokenType::STRINGLITERAL:
   case TokenType::CSTRINGLITERAL:
     result = content.substr(1, content.length() - 2);
+    break;
   case TokenType::RAWSTRINGLITERAL:
   case TokenType::RAWCSTRINGLITERAL: {
     int32_t hash_count = 0;
@@ -689,6 +694,7 @@ auto parseExprLiteralStringNode(TokenStream &stream)
     }
     result =
         content.substr(2 + hash_count, content.length() - 3 - 2 * hash_count);
+    break;
   }
   default:
     throw CompilerException("The string literal has wrong format.", position);
