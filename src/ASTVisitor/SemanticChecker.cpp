@@ -224,7 +224,7 @@ void SemanticChecker::visit(ExprArrayIndexNode *node) {
 }
 
 void SemanticChecker::visit(ExprBlockNode *node) {
-  current_scope_ = current_scope_->addNextChildScope();
+  current_scope_ = current_scope_->getNextChildScope();
   for (auto &stmt : node->statements_) {
     stmt->accept(*this);
   }

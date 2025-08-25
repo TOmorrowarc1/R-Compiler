@@ -12,8 +12,11 @@ void ASTAnnotate(ASTRootNode *root, Scope *initial_scope) {
   scopeBuildInInit(initial_scope);
   SymbolCollector collector(initial_scope);
   root->accept(collector);
+  initial_scope->resetIndex();
   SymbolAnnotator annotator(initial_scope);
   root->accept(annotator);
+  initial_scope->resetIndex();
   SemanticChecker checker(initial_scope);
   root->accept(checker);
+  initial_scope->resetIndex();
 }

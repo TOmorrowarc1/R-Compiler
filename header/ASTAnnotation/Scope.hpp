@@ -34,4 +34,5 @@ public:
       -> std::shared_ptr<SymbolTypeInfo>;
   auto addNextChildScope() -> Scope *;
   auto getNextChildScope() -> Scope *;
+  void resetIndex();
 };

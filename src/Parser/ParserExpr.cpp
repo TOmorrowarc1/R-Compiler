@@ -84,6 +84,9 @@ const std::vector<bindPower> led_powers = {
 
     // All possible starters for stmt/exprs after stmtexpr's semicolon.
     {TokenType::IDENTIFIER, 0, 0},
+    {TokenType::IF, 0, 0},
+    {TokenType::LOOP, 0, 0},
+    {TokenType::WHILE, 0, 0},
     {TokenType::LET, 0, 0},
     {TokenType::FN, 0, 0},
     {TokenType::CONST, 0, 0},

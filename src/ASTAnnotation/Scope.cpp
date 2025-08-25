@@ -82,5 +82,12 @@ auto Scope::getNextChildScope() -> Scope * {
     throw std::runtime_error("No more child scopes available");
     return nullptr;
   }
-  return children_[index_now].get();
+  return children_[index_now++].get();
+}
+
+void Scope::resetIndex() {
+  index_now = 0;
+  for (const auto &child_scope : children_) {
+    child_scope->resetIndex();
+  }
 }
