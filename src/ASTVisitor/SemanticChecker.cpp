@@ -248,7 +248,6 @@ void SemanticChecker::visit(ExprBlockConstNode *node) {
 }
 
 void SemanticChecker::visit(ExprCallNode *node) {
-  node->caller_->accept(*this);
   if (!is_instance_of<ExprPathNode, ExprNode>(node->caller_.get())) {
     throw std::runtime_error("Function call requires a path as caller");
   }

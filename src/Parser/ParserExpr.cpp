@@ -72,7 +72,7 @@ const std::vector<bindPower> led_powers = {
 
     {TokenType::AS, 21, 22},
 
-    {TokenType::LEFT_PAREN, 0, 0},
+    {TokenType::LEFT_PAREN, 1, 0},
     {TokenType::LEFT_BRACKET, 21, 0},
     {TokenType::LEFT_BRACE, 1, 0},
 
