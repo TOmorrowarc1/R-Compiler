@@ -187,13 +187,13 @@ auto parseItemStructNode(TokenStream &stream)
       fields.push_back(parseItemStructField(stream));
       while (stream.peek().type == TokenType::COMMA) {
         stream.next();
-        if (stream.peek().type == TokenType::RIGHT_PAREN) {
+        if (stream.peek().type == TokenType::RIGHT_BRACE) {
           break;
         }
         fields.push_back(parseItemStructField(stream));
       }
     }
-    if (stream.peek().type != TokenType::RIGHT_PAREN) {
+    if (stream.peek().type != TokenType::RIGHT_BRACE) {
       throw CompilerException("Unexpected token in function parameters",
                               position);
     }

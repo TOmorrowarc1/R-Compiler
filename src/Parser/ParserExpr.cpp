@@ -248,7 +248,8 @@ auto parseNudExprNode(TokenStream &stream, int32_t power)
   case TokenType::LEFT_BRACKET:
     return parseExprArrayNode(stream);
   }
-  throw CompilerException("Unexpected token in expression.", position);
+  throw CompilerException(
+      "Unexpected token in expression." + stream.peek().content, position);
   return nullptr;
 }
 
