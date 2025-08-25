@@ -1,0 +1,166 @@
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from AllTest
+[ RUN      ] AllTest.VaildAll
+Test case array1 passed.
+Test case array2 passed.
+Test case array3 passed.
+Test case array4 passed.
+Test case array5 failed. Expected -1, got 0
+Test case array6 passed.
+Test case array7 passed.
+Test case array8 passed.
+Test case expr1 passed.
+Test case expr10 passed.
+Test case expr11 passed.
+Test case expr12 passed.
+Test case expr13 failed. Expected -1, got 0
+Test case expr14 passed.
+Test case expr15 passed.
+Test case expr16 passed.
+Test case expr17 passed.
+Test case expr18 passed.
+Test case expr19 passed.
+Test case expr2 passed.
+Test case expr20 passed.
+Test case expr21 passed.
+Test case expr22 passed.
+Test case expr23 passed.
+Test case expr24 passed.
+Test case expr25 passed.
+Test case expr26 passed.
+Test case expr27 passed.
+Test case expr28 passed.
+Test case expr29 passed.
+Test case expr3 passed.
+Test case expr30 passed.
+Test case expr31 passed.
+Test case expr32 passed.
+Test case expr33 passed.
+Test case expr34 passed.
+Test case expr35 passed.
+Test case expr36 passed.
+Test case expr37 passed.
+Test case expr38 passed.
+Test case expr39 passed.
+Test case expr4 passed.
+Test case expr40 passed.
+Test case expr5 passed.
+Test case expr6 passed.
+Test case expr7 passed.
+Test case expr8 passed.
+Test case expr9 passed.
+Test case if1 failed. Expected 0, got -1
+Test case if10 failed. Expected 0, got -1
+Test case if11 passed.
+Test case if12 passed.
+Test case if13 passed.
+Test case if14 passed.
+Test case if15 passed.
+Test case if2 failed. Expected 0, got -1
+Test case if3 failed. Expected 0, got -1
+Test case if4 failed. Expected 0, got -1
+Test case if5 failed. Expected 0, got -1
+Test case if6 failed. Expected 0, got -1
+Test case if7 failed. Expected 0, got -1
+Test case if8 failed. Expected 0, got -1
+Test case if9 failed. Expected 0, got -1
+Test case loop1 failed. Expected 0, got -1
+Test case loop10 passed.
+Test case loop2 failed. Expected 0, got -1
+Test case loop3 failed. Expected 0, got -1
+Test case loop4 failed. Expected 0, got -1
+Test case loop5 failed. Expected 0, got -1
+Test case loop6 passed.
+Test case loop7 passed.
+Test case loop8 passed.
+Test case loop9 passed.
+Test case misc1 failed. Expected 0, got -1
+Test case misc10 failed. Expected 0, got -1
+Test case misc11 failed. Expected 0, got -1
+Test case misc12 failed. Expected 0, got -1
+Test case misc13 failed. Expected 0, got -1
+Test case misc14 failed. Expected 0, got -1
+Test case misc15 failed. Expected 0, got -1
+Test case misc16 failed. Expected 0, got -1
+Test case misc17 failed. Expected 0, got -1
+Test case misc18 failed. Expected 0, got -1
+Test case misc19 failed. Expected 0, got -1
+Test case misc2 failed. Expected 0, got -1
+Test case misc20 failed. Expected 0, got -1
+Test case misc21 failed. Expected 0, got -1
+Test case misc22 failed. Expected 0, got -1
+Test case misc23 failed. Expected 0, got -1
+Test case misc24 failed. Expected 0, got -1
+Test case misc25 failed. Expected 0, got -1
+Test case misc26 failed. Expected 0, got -1
+Test case misc27 failed. Expected 0, got -1
+Test case misc28 failed. Expected 0, got -1
+Test case misc29 failed. Expected 0, got -1
+Test case misc3 failed. Expected 0, got -1
+Test case misc30 failed. Expected 0, got -1
+Test case misc31 failed. Expected 0, got -1
+Test case misc32 failed. Expected 0, got -1
+Test case misc33 failed. Expected 0, got -1
+Test case misc34 failed. Expected 0, got -1
+Test case misc35 failed. Expected 0, got -1
+Test case misc36 failed. Expected 0, got -1
+Test case misc37 failed. Expected 0, got -1
+Test case misc38 failed. Expected 0, got -1
+Test case misc39 failed. Expected 0, got -1
+Test case misc4 failed. Expected 0, got -1
+Test case misc40 failed. Expected 0, got -1
+Test case misc41 failed. Expected 0, got -1
+Test case misc42 failed. Expected 0, got -1
+Test case misc43 failed. Expected 0, got -1
+Test case misc44 failed. Expected 0, got -1
+Test case misc45 failed. Expected 0, got -1
+Test case misc46 failed. Expected 0, got -1
+Test case misc47 failed. Expected 0, got -1
+Test case misc48 failed. Expected 0, got -1
+Test case misc49 failed. Expected 0, got -1
+Test case misc5 failed. Expected 0, got -1
+Test case misc50 failed. Expected 0, got -1
+Test case misc51 failed. Expected 0, got -1
+Test case misc52 failed. Expected 0, got -1
+Test case misc53 failed. Expected 0, got -1
+Test case misc54 failed. Expected 0, got -1
+Test case misc55 failed. Expected 0, got -1
+Test case misc56 passed.
+Test case misc57 passed.
+Test case misc58 passed.
+Test case misc59 passed.
+Test case misc6 failed. Expected 0, got -1
+Test case misc60 passed.
+Test case misc61 passed.
+Test case misc62 passed.
+Test case misc63 passed.
+Test case misc64 passed.
+Test case misc65 passed.
+Test case misc7 failed. Expected 0, got -1
+Test case misc8 failed. Expected 0, got -1
+Test case misc9 failed. Expected 0, got -1
+Test case return1 passed.
+Test case return2 failed. Expected 0, got -1
+Test case return3 passed.
+Test case return4 passed.
+Test case type1 passed.
+Test case type10 passed.
+Test case type11 passed.
+Test case type12 passed.
+Test case type13 passed.
+Test case type14 passed.
+Test case type15 passed.
+Test case type16 passed.
+Test case type17 passed.
+Test case type18 passed.
+Test case type19 passed.
+Test case type2 passed.
+Test case type20 passed.
+Test case type3 passed.
+Test case type4 passed.
+Test case type5 passed.
+Test case type6 passed.
+Test case type7 passed.
+Test case type8 passed.
+Test case type9 passed.
