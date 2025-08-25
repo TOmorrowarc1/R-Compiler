@@ -18,6 +18,53 @@ auto TypeKindPath::getTypeDef() const -> std::shared_ptr<TypeDef> {
   return typeDef;
 }
 
+TypeKindPossi::TypeKindPossi(std::vector<std::shared_ptr<TypeDef>> &&possi)
+    : possi_(std::move(possi)) {}
+TypeKindPossi::~TypeKindPossi() = default;
+auto TypeKindPossi::isEqual(const TypeKind *other) const -> bool {
+  if (const auto *other_type = dynamic_cast<const TypeKindPath *>(other)) {
+    if (lock_type_) {
+      return lock_type_.get() == other_type->getTypeDef().get();
+    }
+    for (const auto &p : possi_) {
+      if (other_type->isTypePath(p.get())) {
+        return true;
+      }
+    }
+  }
+  if (const auto *other_type = dynamic_cast<const TypeKindPossi *>(other)) {
+    if (lock_type_) {
+      return other_type->isTypePath(lock_type_.get());
+    }
+    for (const auto &p1 : possi_) {
+      for (const auto &p2 : other_type->getPossi()) {
+        if (p1 == p2) {
+          return true;
+        }
+      }
+    }
+  }
+  return false;
+}
+auto TypeKindPossi::isTypePath(const TypeDef *typeDef) const -> bool {
+  if (lock_type_) {
+    return lock_type_.get() == typeDef;
+  }
+  for (const auto &p : possi_) {
+    if (p.get() == typeDef) {
+      return true;
+    }
+  }
+  return false;
+}
+auto TypeKindPossi::getPossi() const
+    -> const std::vector<std::shared_ptr<TypeDef>> & {
+  return possi_;
+}
+void TypeKindPossi::lockType(std::shared_ptr<TypeDef> type) {
+  lock_type_ = type;
+}
+
 TypeKindArray::TypeKindArray(std::shared_ptr<TypeKind> type_kind, uint32_t size)
     : type_kind_(std::move(type_kind)), size(size) {}
 TypeKindArray::~TypeKindArray() = default;

@@ -21,6 +21,20 @@ public:
   auto getTypeDef() const -> std::shared_ptr<TypeDef>;
 };
 
+class TypeKindPossi : public TypeKind {
+private:
+  std::vector<std::shared_ptr<TypeDef>> possi_;
+  std::shared_ptr<TypeDef> lock_type_;
+
+public:
+  TypeKindPossi(std::vector<std::shared_ptr<TypeDef>> &&possi);
+  ~TypeKindPossi() override;
+  auto isEqual(const TypeKind *other) const -> bool override;
+  auto isTypePath(const TypeDef *typeDef) const -> bool override;
+  void lockType(std::shared_ptr<TypeDef> type);
+  auto getPossi() const -> const std::vector<std::shared_ptr<TypeDef>> &;
+};
+
 class TypeKindArray : public TypeKind {
 private:
   std::shared_ptr<TypeKind> type_kind_;
