@@ -1,7 +1,3 @@
-[==========] Running 1 test from 1 test suite.
-[----------] Global test environment set-up.
-[----------] 1 test from AllTest
-[ RUN      ] AllTest.VaildAll
 Test case array1 passed.
 Test case array2 passed.
 Test case array3 passed.
@@ -14,7 +10,7 @@ Test case expr1 passed.
 Test case expr10 passed.
 Test case expr11 passed.
 Test case expr12 passed.
-Test case expr13 failed. Expected -1, got 0
+Test case expr13 passed.
 Test case expr14 passed.
 Test case expr15 passed.
 Test case expr16 passed.
@@ -50,14 +46,14 @@ Test case expr6 passed.
 Test case expr7 passed.
 Test case expr8 passed.
 Test case expr9 passed.
-Test case if1 failed. Expected 0, got -1
+Test case if1 passed.
 Test case if10 failed. Expected 0, got -1
 Test case if11 passed.
 Test case if12 passed.
 Test case if13 passed.
 Test case if14 passed.
 Test case if15 passed.
-Test case if2 failed. Expected 0, got -1
+Test case if2 passed.
 Test case if3 failed. Expected 0, got -1
 Test case if4 failed. Expected 0, got -1
 Test case if5 failed. Expected 0, got -1
