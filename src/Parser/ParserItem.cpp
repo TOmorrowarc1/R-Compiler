@@ -148,7 +148,7 @@ auto parseItemConstNode(TokenStream &stream) -> std::unique_ptr<ItemConstNode> {
   stream.next();
   std::string name;
   std::unique_ptr<TypeNode> type;
-  std::unique_ptr<ExprBlockNode> value;
+  std::unique_ptr<ExprNode> value;
   if (stream.peek().type != TokenType::IDENTIFIER) {
     throw CompilerException("Expected identifier after 'const'", position);
   }
@@ -159,11 +159,11 @@ auto parseItemConstNode(TokenStream &stream) -> std::unique_ptr<ItemConstNode> {
   } else {
     throw CompilerException("Expected ':' after Const name", position);
   }
-  if (stream.peek().type != TokenType::EQUAL) {
+  if (stream.peek().type != TokenType::ASSIGN) {
     throw CompilerException("Expected '=' after Const type", position);
   }
   stream.next();
-  value = parseExprBlockNode(stream);
+  value = parseExprNode(stream);
   return std::make_unique<ItemConstNode>(name, std::move(type),
                                          std::move(value), position);
 }

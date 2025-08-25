@@ -25,6 +25,9 @@ int main() {
   } catch (CompilerException &e) {
     std::cout << e.getExceptionMessage() << '\n';
     return 1;
+  } catch (std::exception &e) {
+    std::cout << e.what() << '\n';
+    return 1;
   }
 
   return 0;
