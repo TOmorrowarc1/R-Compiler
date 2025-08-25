@@ -462,12 +462,20 @@ auto parseExprBlockNode(TokenStream &stream) -> std::unique_ptr<ExprBlockNode> {
       break;
     default:
       auto expr = parseExprNode(stream);
-      if (is_instance_of<ExprBlockOutNode, ExprNode>(expr) &&
-          stream.peek().type != TokenType::SEMICOLON) {
-        return_value = std::move(
-            dynamic_unique_ptr_cast<ExprBlockOutNode, ExprNode>(expr));
-        end_flag = true;
+      if (is_instance_of<ExprBlockOutNode, ExprNode>(expr)) {
+        if (stream.peek().type != TokenType::SEMICOLON) {
+          return_value = std::move(
+              dynamic_unique_ptr_cast<ExprBlockOutNode, ExprNode>(expr));
+          end_flag = true;
+        } else {
+          stream.next();
+          statements.push_back(
+              std::make_unique<StmtExprNode>(std::move(expr), position));
+        }
       } else {
+        if (stream.peek().type == TokenType::SEMICOLON) {
+          stream.next();
+        }
         statements.push_back(
             std::make_unique<StmtExprNode>(std::move(expr), position));
       }
@@ -504,9 +512,6 @@ auto parseExprWhileNode(TokenStream &stream) -> std::unique_ptr<ExprWhileNode> {
   Position position = stream.peek().line;
   stream.next();
   auto condition = parseCondition(stream);
-  if (stream.next().type != TokenType::LEFT_BRACE) {
-    throw CompilerException("the while expr missed left brace.", position);
-  }
   auto loop_body = parseExprBlockNode(stream);
   return std::make_unique<ExprWhileNode>(std::move(condition),
                                          std::move(loop_body), position);

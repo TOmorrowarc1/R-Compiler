@@ -382,8 +382,8 @@ void SemanticChecker::visit(ExprLoopNode *node) {
 
 void SemanticChecker::visit(ExprWhileNode *node) {
   node->condition_->accept(*this);
-  if (node->condition_->value_info_->getType()->isTypePath(
-          current_scope_->getType("bool")->getType().get())) {
+  auto bool_type = current_scope_->getType("bool")->getType().get();
+  if (!node->condition_->value_info_->getType()->isTypePath(bool_type)) {
     throw std::runtime_error("While condition must be a boolean");
   }
   node->loop_body_->accept(*this);
@@ -425,7 +425,7 @@ void SemanticChecker::visit(ExprOperBinaryNode *node) {
   case BinaryOperator::GREATER_THAN:
   case BinaryOperator::GREATER_EQUAL:
     if (!lhs_type->isEqual(rhs_type.get())) {
-      throw std::runtime_error("Equality operator requires boolean operands");
+      throw std::runtime_error("Operands compared have the same type.");
     }
     node->value_info_ = std::make_unique<ValueInfo>(
         std::make_shared<TypeKindPath>(

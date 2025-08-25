@@ -2,7 +2,8 @@
 #include "ExprANode.hpp"
 
 class PathNode;
-class ExprPathNode : public ExprNode {
+
+class ExprPathNode : public ExprBlockOutNode {
 public:
   std::unique_ptr<PathNode> path_;
 
