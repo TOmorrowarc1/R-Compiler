@@ -10,10 +10,11 @@ public:
 
 class ExprLiteralIntNode : public ExprLiteralNode {
 public:
+  enum class IntType { I32, U32, NUM };
+  IntType int_type_;
   int32_t value_;
-  bool signed_;
 
-  ExprLiteralIntNode(int32_t value, bool signed_, Position position);
+  ExprLiteralIntNode(int32_t value, IntType int_type, Position position);
   ~ExprLiteralIntNode();
   void accept(Visitor &visitor) override;
 };

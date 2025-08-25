@@ -346,10 +346,23 @@ void SemanticChecker::visit(ExprIfNode *node) {
 }
 
 void SemanticChecker::visit(ExprLiteralIntNode *node) {
-  auto int_type =
-      std::make_shared<TypeKindPath>(current_scope_->getType("i32")->getType());
+  auto i32_type = current_scope_->getType("i32")->getType();
+  auto u32_type = current_scope_->getType("u32")->getType();
+  std::shared_ptr<TypeKind> type_kind;
+  switch (node->int_type_) {
+  case ExprLiteralIntNode::IntType::I32:
+    type_kind = std::make_shared<TypeKindPath>(i32_type);
+    break;
+  case ExprLiteralIntNode::IntType::U32:
+    type_kind = std::make_shared<TypeKindPath>(u32_type);
+    break;
+  case ExprLiteralIntNode::IntType::NUM:
+    type_kind = std::make_shared<TypeKindPossi>(
+        std::vector<std::shared_ptr<TypeDef>>{i32_type, u32_type});
+    break;
+  }
   node->value_info_ =
-      std::make_unique<ValueInfo>(std::move(int_type), false, false, false);
+      std::make_unique<ValueInfo>(std::move(type_kind), false, false, false);
 }
 
 void SemanticChecker::visit(ExprLiteralBoolNode *node) {

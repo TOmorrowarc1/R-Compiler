@@ -81,7 +81,15 @@ const std::vector<bindPower> led_powers = {
     {TokenType::RIGHT_BRACE, 0, 0},
     {TokenType::SEMICOLON, 0, 0},
     {TokenType::COMMA, 0, 0},
+
+    // All possible starters for stmt/exprs after stmtexpr's semicolon.
     {TokenType::IDENTIFIER, 0, 0},
+    {TokenType::LET, 0, 0},
+    {TokenType::FN, 0, 0},
+    {TokenType::CONST, 0, 0},
+    {TokenType::STRUCT, 0, 0},
+    {TokenType::ENUM, 0, 0},
+    {TokenType::IMPL, 0, 0},
 };
 
 class OpPowerRecoder {
@@ -576,7 +584,7 @@ auto parseExprLiteralIntNode(TokenStream &stream)
   Position position = stream.peek().line;
   size_t end_pos = std::string::npos;
   std::string str = stream.next().content;
-  bool sign = false;
+  ExprLiteralIntNode::IntType int_type = ExprLiteralIntNode::IntType::NUM;
   for (size_t i = 0; i < str.length() && end_pos == std::string::npos; ++i) {
     char c = str[i];
     if (std::isalpha(c)) {
@@ -585,10 +593,10 @@ auto parseExprLiteralIntNode(TokenStream &stream)
         end_pos = i;
         switch (str[i]) {
         case 'i':
-          sign = true;
+          int_type = ExprLiteralIntNode::IntType::I32;
           break;
         case 'u':
-          sign = false;
+          int_type = ExprLiteralIntNode::IntType::U32;
           break;
         default:
           throw CompilerException("Unknown suffix in int literal.", position);
@@ -621,7 +629,7 @@ auto parseExprLiteralIntNode(TokenStream &stream)
     }
   }
   int32_t value = std::stoi(cleaned_literal.substr(pos), &pos, base);
-  return std::make_unique<ExprLiteralIntNode>(value, sign, position);
+  return std::make_unique<ExprLiteralIntNode>(value, int_type, position);
 }
 
 auto parseExprLiteralBoolNode(TokenStream &stream)

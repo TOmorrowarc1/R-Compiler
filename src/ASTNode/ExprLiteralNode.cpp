@@ -2,9 +2,9 @@
 #include "ValueInfo.hpp"
 #include "Visitor.hpp"
 
-ExprLiteralIntNode::ExprLiteralIntNode(int32_t value, bool sign,
+ExprLiteralIntNode::ExprLiteralIntNode(int32_t value, IntType int_type,
                                        Position position)
-    : ExprLiteralNode(position), value_(value), signed_(sign) {}
+    : ExprLiteralNode(position), int_type_(int_type), value_(value) {}
 ExprLiteralIntNode::~ExprLiteralIntNode() = default;
 void ExprLiteralIntNode::accept(Visitor &visitor) { visitor.visit(this); }
 
