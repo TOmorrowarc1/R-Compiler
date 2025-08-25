@@ -323,8 +323,9 @@ void SemanticChecker::visit(ExprGroupNode *node) {
 
 void SemanticChecker::visit(ExprIfNode *node) {
   node->condition_->accept(*this);
-  if (!is_instance_of<ExprLiteralBoolNode, ExprNode>(node->condition_.get())) {
-    throw std::runtime_error("Condition statement must be a boolean");
+  auto bool_type = current_scope_->getType("bool")->getType().get();
+  if (!node->condition_->value_info_->getType()->isTypePath(bool_type)) {
+    throw std::runtime_error("If condition must be a boolean");
   }
   node->then_block_->accept(*this);
   auto then_type = node->then_block_->value_info_->getType();

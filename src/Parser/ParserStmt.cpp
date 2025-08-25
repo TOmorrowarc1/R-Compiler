@@ -40,18 +40,18 @@ auto parseStmtLetNode(TokenStream &stream) -> std::unique_ptr<StmtLetNode> {
   std::unique_ptr<PatternNode> pattern;
   std::unique_ptr<TypeNode> type;
   std::unique_ptr<ExprNode> init_value;
-  std::unique_ptr<ExprBlockNode> else_body;
-  if(stream.peek().type == TokenType::REF) {
+  if (stream.peek().type == TokenType::REF) {
     stream.next();
   }
-  if(stream.peek().type == TokenType::MUT) {
+  if (stream.peek().type == TokenType::MUT) {
     stream.next();
   }
   pattern = parsePatternNode(stream);
-  if (stream.peek().type == TokenType::COLON) {
-    stream.next();
-    type = parseTypeNode(stream);
+  if (stream.peek().type != TokenType::COLON) {
+    throw CompilerException("No type infer.", position);
   }
+  stream.next();
+  type = parseTypeNode(stream);
   if (stream.peek().type == TokenType::ASSIGN) {
     stream.next();
     init_value = parseExprNode(stream);

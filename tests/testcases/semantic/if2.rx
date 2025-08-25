@@ -8,8 +8,8 @@ Comment: if statement test, if-else with mutable variable modification
 */
 
 fn main() {
-    let mut flag = true;
-    if flag {
+    let mut flag: bool = true;
+    if (flag) {
         flag = false;
     } else {
         flag = true;

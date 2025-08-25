@@ -81,6 +81,7 @@ const std::vector<bindPower> led_powers = {
     {TokenType::RIGHT_BRACE, 0, 0},
     {TokenType::SEMICOLON, 0, 0},
     {TokenType::COMMA, 0, 0},
+    {TokenType::IDENTIFIER, 0, 0},
 };
 
 class OpPowerRecoder {
@@ -107,7 +108,7 @@ public:
     if (iter != led_power_map.end()) {
       return iter->second.left_power;
     }
-    throw std::runtime_error("This token is not a led operator.");
+    throw std::runtime_error("Token is not a led operator.");
     return 0;
   }
 
@@ -116,7 +117,7 @@ public:
     if (iter != led_power_map.end()) {
       return iter->second.right_power;
     }
-    throw std::runtime_error("This token is not a led operator.");
+    throw std::runtime_error("Token is not a led operator.");
     return 0;
   }
 
@@ -125,7 +126,7 @@ public:
     if (iter != nud_power_map.end()) {
       return iter->second.left_power;
     }
-    throw std::runtime_error("This token is not a led operator.");
+    throw std::runtime_error("Token is not a nud operator.");
     return 0;
   }
 
@@ -134,7 +135,7 @@ public:
     if (iter != nud_power_map.end()) {
       return iter->second.right_power;
     }
-    throw std::runtime_error("This token is not a led operator.");
+    throw std::runtime_error("Token is not a nud operator.");
     return 0;
   }
 };
@@ -148,8 +149,6 @@ auto parseLedExprNode(TokenStream &stream, const Token &token,
                       std::unique_ptr<ExprNode> &&lhs)
     -> std::unique_ptr<ExprNode>;
 
-auto parseExprBlockInNode(TokenStream &stream)
-    -> std::unique_ptr<ExprBlockInNode>;
 auto parseExprBlockNode(TokenStream &stream) -> std::unique_ptr<ExprBlockNode>;
 auto parseExprBlockConstNode(TokenStream &stream)
     -> std::unique_ptr<ExprBlockConstNode>;
@@ -245,11 +244,21 @@ auto parseNudExprNode(TokenStream &stream, int32_t power)
     stream.next();
     return std::make_unique<ExprGroupNode>(std::move(expr), position);
   }
+  case TokenType::LEFT_BRACE:
+    return parseExprBlockNode(stream);
   case TokenType::LEFT_BRACKET:
     return parseExprArrayNode(stream);
+  case TokenType::CONST:
+    return parseExprBlockConstNode(stream);
+  case TokenType::LOOP:
+    return parseExprLoopNode(stream);
+  case TokenType::WHILE:
+    return parseExprWhileNode(stream);
+  case TokenType::IF:
+    return parseExprIfNode(stream);
   }
   throw CompilerException(
-      "Unexpected token in expression." + stream.peek().content, position);
+      "Unexpected token in expression: " + stream.peek().content, position);
   return nullptr;
 }
 
@@ -408,27 +417,8 @@ auto tokenToBinaryOp(TokenType type) -> BinaryOperator {
   case TokenType::RIGHT_SHIFT_EQUAL:
     return BinaryOperator::RIGHT_SHIFT_EQUAL;
   }
-  throw std::runtime_error("This token is not a binary operator.");
+  throw std::runtime_error("Token is not a binary operator.");
   return BinaryOperator::ASSIGN;
-}
-
-auto parseExprBlockInNode(TokenStream &stream)
-    -> std::unique_ptr<ExprBlockInNode> {
-  Position position = stream.peek().line;
-  switch (stream.peek().type) {
-  case TokenType::LEFT_BRACE:
-    return parseExprBlockNode(stream);
-  case TokenType::CONST:
-    return parseExprBlockConstNode(stream);
-  case TokenType::LOOP:
-    return parseExprLoopNode(stream);
-  case TokenType::WHILE:
-    return parseExprWhileNode(stream);
-  case TokenType::IF:
-    return parseExprIfNode(stream);
-  }
-  throw CompilerException("Unexpected token in parseExprBlockInNode", position);
-  return nullptr;
 }
 
 auto parseStructField(TokenStream &stream) -> ExprStructField {
@@ -526,16 +516,10 @@ auto parseExprIfNode(TokenStream &stream) -> std::unique_ptr<ExprIfNode> {
   Position position = stream.peek().line;
   stream.next();
   auto condition = parseCondition(stream);
-  if (stream.next().type != TokenType::LEFT_BRACE) {
-    throw CompilerException("the if expr missed left brace.", position);
-  }
   auto then_block = parseExprBlockNode(stream);
   std::unique_ptr<ExprBlockNode> else_block;
   if (stream.peek().type == TokenType::ELSE) {
     stream.next();
-    if (stream.next().type != TokenType::LEFT_BRACE) {
-      throw CompilerException("the else expr missed left brace.", position);
-    }
     else_block = parseExprBlockNode(stream);
   }
   return std::make_unique<ExprIfNode>(std::move(condition),
