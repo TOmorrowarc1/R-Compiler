@@ -9,4 +9,4 @@ echo "--- Building project ---"
 cmake --build build --config Release
 
 echo "--- Running semantic tests ---"
-./build/tests/run_tests --gtest_filter=SemanticTest.*
+./build/tests/run_tests --gtest_filter=AllTest.*

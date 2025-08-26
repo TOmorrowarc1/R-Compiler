@@ -11,9 +11,29 @@ Scope::~Scope() = default;
 
 auto Scope::getParent() const -> Scope * { return parent_; }
 
+auto Scope::getConstSymbol(const std::string &name) const
+    -> std::shared_ptr<SymbolConstInfo> {
+  auto it = consts_.find(name);
+  if (it != consts_.end()) {
+    return it->second;
+  }
+  if (parent_) {
+    return parent_->getConstSymbol(name);
+  }
+}
+
+auto Scope::addConst(const std::string &name,
+                     std::shared_ptr<SymbolConstInfo> const_var) -> bool {
+  if (getConstSymbol(name) != nullptr) {
+    return false;
+  }
+  consts_[name] = std::move(const_var);
+  return true;
+}
+
 auto Scope::addFunction(const std::string &name,
                         std::shared_ptr<SymbolFunctionInfo> function) -> bool {
-  if (symbols_.find(name) != symbols_.end()) {
+  if (getConstSymbol(name) != nullptr) {
     return false;
   }
   symbols_[name] = std::move(function);
@@ -22,15 +42,8 @@ auto Scope::addFunction(const std::string &name,
 
 auto Scope::addVarible(const std::string &name,
                        std::shared_ptr<SymbolVariableInfo> symbol) -> bool {
-  if (symbols_.find(name) != symbols_.end()) {
-    auto existing = symbols_[name];
-    if (is_instance_of<SymbolVariableInfo, SymbolInfo>(existing)) {
-      auto existing_var =
-          std::dynamic_pointer_cast<SymbolVariableInfo>(existing);
-      if (existing_var->getIsConst()) {
-        return false;
-      }
-    }
+  if (getConstSymbol(name) != nullptr) {
+    return false;
   }
   symbols_[name] = std::move(symbol);
   return true;
@@ -38,12 +51,17 @@ auto Scope::addVarible(const std::string &name,
 
 auto Scope::getSymbol(const std::string &name) const
     -> std::shared_ptr<SymbolInfo> {
-  auto it = symbols_.find(name);
-  if (it != symbols_.end()) {
-    return it->second;
+  auto const_symbol = getConstSymbol(name);
+  if (const_symbol != nullptr) {
+    return const_symbol;
   }
-  if (parent_) {
-    return parent_->getSymbol(name);
+  const Scope *cursor = this;
+  while (cursor) {
+    auto it = cursor->symbols_.find(name);
+    if (it != cursor->symbols_.end()) {
+      return it->second;
+    }
+    cursor = cursor->parent_;
   }
   throw std::runtime_error("Symbol not found: " + name);
   return nullptr;

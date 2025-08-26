@@ -9,20 +9,26 @@ class SymbolInfo;
 class SymbolTypeInfo;
 class SymbolFunctionInfo;
 class SymbolVariableInfo;
+class SymbolConstInfo;
 
 class Scope {
 private:
   Scope *parent_;
   uint32_t index_now;
   std::vector<std::unique_ptr<Scope>> children_;
+  std::unordered_map<std::string, std::shared_ptr<SymbolConstInfo>> consts_;
   std::unordered_map<std::string, std::shared_ptr<SymbolInfo>> symbols_;
   std::unordered_map<std::string, std::shared_ptr<SymbolTypeInfo>> types_;
+  auto getConstSymbol(const std::string &name) const
+      -> std::shared_ptr<SymbolConstInfo>;
 
 public:
   Scope();
   Scope(Scope *parent);
   ~Scope();
   auto getParent() const -> Scope *;
+  auto addConst(const std::string &name,
+                std::shared_ptr<SymbolConstInfo> const_var) -> bool;
   auto addFunction(const std::string &name,
                    std::shared_ptr<SymbolFunctionInfo> function) -> bool;
   auto addVarible(const std::string &name,
