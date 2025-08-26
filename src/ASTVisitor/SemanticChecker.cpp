@@ -4,6 +4,10 @@
 #include "TypeKind.hpp"
 #include "cast.hpp"
 
+auto LoopContext::breakAdd(std::shared_ptr<TypeKind> type) -> bool {
+  return !loop_type || loop_type->isEqual(type.get());
+}
+
 SemanticChecker::SemanticChecker(Scope *initial_scope)
     : current_scope_(initial_scope) {}
 SemanticChecker::~SemanticChecker() = default;

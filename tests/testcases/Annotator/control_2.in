@@ -1,0 +1,28 @@
+fn main(){
+  loop{
+    let a:i32=1;
+    break;
+  }
+  loop{
+    if(true){
+      break;
+    }else{
+      break;
+    }
+  }
+  loop{
+    loop{
+      break;
+    }
+    loop{
+      continue;
+    }
+    break;
+  }
+}
+
+fn breakTest1()->i32{
+  loop{
+    break 21;
+  }
+}

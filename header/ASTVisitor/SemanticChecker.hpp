@@ -30,9 +30,7 @@ class TypeDef;
 struct LoopContext {
   std::shared_ptr<TypeKind> loop_type;
 
-  auto breakAdd(std::shared_ptr<TypeKind> type) -> bool {
-    return !loop_type || loop_type->isEqual(type.get());
-  }
+  auto breakAdd(std::shared_ptr<TypeKind> type) -> bool;
 };
 
 class SemanticChecker : public Visitor {

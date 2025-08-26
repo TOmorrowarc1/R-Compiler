@@ -478,21 +478,21 @@ auto parseExprBlockNode(TokenStream &stream) -> std::unique_ptr<ExprBlockNode> {
     default:
       auto expr = parseExprNode(stream);
       if (is_instance_of<ExprBlockOutNode, ExprNode>(expr)) {
-        if (stream.peek().type != TokenType::SEMICOLON) {
+        if (stream.peek().type == TokenType::SEMICOLON) {
+          stream.next();
+          auto stmt = std::make_unique<StmtExprNode>(std::move(expr), position);
+          statements.push_back(std::move(stmt));
+        } else {
           return_value = std::move(
               dynamic_unique_ptr_cast<ExprBlockOutNode, ExprNode>(expr));
           end_flag = true;
-        } else {
-          stream.next();
-          statements.push_back(
-              std::make_unique<StmtExprNode>(std::move(expr), position));
         }
       } else {
         if (stream.peek().type == TokenType::SEMICOLON) {
           stream.next();
         }
-        statements.push_back(
-            std::make_unique<StmtExprNode>(std::move(expr), position));
+        auto stmt = std::make_unique<StmtExprNode>(std::move(expr), position);
+        statements.push_back(std::move(stmt));
       }
     }
     if (end_flag) {
