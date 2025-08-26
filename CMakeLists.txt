@@ -79,6 +79,7 @@ set(EXECUTABLE_SOURCES
   src/ASTVisitor/SymbolCollector.cpp
   src/ASTVisitor/SymbolAnnotator.cpp
   src/ASTVisitor/ScopeBuiltInInit.cpp
+  src/ASTVisitor/ConstEvaluator.cpp
   src/ASTAnnotator/ASTAnnotator.cpp
   src/utils/position.cpp
   src/utils/exception.cpp

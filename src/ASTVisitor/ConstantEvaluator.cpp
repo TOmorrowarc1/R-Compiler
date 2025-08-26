@@ -52,7 +52,11 @@ void ConstEvaluator::visit(ExprReturnNode *node) {}
 void ConstEvaluator::visit(ExprContinueNode *node) {}
 void ConstEvaluator::visit(ExprGroupNode *node) {}
 void ConstEvaluator::visit(ExprIfNode *node) {}
-void ConstEvaluator::visit(ExprLiteralIntNode *node) {}
+
+void ConstEvaluator::visit(ExprLiteralIntNode *node) {
+  node->const_value_ = std::make_unique<ConstValueInfo>(node->value_);
+}
+
 void ConstEvaluator::visit(ExprLiteralBoolNode *node) {}
 void ConstEvaluator::visit(ExprLiteralCharNode *node) {}
 void ConstEvaluator::visit(ExprLiteralStringNode *node) {}

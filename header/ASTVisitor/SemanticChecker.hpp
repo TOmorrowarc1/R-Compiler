@@ -26,6 +26,7 @@ well-formed and not lead to infinite recursion.
 
 class TypeKind;
 class TypeDef;
+class ConstEvaluator;
 
 struct LoopContext {
   std::shared_ptr<TypeKind> loop_type;
@@ -35,13 +36,14 @@ struct LoopContext {
 class SemanticChecker : public Visitor {
 private:
   Scope *current_scope_;
+  std::unique_ptr<ConstEvaluator> const_evaluator_;
   std::shared_ptr<TypeDef> current_impl_type_;
   std::stack<std::shared_ptr<TypeKind>> fn_type_stack_;
   std::stack<std::shared_ptr<LoopContext>> loop_type_stack_;
 
   auto getPathIndexName(const PathNode *path_node, uint32_t index)
       -> std::string;
-  auto typeNodeToType(const TypeNode *type_node) -> std::shared_ptr<TypeKind>;
+  auto typeNodeToType(TypeNode *type_node) -> std::shared_ptr<TypeKind>;
 
   auto bindPatternToType(const PatternNode *pattern_node,
                          std::shared_ptr<TypeKind> type) -> bool;

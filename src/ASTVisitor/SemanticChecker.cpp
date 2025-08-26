@@ -1,5 +1,6 @@
 #include "SemanticChecker.hpp"
 #include "ASTNodeTotal.hpp"
+#include "ConstEvaluator.hpp"
 #include "Symbol.hpp"
 #include "TypeKind.hpp"
 #include "cast.hpp"
@@ -9,10 +10,12 @@ auto LoopContext::breakAdd(std::shared_ptr<TypeKind> type) -> bool {
 }
 
 SemanticChecker::SemanticChecker(Scope *initial_scope)
-    : current_scope_(initial_scope) {}
+    : current_scope_(initial_scope) {
+  const_evaluator_ = std::make_unique<ConstEvaluator>(initial_scope);
+}
 SemanticChecker::~SemanticChecker() = default;
 
-auto SemanticChecker::typeNodeToType(const TypeNode *type_node)
+auto SemanticChecker::typeNodeToType(TypeNode *type_node)
     -> std::shared_ptr<TypeKind> {
   if (type_node == nullptr) {
     return std::make_shared<TypeKindPath>(
@@ -28,14 +31,34 @@ auto SemanticChecker::typeNodeToType(const TypeNode *type_node)
     const auto *type_array = dynamic_cast<const TypeArrayNode *>(type_node);
     auto type = SemanticChecker::typeNodeToType(type_array->type_.get());
     int32_t length;
-    if (type_array->length_ != nullptr &&
-        is_instance_of<ExprLiteralIntNode, ExprNode>(type_array->length_)) {
-      // TODO: 编译期求值。
-      length =
-          dynamic_cast<const ExprLiteralIntNode *>(type_array->length_.get())
-              ->value_;
+    if (type_array->length_ != nullptr) {
+      auto binary =
+          dynamic_cast<ExprOperBinaryNode *>(type_array->length_.get());
+      if (binary) {
+        const_evaluator_->visit(binary);
+      } else {
+        auto unary =
+            dynamic_cast<ExprOperUnaryNode *>(type_array->length_.get());
+        if (unary) {
+          const_evaluator_->visit(unary);
+        } else {
+          auto path = dynamic_cast<ExprPathNode *>(type_array->length_.get());
+          if (path) {
+            const_evaluator_->visit(path);
+          } else {
+            auto literal =
+                dynamic_cast<ExprLiteralIntNode *>(type_array->length_.get());
+            if (literal) {
+              const_evaluator_->visit(literal);
+            } else {
+              throw std::runtime_error("Array length must be a constant");
+            }
+          }
+        }
+      }
+      length = type_array->length_.get()->const_value_->getValue();
     } else {
-      throw std::runtime_error("Array length must be a literal integer");
+      throw std::runtime_error("Array length cannot be null");
     }
     return std::make_shared<TypeKindArray>(type, length);
   }
@@ -117,6 +140,11 @@ void SemanticChecker::visit(ASTRootNode *node) {
 void SemanticChecker::visit(ItemConstNode *node) {
   node->type_->accept(*this);
   node->value_->accept(*this);
+  auto type = typeNodeToType(node->type_.get());
+  if (!node->value_->value_info_->getType()->isEqual(type.get())) {
+    throw std::runtime_error("Type mismatch in let statement initialization");
+  }
+  const_evaluator_->visit(node);
 }
 
 void SemanticChecker::visit(ItemFnNode *node) {
