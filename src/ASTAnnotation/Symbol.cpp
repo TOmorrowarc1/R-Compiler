@@ -4,8 +4,10 @@
 #include <stdexcept>
 
 SymbolVariableInfo::SymbolVariableInfo(const std::string &name,
-                                       std::shared_ptr<TypeKind> type)
-    : SymbolInfo(), name_(name), type_(std::move(type)) {}
+                                       std::shared_ptr<TypeKind> type,
+                                       bool is_mutable)
+    : SymbolInfo(), name_(name), type_(std::move(type)),
+      is_mutable_(is_mutable) {}
 SymbolVariableInfo::~SymbolVariableInfo() = default;
 auto SymbolVariableInfo::getName() const -> const std::string & {
   return name_;

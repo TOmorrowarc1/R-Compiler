@@ -74,13 +74,13 @@ auto SemanticChecker::getPathIndexName(const PathNode *path_node,
   return path_node->segments_[index].name;
 }
 
-auto SemanticChecker::bindPatternToType(const PatternNode *pattern_node,
-                                        std::shared_ptr<TypeKind> type)
-    -> bool {
+auto SemanticChecker::bindVarSymbol(const PatternNode *pattern_node,
+                                    std::shared_ptr<TypeKind> type) -> bool {
   if (is_instance_of<PatternIDNode, PatternNode>(pattern_node)) {
     const auto *id_pattern = dynamic_cast<const PatternIDNode *>(pattern_node);
+    bool is_mutable = id_pattern->id_type_ == PatternIDNode::IDType::MUT;
     auto var_info = std::make_shared<SymbolVariableInfo>(
-        id_pattern->identifier_, type, false);
+        id_pattern->identifier_, type, is_mutable);
     return current_scope_->addVarible(id_pattern->identifier_, var_info);
   }
   if (is_instance_of<PatternReferNode, PatternNode>(pattern_node)) {
@@ -93,8 +93,7 @@ auto SemanticChecker::bindPatternToType(const PatternNode *pattern_node,
     if (refer_type->isMutable() != refer_pattern->is_mutable_) {
       throw std::runtime_error("Pattern refer type mismatch");
     }
-    return bindPatternToType(refer_pattern->pattern_.get(),
-                             refer_type->getType());
+    return bindVarSymbol(refer_pattern->pattern_.get(), refer_type->getType());
   }
   if (is_instance_of<PatternWildNode, PatternNode>(pattern_node)) {
     return true;
@@ -159,13 +158,13 @@ void SemanticChecker::visit(ItemFnNode *node) {
     if (node->fn_type_ != FnType::Fn) {
       auto self_type = std::make_shared<TypeKindPath>(current_impl_type_);
       auto var_info =
-          std::make_shared<SymbolVariableInfo>("self", self_type, false);
+          std::make_shared<SymbolVariableInfo>("self", self_type, true);
       current_scope_->addVarible("self", var_info);
     }
     for (auto &param : node->parameters_) {
       if (param.pattern) {
         auto type = typeNodeToType(param.type.get());
-        bindPatternToType(param.pattern.get(), type);
+        bindVarSymbol(param.pattern.get(), type);
       } else {
         throw std::runtime_error(
             "Parameters must have a pattern in function definitions");
@@ -716,7 +715,8 @@ void SemanticChecker::visit(StmtLetNode *node) {
     }
     node->type_->accept(*this);
     auto type = typeNodeToType(node->type_.get());
-    bindPatternToType(node->pattern_.get(), type);
+    bool is_mutable = node->let_type_ == StmtLetNode::LetType::MUT;
+    bindVarSymbol(node->pattern_.get(), type, is_mutable);
     if (node->init_value_) {
       node->init_value_->accept(*this);
     }
