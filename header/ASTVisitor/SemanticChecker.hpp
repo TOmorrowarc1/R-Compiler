@@ -1,6 +1,7 @@
 #pragma once
 #include "Scope.hpp"
 #include "Visitor.hpp"
+#include <stack>
 
 /*
 The third pass is semantic check, in which we realize characteristics below:
@@ -26,10 +27,20 @@ well-formed and not lead to infinite recursion.
 class TypeKind;
 class TypeDef;
 
+struct LoopContext {
+  std::shared_ptr<TypeKind> loop_type;
+
+  auto breakAdd(std::shared_ptr<TypeKind> type) -> bool {
+    return !loop_type || loop_type->isEqual(type.get());
+  }
+};
+
 class SemanticChecker : public Visitor {
 private:
   Scope *current_scope_;
   std::shared_ptr<TypeDef> current_impl_type_;
+  std::stack<std::shared_ptr<TypeKind>> fn_type_stack_;
+  std::stack<std::shared_ptr<LoopContext>> loop_type_stack_;
 
   auto getPathIndexName(const PathNode *path_node, uint32_t index)
       -> std::string;

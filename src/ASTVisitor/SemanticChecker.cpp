@@ -139,11 +139,13 @@ void SemanticChecker::visit(ItemFnNode *node) {
             "Parameters must have a pattern in function definitions");
       }
     }
+    auto return_type_kind = typeNodeToType(node->return_type_.get());
+    fn_type_stack_.push(return_type_kind);
     node->body_->accept(*this);
-    if (!node->body_->value_info_->getType()->isEqual(
-            typeNodeToType(node->return_type_.get()).get())) {
+    if (!node->body_->value_info_->getType()->isEqual(return_type_kind.get())) {
       throw std::runtime_error("Function return type mismatch");
     }
+    fn_type_stack_.pop();
     current_scope_ = current_scope_->getParent();
   }
 }
@@ -233,10 +235,17 @@ void SemanticChecker::visit(ExprBlockNode *node) {
     node->value_info_ = std::make_unique<ValueInfo>(std::move(return_type),
                                                     false, false, false);
   } else {
-    auto unit_type = std::make_shared<TypeKindPath>(
+    std::shared_ptr<TypeKind> block_type = std::make_shared<TypeKindPath>(
         current_scope_->getType("unit")->getType());
+    auto stmt = node->statements_.back().get();
+    if (is_instance_of<StmtExprNode, StmtNode>(stmt)) {
+      auto expr = dynamic_cast<StmtExprNode *>(stmt)->expr_.get();
+      if (is_instance_of<ExprReturnNode, ExprNode>(expr)) {
+        block_type = expr->value_info_->getType();
+      }
+    }
     node->value_info_ =
-        std::make_unique<ValueInfo>(std::move(unit_type), false, false, false);
+        std::make_unique<ValueInfo>(std::move(block_type), false, false, false);
   }
   // Block expr return a anonymous value.
   current_scope_ = current_scope_->getParent();
@@ -293,24 +302,41 @@ void SemanticChecker::visit(ExprBreakNode *node) {
   /*
   The return value of control flow is same as the one from block expr.
   */
-  node->value_->accept(*this);
-  auto value_type = node->value_->value_info_->getType();
+  if (loop_type_stack_.empty()) {
+    throw std::runtime_error("Break statement not in a loop");
+  }
+  std::shared_ptr<TypeKind> value_type = std::make_shared<TypeKindPath>(
+      current_scope_->getType("unit")->getType());
+  if (node->value_) {
+    node->value_->accept(*this);
+    value_type = node->value_->value_info_->getType();
+  }
+  loop_type_stack_.top()->breakAdd(value_type);
   node->value_info_ =
       std::make_unique<ValueInfo>(std::move(value_type), false, false, false);
 }
 
 void SemanticChecker::visit(ExprReturnNode *node) {
+  if (fn_type_stack_.empty()) {
+    throw std::runtime_error("Return statement not in a function");
+  }
   node->value_->accept(*this);
   auto value_type = node->value_->value_info_->getType();
+  if (!value_type->isEqual(fn_type_stack_.top().get())) {
+    throw std::runtime_error("Return type mismatch");
+  }
   node->value_info_ =
       std::make_unique<ValueInfo>(std::move(value_type), false, false, false);
 }
 
 void SemanticChecker::visit(ExprContinueNode *node) {
-  node->value_info_ = std::make_unique<ValueInfo>(
-      std::make_shared<TypeKindPath>(
-          current_scope_->getType("unit")->getType()),
-      false, false, false);
+  if (loop_type_stack_.empty()) {
+    throw std::runtime_error("Continue statement not in a loop");
+  }
+  auto unit_type = std::make_shared<TypeKindPath>(
+      current_scope_->getType("unit")->getType());
+  node->value_info_ =
+      std::make_unique<ValueInfo>(unit_type, false, false, false);
 }
 
 void SemanticChecker::visit(ExprGroupNode *node) {
@@ -386,8 +412,14 @@ void SemanticChecker::visit(ExprLiteralStringNode *node) {
 }
 
 void SemanticChecker::visit(ExprLoopNode *node) {
+  loop_type_stack_.push(std::make_shared<LoopContext>());
   node->loop_body_->accept(*this);
-  auto body_type = node->loop_body_->value_info_->getType();
+  auto body_type = loop_type_stack_.top()->loop_type;
+  if (!body_type) {
+    auto unit_type = current_scope_->getType("unit")->getType();
+    body_type = std::make_shared<TypeKindPath>(unit_type);
+  }
+  loop_type_stack_.pop();
   node->value_info_ =
       std::make_unique<ValueInfo>(std::move(body_type), false, false, false);
 }
@@ -398,8 +430,14 @@ void SemanticChecker::visit(ExprWhileNode *node) {
   if (!node->condition_->value_info_->getType()->isTypePath(bool_type)) {
     throw std::runtime_error("While condition must be a boolean");
   }
+  loop_type_stack_.push(std::make_shared<LoopContext>());
   node->loop_body_->accept(*this);
-  auto body_type = node->loop_body_->value_info_->getType();
+  auto body_type = loop_type_stack_.top()->loop_type;
+  if (!body_type) {
+    auto unit_type = current_scope_->getType("unit")->getType();
+    body_type = std::make_shared<TypeKindPath>(unit_type);
+  }
+  loop_type_stack_.pop();
   node->value_info_ =
       std::make_unique<ValueInfo>(std::move(body_type), false, false, false);
 }
