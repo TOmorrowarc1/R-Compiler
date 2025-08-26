@@ -123,8 +123,7 @@ void SemanticChecker::visit(ItemFnNode *node) {
     node->return_type_->accept(*this);
   }
   if (node->body_) {
-    auto function_scope = std::make_unique<Scope>(current_scope_);
-    current_scope_ = function_scope.get();
+    current_scope_ = current_scope_->getNextChildScope();
     if (node->fn_type_ != FnType::Fn) {
       auto self_type = std::make_shared<TypeKindPath>(current_impl_type_);
       auto var_info =

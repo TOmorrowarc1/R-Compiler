@@ -46,7 +46,9 @@ void SymbolCollector::visit(ItemFnNode *node) {
     node->return_type_->accept(*this);
   }
   if (node->body_) {
+    current_scope_ = current_scope_->addNextChildScope();
     node->body_->accept(*this);
+    current_scope_ = current_scope_->getParent();
   }
 }
 

@@ -83,7 +83,9 @@ void SymbolAnnotator::visit(ItemFnNode *node) {
     node->return_type_->accept(*this);
   }
   if (node->body_) {
+    current_scope_ = current_scope_->getNextChildScope();
     node->body_->accept(*this);
+    current_scope_ = current_scope_->getParent();
   }
   current_scope_->addFunction(node->ID_, fnNodeToFunc(node));
 }
