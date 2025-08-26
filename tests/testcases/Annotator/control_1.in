@@ -12,6 +12,7 @@ fn returnTest3()->i32{
   }else{
     return 6
   }
+  3
 }
 
 fn returnTest4()->i32{
