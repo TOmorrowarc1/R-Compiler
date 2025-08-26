@@ -10,17 +10,25 @@ private:
   std::shared_ptr<TypeKind> type_;
   bool is_left_value_;
   bool is_mutable_;
-  bool is_const_;
 
 public:
-  ValueInfo(std::shared_ptr<TypeKind> type, bool is_left_value, bool is_mutable,
-            bool is_const);
+  ValueInfo(std::shared_ptr<TypeKind> type, bool is_left_value, bool is_mut);
   ~ValueInfo();
   auto getType() const -> std::shared_ptr<TypeKind>;
   auto isLeftValue() const -> bool;
   void setLeftValue(bool is_left_value);
   auto isMutable() const -> bool;
   void setMutable(bool is_mutable);
-  auto isConst() const -> bool;
-  void setConst(bool is_const);
+  auto getValue() const -> int32_t;
+  void setValue(int32_t const_value);
+};
+
+class ConstValueInfo {
+private:
+  int32_t const_value_;
+
+public:
+  ConstValueInfo(int32_t const_value);
+  ~ConstValueInfo();
+  auto getValue() const -> int32_t;
 };

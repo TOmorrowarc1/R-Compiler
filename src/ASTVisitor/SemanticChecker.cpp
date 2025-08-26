@@ -204,8 +204,7 @@ void SemanticChecker::visit(ExprArrayNode *node) {
   length = length == 0 ? node->elements_.size() : length;
   auto array_type = std::make_shared<TypeKindArray>(element_type, length);
   // The array expr is not a left value, not mutable, and not const.
-  node->value_info_ =
-      std::make_unique<ValueInfo>(array_type, false, false, false);
+  node->value_info_ = std::make_unique<ValueInfo>(array_type, false, false);
 }
 
 void SemanticChecker::visit(ExprArrayIndexNode *node) {
@@ -224,8 +223,7 @@ void SemanticChecker::visit(ExprArrayIndexNode *node) {
       std::dynamic_pointer_cast<TypeKindArray>(array_type)->getType();
   node->value_info_ = std::make_unique<ValueInfo>(
       std::move(element_type), node->array_->value_info_->isLeftValue(),
-      node->array_->value_info_->isMutable(),
-      node->array_->value_info_->isConst());
+      node->array_->value_info_->isMutable());
 }
 
 void SemanticChecker::visit(ExprBlockNode *node) {
@@ -236,8 +234,8 @@ void SemanticChecker::visit(ExprBlockNode *node) {
   if (node->return_value_) {
     node->return_value_->accept(*this);
     auto return_type = node->return_value_->value_info_->getType();
-    node->value_info_ = std::make_unique<ValueInfo>(std::move(return_type),
-                                                    false, false, false);
+    node->value_info_ =
+        std::make_unique<ValueInfo>(std::move(return_type), false, false);
   } else {
     std::shared_ptr<TypeKind> block_type = std::make_shared<TypeKindPath>(
         current_scope_->getType("unit")->getType());
@@ -251,7 +249,7 @@ void SemanticChecker::visit(ExprBlockNode *node) {
       }
     }
     node->value_info_ =
-        std::make_unique<ValueInfo>(std::move(block_type), false, false, false);
+        std::make_unique<ValueInfo>(std::move(block_type), false, false);
   }
   // Block expr return a anonymous value.
   current_scope_ = current_scope_->getParent();
@@ -261,7 +259,7 @@ void SemanticChecker::visit(ExprBlockConstNode *node) {
   node->block_expr_->accept(*this);
   auto block_type = node->block_expr_->value_info_->getType();
   node->value_info_ =
-      std::make_unique<ValueInfo>(std::move(block_type), false, false, true);
+      std::make_unique<ValueInfo>(std::move(block_type), false, false);
 }
 
 void SemanticChecker::visit(ExprCallNode *node) {
@@ -300,8 +298,8 @@ void SemanticChecker::visit(ExprCallNode *node) {
   A function call returns a value, which is neither a left value nor mutable,
   and whether it is const depends on the function's qualifier.
   */
-  node->value_info_ = std::make_unique<ValueInfo>(
-      function_info->getReturnType(), false, false, false);
+  node->value_info_ =
+      std::make_unique<ValueInfo>(function_info->getReturnType(), false, false);
 }
 
 void SemanticChecker::visit(ExprBreakNode *node) {
@@ -319,7 +317,7 @@ void SemanticChecker::visit(ExprBreakNode *node) {
   }
   loop_type_stack_.top()->breakAdd(value_type);
   node->value_info_ =
-      std::make_unique<ValueInfo>(std::move(value_type), false, false, false);
+      std::make_unique<ValueInfo>(std::move(value_type), false, false);
 }
 
 void SemanticChecker::visit(ExprReturnNode *node) {
@@ -332,7 +330,7 @@ void SemanticChecker::visit(ExprReturnNode *node) {
     throw std::runtime_error("Return type mismatch");
   }
   node->value_info_ =
-      std::make_unique<ValueInfo>(std::move(value_type), false, false, false);
+      std::make_unique<ValueInfo>(std::move(value_type), false, false);
 }
 
 void SemanticChecker::visit(ExprContinueNode *node) {
@@ -341,15 +339,14 @@ void SemanticChecker::visit(ExprContinueNode *node) {
   }
   auto unit_type = std::make_shared<TypeKindPath>(
       current_scope_->getType("unit")->getType());
-  node->value_info_ =
-      std::make_unique<ValueInfo>(unit_type, false, false, false);
+  node->value_info_ = std::make_unique<ValueInfo>(unit_type, false, false);
 }
 
 void SemanticChecker::visit(ExprGroupNode *node) {
   node->expr_->accept(*this);
   auto expr_type = node->expr_->value_info_->getType();
   node->value_info_ =
-      std::make_unique<ValueInfo>(std::move(expr_type), false, false, false);
+      std::make_unique<ValueInfo>(std::move(expr_type), false, false);
 }
 
 void SemanticChecker::visit(ExprIfNode *node) {
@@ -373,7 +370,7 @@ void SemanticChecker::visit(ExprIfNode *node) {
     }
   }
   node->value_info_ =
-      std::make_unique<ValueInfo>(std::move(then_type), false, false, false);
+      std::make_unique<ValueInfo>(std::move(then_type), false, false);
 }
 
 void SemanticChecker::visit(ExprLiteralIntNode *node) {
@@ -393,28 +390,28 @@ void SemanticChecker::visit(ExprLiteralIntNode *node) {
     break;
   }
   node->value_info_ =
-      std::make_unique<ValueInfo>(std::move(type_kind), false, false, false);
+      std::make_unique<ValueInfo>(std::move(type_kind), false, false);
 }
 
 void SemanticChecker::visit(ExprLiteralBoolNode *node) {
   auto bool_type = std::make_shared<TypeKindPath>(
       current_scope_->getType("bool")->getType());
   node->value_info_ =
-      std::make_unique<ValueInfo>(std::move(bool_type), false, false, false);
+      std::make_unique<ValueInfo>(std::move(bool_type), false, false);
 }
 
 void SemanticChecker::visit(ExprLiteralCharNode *node) {
   auto char_type = std::make_shared<TypeKindPath>(
       current_scope_->getType("char")->getType());
   node->value_info_ =
-      std::make_unique<ValueInfo>(std::move(char_type), false, false, false);
+      std::make_unique<ValueInfo>(std::move(char_type), false, false);
 }
 
 void SemanticChecker::visit(ExprLiteralStringNode *node) {
   auto string_type =
       std::make_shared<TypeKindPath>(current_scope_->getType("str")->getType());
   node->value_info_ =
-      std::make_unique<ValueInfo>(std::move(string_type), false, false, false);
+      std::make_unique<ValueInfo>(std::move(string_type), false, false);
 }
 
 void SemanticChecker::visit(ExprLoopNode *node) {
@@ -427,7 +424,7 @@ void SemanticChecker::visit(ExprLoopNode *node) {
   }
   loop_type_stack_.pop();
   node->value_info_ =
-      std::make_unique<ValueInfo>(std::move(body_type), false, false, false);
+      std::make_unique<ValueInfo>(std::move(body_type), false, false);
 }
 
 void SemanticChecker::visit(ExprWhileNode *node) {
@@ -445,7 +442,7 @@ void SemanticChecker::visit(ExprWhileNode *node) {
   }
   loop_type_stack_.pop();
   node->value_info_ =
-      std::make_unique<ValueInfo>(std::move(body_type), false, false, false);
+      std::make_unique<ValueInfo>(std::move(body_type), false, false);
 }
 
 void SemanticChecker::visit(ExprOperBinaryNode *node) {
@@ -462,7 +459,7 @@ void SemanticChecker::visit(ExprOperBinaryNode *node) {
       throw std::runtime_error("The rhs type is not number");
     }
     node->value_info_ =
-        std::make_unique<ValueInfo>(std::move(rhs_type), false, false, false);
+        std::make_unique<ValueInfo>(std::move(rhs_type), false, false);
     break;
   case BinaryOperator::ASSIGN:
     if (!lhs_type->isEqual(rhs_type.get())) {
@@ -472,22 +469,22 @@ void SemanticChecker::visit(ExprOperBinaryNode *node) {
       throw std::runtime_error("Assignment requires lhs to be a left value");
     }
     node->value_info_ =
-        std::make_unique<ValueInfo>(std::move(lhs_type), true, false, false);
+        std::make_unique<ValueInfo>(std::move(lhs_type), true, false);
     break;
   case BinaryOperator::EQUAL:
   case BinaryOperator::NOT_EQUAL:
   case BinaryOperator::LESS_THAN:
   case BinaryOperator::LESS_EQUAL:
   case BinaryOperator::GREATER_THAN:
-  case BinaryOperator::GREATER_EQUAL:
+  case BinaryOperator::GREATER_EQUAL: {
     if (!lhs_type->isEqual(rhs_type.get())) {
       throw std::runtime_error("Operands compared have the same type.");
     }
+    auto bool_type = current_scope_->getType("bool")->getType();
     node->value_info_ = std::make_unique<ValueInfo>(
-        std::make_shared<TypeKindPath>(
-            current_scope_->getType("bool")->getType()),
-        false, false, false);
+        std::make_shared<TypeKindPath>(bool_type), false, false);
     break;
+  }
   case BinaryOperator::LOGIC_AND:
   case BinaryOperator::LOGIC_OR: {
     auto bool_type = current_scope_->getType("bool")->getType();
@@ -507,7 +504,7 @@ void SemanticChecker::visit(ExprOperBinaryNode *node) {
           "Calculation binary operation operands must be numeric");
     }
     node->value_info_ =
-        std::make_unique<ValueInfo>(std::move(lhs_type), false, false, false);
+        std::make_unique<ValueInfo>(std::move(lhs_type), false, false);
   }
 }
 
@@ -522,7 +519,7 @@ void SemanticChecker::visit(ExprOperUnaryNode *node) {
     auto i32_type = std::make_shared<TypeKindPath>(
         current_scope_->getType("i32")->getType());
     node->value_info_ =
-        std::make_unique<ValueInfo>(std::move(i32_type), false, false, false);
+        std::make_unique<ValueInfo>(std::move(i32_type), false, false);
     break;
   }
   case UnaryOperator::NOT: {
@@ -532,22 +529,19 @@ void SemanticChecker::visit(ExprOperUnaryNode *node) {
       throw std::runtime_error(
           "Not operator requires a boolean or numeric operand");
     }
-    node->value_info_ =
-        std::make_unique<ValueInfo>(operand_type, false, false, false);
+    node->value_info_ = std::make_unique<ValueInfo>(operand_type, false, false);
     break;
   }
   case UnaryOperator::REF: {
     node->value_info_ = std::make_unique<ValueInfo>(
         std::make_shared<TypeKindRefer>(operand_type, false),
-        node->operand_->value_info_->isLeftValue(), false,
-        node->operand_->value_info_->isConst());
+        node->operand_->value_info_->isLeftValue(), false);
     break;
   }
   case UnaryOperator::MUTREF: {
     node->value_info_ = std::make_unique<ValueInfo>(
         std::make_shared<TypeKindRefer>(operand_type, true),
-        node->operand_->value_info_->isLeftValue(), false,
-        node->operand_->value_info_->isConst());
+        node->operand_->value_info_->isLeftValue());
     break;
   }
   case UnaryOperator::DEREF: {
@@ -558,7 +552,7 @@ void SemanticChecker::visit(ExprOperUnaryNode *node) {
     auto refer_type = std::dynamic_pointer_cast<TypeKindRefer>(operand_type);
     node->value_info_ = std::make_unique<ValueInfo>(
         refer_type->getType(), node->operand_->value_info_->isLeftValue(),
-        refer_type->isMutable(), node->operand_->value_info_->isConst());
+        refer_type->isMutable());
     break;
   }
   default:
@@ -577,7 +571,7 @@ void SemanticChecker::visit(ExprPathNode *node) {
         throw std::runtime_error("Enum variant not found in enum.");
       }
       node->value_info_ = std::make_unique<ValueInfo>(
-          std::make_shared<TypeKindPath>(type), false, false, false);
+          std::make_shared<TypeKindPath>(type), false, false);
     } else if (is_instance_of<StructDef, TypeDef>(type.get())) {
       // Here we lost the const item.
       auto struct_def = dynamic_cast<StructDef *>(type.get());
@@ -586,8 +580,7 @@ void SemanticChecker::visit(ExprPathNode *node) {
       if (!member_type) {
         throw std::runtime_error("Struct member not found in struct.");
       }
-      node->value_info_ =
-          std::make_unique<ValueInfo>(member_type, true, false, false);
+      node->value_info_ = std::make_unique<ValueInfo>(member_type, true, false);
     } else {
       throw std::runtime_error("Path must be a type or enum.");
     }
@@ -601,7 +594,7 @@ void SemanticChecker::visit(ExprPathNode *node) {
     auto variable_info =
         std::dynamic_pointer_cast<SymbolVariableInfo>(variable);
     auto type = variable_info->getType();
-    node->value_info_ = std::make_unique<ValueInfo>(type, true, false, false);
+    node->value_info_ = std::make_unique<ValueInfo>(type, true, false);
   }
 }
 
@@ -621,8 +614,7 @@ void SemanticChecker::visit(ExprFieldNode *node) {
   if (!member_type) {
     throw std::runtime_error("Field " + node->ID_ + " not found in type");
   }
-  node->value_info_ =
-      std::make_unique<ValueInfo>(member_type, true, false, false);
+  node->value_info_ = std::make_unique<ValueInfo>(member_type, true, false);
 }
 
 void SemanticChecker::visit(ExprMethodNode *node) {
@@ -649,8 +641,8 @@ void SemanticChecker::visit(ExprMethodNode *node) {
       throw std::runtime_error("Method call parameters type mismatch");
     }
   }
-  node->value_info_ = std::make_unique<ValueInfo>(method_info->getReturnType(),
-                                                  false, false, false);
+  node->value_info_ =
+      std::make_unique<ValueInfo>(method_info->getReturnType(), false, false);
 }
 
 void SemanticChecker::visit(ExprStructNode *node) {
@@ -672,14 +664,13 @@ void SemanticChecker::visit(ExprStructNode *node) {
   }
   auto struct_type_kind = std::make_shared<TypeKindPath>(struct_type);
   node->value_info_ =
-      std::make_unique<ValueInfo>(struct_type_kind, true, false, false);
+      std::make_unique<ValueInfo>(struct_type_kind, true, false);
 }
 
 void SemanticChecker::visit(ExprUnderScoreNode *node) {
+  auto unit_type = current_scope_->getType("unit")->getType();
   node->value_info_ = std::make_unique<ValueInfo>(
-      std::make_shared<TypeKindPath>(
-          current_scope_->getType("unit")->getType()),
-      false, false, false);
+      std::make_shared<TypeKindPath>(unit_type), false, false);
 }
 
 void SemanticChecker::visit(StmtEmptyNode *node) {}

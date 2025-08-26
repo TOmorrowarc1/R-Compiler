@@ -1,58 +1,23 @@
 #pragma once
 #include "Scope.hpp"
 #include "Visitor.hpp"
-#include <stack>
 
 /*
-The third pass is semantic check, in which we realize characteristics below:
-1. Name Existence: A name must be defined before it is used, including
-variables, functions, types, methods, etc.
-2. Type Correctness: The type of an expression must match the expected type,
-such as assignment, function call, etc.
-3. Place Expression: Everything on the lhs of the = should be place expr.
-4. Mutability Correctness: A mutable variable must be declared as mutable, and
-everything modified is either a mutable var or a mutable reference.
-5. Pattern Correctness: Patterns must match the structure of the value they
-are matching against when are irrefutable.
-6. Control Flow context: Control flow statements like `break`, `continue`, and
-`return` must be used in the correct context, such as loops or functions.
-7. Const Evaluation: Constants must be evaluated at compile time, and their
-values must be known at compile time.
-8. Match Patterns: Match arms must cover all possible cases, and patterns must
-be valid for the type they are matching against.
-9. Recursive Type Definitions: Types can be defined recursively, but must be
-well-formed and not lead to infinite recursion.
+Traverse a part of the ASTNode tree recursively to calculate value of constants,
+supporting basic arithmetic operations and parentheses between numbers. However,
+the fowarding defination(decalaration) of const has not been supported yet.
 */
 
-class TypeKind;
-class TypeDef;
-
-struct LoopContext {
-  std::shared_ptr<TypeKind> loop_type;
-  auto breakAdd(std::shared_ptr<TypeKind> type) -> bool;
-};
-
-class SemanticChecker : public Visitor {
+class ConstEvaluator : public Visitor {
 private:
   Scope *current_scope_;
-  std::shared_ptr<TypeDef> current_impl_type_;
-  std::stack<std::shared_ptr<TypeKind>> fn_type_stack_;
-  std::stack<std::shared_ptr<LoopContext>> loop_type_stack_;
-
   auto getPathIndexName(const PathNode *path_node, uint32_t index)
       -> std::string;
-  auto typeNodeToType(const TypeNode *type_node) -> std::shared_ptr<TypeKind>;
-
-  auto bindPatternToType(const PatternNode *pattern_node,
-                         std::shared_ptr<TypeKind> type) -> bool;
-
-  auto judgeU32(const ExprNode *node) -> bool;
-  auto judgeI32(const ExprNode *node) -> bool;
   auto judgeNum(const ExprNode *node) -> bool;
 
 public:
-  SemanticChecker(Scope *initial_scope);
-  ~SemanticChecker() override;
+  ConstEvaluator(Scope *initial_scope);
+  ~ConstEvaluator() override;
 
   void visit(ASTRootNode *node) override;
 
