@@ -241,11 +241,13 @@ void SemanticChecker::visit(ExprBlockNode *node) {
   } else {
     std::shared_ptr<TypeKind> block_type = std::make_shared<TypeKindPath>(
         current_scope_->getType("unit")->getType());
-    auto stmt = node->statements_.back().get();
-    if (is_instance_of<StmtExprNode, StmtNode>(stmt)) {
-      auto expr = dynamic_cast<StmtExprNode *>(stmt)->expr_.get();
-      if (is_instance_of<ExprReturnNode, ExprNode>(expr)) {
-        block_type = expr->value_info_->getType();
+    if (!node->statements_.empty()) {
+      auto stmt = node->statements_.back().get();
+      if (is_instance_of<StmtExprNode, StmtNode>(stmt)) {
+        auto expr = dynamic_cast<StmtExprNode *>(stmt)->expr_.get();
+        if (is_instance_of<ExprReturnNode, ExprNode>(expr)) {
+          block_type = expr->value_info_->getType();
+        }
       }
     }
     node->value_info_ =

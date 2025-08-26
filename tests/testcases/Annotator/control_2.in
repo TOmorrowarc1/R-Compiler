@@ -6,7 +6,7 @@ fn main(){
   loop{
     if(true){
       break;
-    }else{
+    } else {
       break;
     }
   }
@@ -25,4 +25,5 @@ fn breakTest1()->i32{
   loop{
     break 21;
   }
+  4
 }

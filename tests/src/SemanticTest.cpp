@@ -17,7 +17,7 @@ TEST(SemanticTest, Scope) {
 }
 
 TEST(SemanticTest, Return) {
-  std::string input_path = test_cases_dir + "/Semantic/control_1.in";
+  std::string input_path = test_cases_dir + "/Annotator/control_1.in";
   std::string text = readFileToString(input_path);
   try {
     auto lex_result = lex(text);
@@ -35,7 +35,7 @@ TEST(SemanticTest, Return) {
 }
 
 TEST(SemanticTest, Break) {
-  std::string input_path = test_cases_dir + "/Semantic/control_2.in";
+  std::string input_path = test_cases_dir + "/Annotator/control_2.in";
   std::string text = readFileToString(input_path);
   try {
     auto lex_result = lex(text);
