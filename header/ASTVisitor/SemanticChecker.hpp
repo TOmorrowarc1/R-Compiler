@@ -48,9 +48,7 @@ private:
   auto bindVarSymbol(const PatternNode *pattern_node,
                      std::shared_ptr<TypeKind> type) -> bool;
 
-  auto judgeU32(const ExprNode *node) -> bool;
-  auto judgeI32(const ExprNode *node) -> bool;
-  auto judgeNum(const ExprNode *node) -> bool;
+  auto judgeTypeEqual(const ExprNode *node, const std::string &name) -> bool;
 
 public:
   SemanticChecker(Scope *initial_scope);

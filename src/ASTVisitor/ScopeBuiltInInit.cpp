@@ -3,9 +3,10 @@
 #include "TypeKind.hpp"
 
 const std::vector<std::shared_ptr<TypeDef>> BUILTIN = {
-    std::make_shared<TypeDef>("i32"),  std::make_shared<TypeDef>("u32"),
-    std::make_shared<TypeDef>("bool"), std::make_shared<TypeDef>("char"),
-    std::make_shared<TypeDef>("str"),  std::make_shared<TypeDef>("unit"),
+    std::make_shared<TypeDef>("i32"),   std::make_shared<TypeDef>("u32"),
+    std::make_shared<TypeDef>("isize"), std::make_shared<TypeDef>("usize"),
+    std::make_shared<TypeDef>("bool"),  std::make_shared<TypeDef>("char"),
+    std::make_shared<TypeDef>("str"),   std::make_shared<TypeDef>("unit"),
 };
 
 auto getTypeKind(Scope *global_scope, const std::string &type_name)

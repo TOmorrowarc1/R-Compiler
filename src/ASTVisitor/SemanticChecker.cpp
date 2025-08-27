@@ -79,32 +79,21 @@ auto SemanticChecker::bindVarSymbol(const PatternNode *pattern_node,
   return false;
 }
 
-auto SemanticChecker::judgeU32(const ExprNode *node) -> bool {
-  if (!is_instance_of<ExprLiteralIntNode, ExprNode>(node)) {
-    auto index_type = node->value_info_->getType();
-    if (!index_type->isTypePath(
-            current_scope_->getType("u32")->getType().get())) {
-      return false;
-    }
+auto SemanticChecker::judgeTypeEqual(const ExprNode *node,
+                                     const std::string &name) -> bool {
+  auto value_type = node->value_info_->getType();
+  auto target_type = current_scope_->getType(name)->getType();
+  if (name == "num") {
+    auto i32_type = current_scope_->getType("i32")->getType();
+    auto u32_type = current_scope_->getType("u32")->getType();
+    auto isize_type = current_scope_->getType("isize")->getType();
+    auto usize_type = current_scope_->getType("usize")->getType();
+    auto type_vector = std::vector<std::shared_ptr<TypeDef>>{
+        i32_type, u32_type, isize_type, usize_type};
+    auto possi_type = std::make_shared<TypeKindPossi>(std::move(type_vector));
+    return value_type->isEqual(possi_type.get());
   }
-  return true;
-}
-
-auto SemanticChecker::judgeI32(const ExprNode *node) -> bool {
-  if (!is_instance_of<ExprLiteralIntNode, ExprNode>(node)) {
-    auto index_type = node->value_info_->getType();
-    if (!index_type->isTypePath(
-            current_scope_->getType("i32")->getType().get())) {
-      return false;
-    }
-  }
-  return true;
-}
-
-auto SemanticChecker::judgeNum(const ExprNode *node) -> bool {
-  auto type = node->value_info_->getType();
-  return type->isTypePath(current_scope_->getType("i32")->getType().get()) ||
-         type->isTypePath(current_scope_->getType("u32")->getType().get());
+  return value_type->isTypePath(target_type.get());
 }
 
 void SemanticChecker::visit(ASTRootNode *node) {
@@ -211,8 +200,8 @@ void SemanticChecker::visit(ExprArrayNode *node) {
   if (node->length_) {
     node->length_->accept(*this);
     auto length_type = node->length_->value_info_->getType();
-    if (!judgeU32(node->length_.get())) {
-      throw std::runtime_error("Array length must be U32.");
+    if (!judgeTypeEqual(node->length_.get(), "usize")) {
+      throw std::runtime_error("Array length must be usize.");
     }
     length = dynamic_cast<ExprLiteralIntNode *>(node->length_.get())->value_;
   }
@@ -230,8 +219,8 @@ void SemanticChecker::visit(ExprArrayIndexNode *node) {
     throw std::runtime_error("Array index operation requires an array type");
   }
   auto index_type = node->index_->value_info_->getType();
-  if (!judgeU32(node->index_.get())) {
-    throw std::runtime_error("Array index must be U32.");
+  if (!judgeTypeEqual(node->index_.get(), "usize")) {
+    throw std::runtime_error("Array index must be Usize.");
   }
   // ValueInfo in arrayIndexExpr is decided by the array.
   auto element_type =
@@ -391,6 +380,8 @@ void SemanticChecker::visit(ExprIfNode *node) {
 void SemanticChecker::visit(ExprLiteralIntNode *node) {
   auto i32_type = current_scope_->getType("i32")->getType();
   auto u32_type = current_scope_->getType("u32")->getType();
+  auto isize_type = current_scope_->getType("isize")->getType();
+  auto usize_type = current_scope_->getType("usize")->getType();
   std::shared_ptr<TypeKind> type_kind;
   switch (node->int_type_) {
   case ExprLiteralIntNode::IntType::I32:
@@ -400,8 +391,9 @@ void SemanticChecker::visit(ExprLiteralIntNode *node) {
     type_kind = std::make_shared<TypeKindPath>(u32_type);
     break;
   case ExprLiteralIntNode::IntType::NUM:
-    type_kind = std::make_shared<TypeKindPossi>(
-        std::vector<std::shared_ptr<TypeDef>>{i32_type, u32_type});
+    type_kind =
+        std::make_shared<TypeKindPossi>(std::vector<std::shared_ptr<TypeDef>>{
+            i32_type, u32_type, isize_type, usize_type});
     break;
   }
   node->value_info_ =
@@ -467,10 +459,10 @@ void SemanticChecker::visit(ExprOperBinaryNode *node) {
   auto rhs_type = node->rhs_->value_info_->getType();
   switch (node->op_) {
   case BinaryOperator::AS_CAST:
-    if (!judgeNum(node->lhs_.get())) {
+    if (!judgeTypeEqual(node->lhs_.get(), "num")) {
       throw std::runtime_error("The lhs type is not number");
     }
-    if (!judgeNum(node->rhs_.get())) {
+    if (!judgeTypeEqual(node->rhs_.get(), "num")) {
       throw std::runtime_error("The rhs type is not number");
     }
     node->value_info_ =
@@ -519,7 +511,8 @@ void SemanticChecker::visit(ExprOperBinaryNode *node) {
   }
   default:
     // These are numeric calculations.
-    if (!judgeNum(node->lhs_.get()) || !judgeNum(node->rhs_.get())) {
+    if (!judgeTypeEqual(node->lhs_.get(), "num") ||
+        !judgeTypeEqual(node->rhs_.get(), "num")) {
       throw std::runtime_error(
           "Calculation binary operation operands must be numeric");
     }
@@ -533,7 +526,7 @@ void SemanticChecker::visit(ExprOperUnaryNode *node) {
   auto operand_type = node->operand_->value_info_->getType();
   switch (node->op_) {
   case UnaryOperator::NEGATE: {
-    if (!judgeI32(node->operand_.get())) {
+    if (!judgeTypeEqual(node->operand_.get(), "i32")) {
       throw std::runtime_error("Negation operator requires a i32 operand");
     }
     auto i32_type = std::make_shared<TypeKindPath>(
@@ -545,7 +538,7 @@ void SemanticChecker::visit(ExprOperUnaryNode *node) {
   case UnaryOperator::NOT: {
     if (!operand_type->isTypePath(
             current_scope_->getType("bool")->getType().get()) &&
-        !judgeNum(node->operand_.get())) {
+        !judgeTypeEqual(node->operand_.get(), "num")) {
       throw std::runtime_error(
           "Not operator requires a boolean or numeric operand");
     }
