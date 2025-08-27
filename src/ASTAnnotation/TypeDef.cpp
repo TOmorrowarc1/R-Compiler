@@ -9,9 +9,8 @@ TypeDef::~TypeDef() = default;
 
 auto TypeDef::getName() const -> const std::string & { return name_; }
 
-auto TypeDef::addTypeConst(const std::string &name,
-                           std::shared_ptr<SymbolVariableInfo> type_const)
-    -> bool {
+auto TypeDef::addConst(const std::string &name,
+                       std::shared_ptr<SymbolConstInfo> type_const) -> bool {
   if (type_consts_.find(name) != type_consts_.end()) {
     return false;
   }
@@ -19,8 +18,8 @@ auto TypeDef::addTypeConst(const std::string &name,
   return true;
 }
 
-auto TypeDef::getTypeConst(const std::string &name) const
-    -> std::shared_ptr<SymbolVariableInfo> {
+auto TypeDef::getConst(const std::string &name) const
+    -> std::shared_ptr<SymbolConstInfo> {
   auto iter = type_consts_.find(name);
   if (iter != type_consts_.end()) {
     return iter->second;

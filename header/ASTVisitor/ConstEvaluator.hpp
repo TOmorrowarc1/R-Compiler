@@ -28,6 +28,7 @@ public:
   void visit(ItemImplNode *node) override;
   void visit(ItemTraitNode *node) override;
 
+  void visit(ExprNode* node);
   void visit(ExprArrayNode *node) override;
   void visit(ExprArrayIndexNode *node) override;
   void visit(ExprBlockNode *node) override;

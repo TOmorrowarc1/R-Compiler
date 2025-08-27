@@ -68,7 +68,8 @@ auto parsePatternIDNode(TokenStream &stream) -> std::unique_ptr<PatternIDNode> {
   if (stream.peek().type == TokenType::AT) {
     pattern = parsePatternNode(stream);
   }
-  return std::make_unique<PatternIDNode>(name, std::move(pattern), position);
+  return std::make_unique<PatternIDNode>(name, std::move(pattern), id_type,
+                                         position);
 }
 
 auto parsePatternPathNode(TokenStream &stream)

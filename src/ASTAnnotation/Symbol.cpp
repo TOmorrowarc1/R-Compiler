@@ -15,6 +15,7 @@ auto SymbolVariableInfo::getName() const -> const std::string & {
 auto SymbolVariableInfo::getType() const -> std::shared_ptr<TypeKind> {
   return type_;
 }
+auto SymbolVariableInfo::isMutable() const -> bool { return is_mutable_; }
 
 SymbolFunctionInfo::SymbolFunctionInfo(
     const std::string &name, std::shared_ptr<TypeKind> returnType,

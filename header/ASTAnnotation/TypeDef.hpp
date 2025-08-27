@@ -8,12 +8,12 @@
 
 class TypeKind;
 class SymbolFunctionInfo;
-class SymbolVariableInfo;
+class SymbolConstInfo;
 
 class TypeDef {
 private:
   std::string name_;
-  std::unordered_map<std::string, std::shared_ptr<SymbolVariableInfo>>
+  std::unordered_map<std::string, std::shared_ptr<SymbolConstInfo>>
       type_consts_;
   std::unordered_map<std::string, std::shared_ptr<SymbolFunctionInfo>> methods_;
   std::unordered_map<std::string, std::shared_ptr<SymbolFunctionInfo>>
@@ -23,10 +23,10 @@ public:
   TypeDef(const std::string &name);
   virtual ~TypeDef();
   auto getName() const -> const std::string &;
-  auto addTypeConst(const std::string &name,
-                    std::shared_ptr<SymbolVariableInfo> type_const) -> bool;
-  auto getTypeConst(const std::string &name) const
-      -> std::shared_ptr<SymbolVariableInfo>;
+  auto addConst(const std::string &name,
+                    std::shared_ptr<SymbolConstInfo> type_const) -> bool;
+  auto getConst(const std::string &name) const
+      -> std::shared_ptr<SymbolConstInfo>;
   auto addMethod(const std::string &name,
                  std::shared_ptr<SymbolFunctionInfo> method) -> bool;
   auto addAssociatedFunction(const std::string &name,

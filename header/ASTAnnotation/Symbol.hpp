@@ -24,6 +24,7 @@ public:
   ~SymbolVariableInfo();
   auto getName() const -> const std::string &;
   auto getType() const -> std::shared_ptr<TypeKind>;
+  auto isMutable() const -> bool;
 };
 
 class SymbolFunctionInfo : public SymbolInfo {

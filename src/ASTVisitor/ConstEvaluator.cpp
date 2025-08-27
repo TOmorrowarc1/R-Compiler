@@ -1,5 +1,5 @@
-#include "ASTNodeTotal.hpp"
 #include "ConstEvaluator.hpp"
+#include "ASTNodeTotal.hpp"
 #include "Symbol.hpp"
 #include "TypeKind.hpp"
 #include "cast.hpp"
@@ -42,6 +42,20 @@ void ConstEvaluator::visit(ItemEnumNode *node) {}
 void ConstEvaluator::visit(ItemImplNode *node) {}
 void ConstEvaluator::visit(ItemTraitNode *node) {}
 
+void ConstEvaluator::visit(ExprNode *node) {
+  if (is_instance_of<ExprLiteralIntNode, ExprNode>(node)) {
+    visit(dynamic_cast<ExprLiteralIntNode *>(node));
+  } else if (is_instance_of<ExprOperBinaryNode, ExprNode>(node)) {
+    visit(dynamic_cast<ExprOperBinaryNode *>(node));
+  } else if (is_instance_of<ExprOperUnaryNode, ExprNode>(node)) {
+    visit(dynamic_cast<ExprOperUnaryNode *>(node));
+  } else if (is_instance_of<ExprPathNode, ExprNode>(node)) {
+    visit(dynamic_cast<ExprPathNode *>(node));
+  } else {
+    throw CompilerException("Unsupported expression in constant evaluation",
+                            node->position_);
+  }
+}
 void ConstEvaluator::visit(ExprArrayNode *node) {}
 void ConstEvaluator::visit(ExprArrayIndexNode *node) {}
 void ConstEvaluator::visit(ExprBlockNode *node) {}
@@ -67,8 +81,8 @@ void ConstEvaluator::visit(ExprOperBinaryNode *node) {
   Position position = node->position_;
   node->lhs_->accept(*this);
   node->rhs_->accept(*this);
-  auto lhs_value = node->lhs_->value_info_->getValue();
-  auto rhs_value = node->rhs_->value_info_->getValue();
+  auto lhs_value = node->lhs_->const_value_->getValue();
+  auto rhs_value = node->rhs_->const_value_->getValue();
   std::unique_ptr<ConstValueInfo> result;
   switch (node->op_) {
   case BinaryOperator::PLUS:
@@ -136,8 +150,12 @@ void ConstEvaluator::visit(ExprPathNode *node) {
   if (!const_info) {
     throw CompilerException("Const symbol info is null.", node->position_);
   }
-  node->const_value_ =
-      std::make_unique<ConstValueInfo>(const_info->calcValue());
+  auto const_value = const_info->calcValue();
+  if (!const_value.second) {
+    throw CompilerException("Const value has not been calculated.",
+                            node->position_);
+  }
+  node->const_value_ = std::make_unique<ConstValueInfo>(const_value.first);
 }
 void ConstEvaluator::visit(ExprFieldNode *node) {}
 void ConstEvaluator::visit(ExprMethodNode *node) {}

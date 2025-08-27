@@ -20,6 +20,7 @@ auto Scope::getConstSymbol(const std::string &name) const
   if (parent_) {
     return parent_->getConstSymbol(name);
   }
+  return nullptr;
 }
 
 auto Scope::addConst(const std::string &name,

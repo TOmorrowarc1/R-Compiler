@@ -32,30 +32,7 @@ auto SemanticChecker::typeNodeToType(TypeNode *type_node)
     auto type = SemanticChecker::typeNodeToType(type_array->type_.get());
     int32_t length;
     if (type_array->length_ != nullptr) {
-      auto binary =
-          dynamic_cast<ExprOperBinaryNode *>(type_array->length_.get());
-      if (binary) {
-        const_evaluator_->visit(binary);
-      } else {
-        auto unary =
-            dynamic_cast<ExprOperUnaryNode *>(type_array->length_.get());
-        if (unary) {
-          const_evaluator_->visit(unary);
-        } else {
-          auto path = dynamic_cast<ExprPathNode *>(type_array->length_.get());
-          if (path) {
-            const_evaluator_->visit(path);
-          } else {
-            auto literal =
-                dynamic_cast<ExprLiteralIntNode *>(type_array->length_.get());
-            if (literal) {
-              const_evaluator_->visit(literal);
-            } else {
-              throw std::runtime_error("Array length must be a constant");
-            }
-          }
-        }
-      }
+      const_evaluator_->visit(type_array->length_.get());
       length = type_array->length_.get()->const_value_->getValue();
     } else {
       throw std::runtime_error("Array length cannot be null");
@@ -199,6 +176,17 @@ void SemanticChecker::visit(ItemImplNode *node) {
   for (const auto &item : node->items_) {
     if (item.function) {
       item.function->accept(*this);
+    } else if (item.constant) {
+      auto const_info = current_impl_type_->getConst(item.constant->ID_);
+      auto const_type = typeNodeToType(node->type_.get());
+      item.constant->value_->accept(*this);
+      const_evaluator_->visit(item.constant->value_.get());
+      if (!item.constant->value_->value_info_->getType()->isEqual(
+              const_type.get())) {
+        throw std::runtime_error(
+            "Type mismatch in let statement initialization");
+      }
+      const_info->setValue(item.constant->value_->const_value_->getValue());
     } else {
       throw std::runtime_error(
           "ItemImplNode currently does not support constants");
@@ -230,7 +218,7 @@ void SemanticChecker::visit(ExprArrayNode *node) {
   }
   length = length == 0 ? node->elements_.size() : length;
   auto array_type = std::make_shared<TypeKindArray>(element_type, length);
-  // The array expr is not a left value, not mutable, and not const.
+  // The array expr is neither a left value nor mutable.
   node->value_info_ = std::make_unique<ValueInfo>(array_type, false, false);
 }
 
@@ -488,16 +476,21 @@ void SemanticChecker::visit(ExprOperBinaryNode *node) {
     node->value_info_ =
         std::make_unique<ValueInfo>(std::move(rhs_type), false, false);
     break;
-  case BinaryOperator::ASSIGN:
+  case BinaryOperator::ASSIGN: {
     if (!lhs_type->isEqual(rhs_type.get())) {
       throw std::runtime_error("Assignment requires types to match");
     }
     if (!node->lhs_->value_info_->isLeftValue()) {
       throw std::runtime_error("Assignment requires lhs to be a left value");
     }
-    node->value_info_ =
-        std::make_unique<ValueInfo>(std::move(lhs_type), true, false);
+    if (!node->lhs_->value_info_->isMutable()) {
+      throw std::runtime_error("Assignment requires lhs to be mutable");
+    }
+    auto unit_type = current_scope_->getType("unit")->getType();
+    node->value_info_ = std::make_unique<ValueInfo>(
+        std::make_shared<TypeKindPath>(unit_type), true, false);
     break;
+  }
   case BinaryOperator::EQUAL:
   case BinaryOperator::NOT_EQUAL:
   case BinaryOperator::LESS_THAN:
@@ -521,7 +514,7 @@ void SemanticChecker::visit(ExprOperBinaryNode *node) {
                                "boolean operands");
     }
     node->value_info_ = std::make_unique<ValueInfo>(
-        std::make_shared<TypeKindPath>(bool_type), false, false, false);
+        std::make_shared<TypeKindPath>(bool_type), false, false);
     break;
   }
   default:
@@ -568,7 +561,7 @@ void SemanticChecker::visit(ExprOperUnaryNode *node) {
   case UnaryOperator::MUTREF: {
     node->value_info_ = std::make_unique<ValueInfo>(
         std::make_shared<TypeKindRefer>(operand_type, true),
-        node->operand_->value_info_->isLeftValue());
+        node->operand_->value_info_->isLeftValue(), false);
     break;
   }
   case UnaryOperator::DEREF: {
@@ -602,12 +595,18 @@ void SemanticChecker::visit(ExprPathNode *node) {
     } else if (is_instance_of<StructDef, TypeDef>(type.get())) {
       // Here we lost the const item.
       auto struct_def = dynamic_cast<StructDef *>(type.get());
-      auto member_type =
-          struct_def->getMember(getPathIndexName(node->path_.get(), 1));
-      if (!member_type) {
+      auto const_info =
+          struct_def->getConst(getPathIndexName(node->path_.get(), 1));
+      if (!const_info) {
         throw std::runtime_error("Struct member not found in struct.");
       }
-      node->value_info_ = std::make_unique<ValueInfo>(member_type, true, false);
+      auto const_type = const_info->getType();
+      auto const_value = const_info->calcValue();
+      if (!const_value.second) {
+        throw std::runtime_error("Const value has not been calculated.");
+      }
+      node->const_value_ = std::make_unique<ConstValueInfo>(const_value.first);
+      node->value_info_ = std::make_unique<ValueInfo>(const_type, false, false);
     } else {
       throw std::runtime_error("Path must be a type or enum.");
     }
@@ -621,27 +620,28 @@ void SemanticChecker::visit(ExprPathNode *node) {
     auto variable_info =
         std::dynamic_pointer_cast<SymbolVariableInfo>(variable);
     auto type = variable_info->getType();
-    node->value_info_ = std::make_unique<ValueInfo>(type, true, false);
+    bool is_mutable = variable_info->isMutable();
+    node->value_info_ = std::make_unique<ValueInfo>(type, true, is_mutable);
   }
 }
 
 void SemanticChecker::visit(ExprFieldNode *node) {
   node->instance_->accept(*this);
   auto instance_type = node->instance_->value_info_->getType();
-  if (!is_instance_of<TypeKindPath, TypeKind>(instance_type.get())) {
-    throw std::runtime_error("Field access requires a path type");
+  auto path_type = dynamic_cast<TypeKindPath *>(instance_type.get());
+  if (!path_type) {
+    throw std::runtime_error("Instance requires a path type");
   }
-  auto path_type =
-      dynamic_cast<TypeKindPath *>(instance_type.get())->getTypeDef();
-  if (!path_type || !is_instance_of<StructDef, TypeDef>(path_type.get())) {
+  auto type_def = dynamic_shared_ptr_cast<StructDef>(path_type->getTypeDef());
+  if (!type_def) {
     throw std::runtime_error("Field access requires a struct type");
   }
-  auto member_type =
-      dynamic_shared_ptr_cast<StructDef>(path_type)->getMember(node->ID_);
+  auto member_type = type_def->getMember(node->ID_);
   if (!member_type) {
     throw std::runtime_error("Field " + node->ID_ + " not found in type");
   }
-  node->value_info_ = std::make_unique<ValueInfo>(member_type, true, false);
+  bool is_mut = node->instance_->value_info_->isMutable();
+  node->value_info_ = std::make_unique<ValueInfo>(member_type, true, is_mut);
 }
 
 void SemanticChecker::visit(ExprMethodNode *node) {
@@ -715,8 +715,7 @@ void SemanticChecker::visit(StmtLetNode *node) {
     }
     node->type_->accept(*this);
     auto type = typeNodeToType(node->type_.get());
-    bool is_mutable = node->let_type_ == StmtLetNode::LetType::MUT;
-    bindVarSymbol(node->pattern_.get(), type, is_mutable);
+    bindVarSymbol(node->pattern_.get(), type);
     if (node->init_value_) {
       node->init_value_->accept(*this);
     }
