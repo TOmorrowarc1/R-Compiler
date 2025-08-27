@@ -51,6 +51,7 @@ public:
   auto addMember(const std::string &name, std::shared_ptr<TypeKind> type)
       -> bool;
   auto getMember(const std::string &name) const -> std::shared_ptr<TypeKind>;
+  auto getMemNum() const -> size_t;
 };
 
 class EnumDef : public TypeDef {

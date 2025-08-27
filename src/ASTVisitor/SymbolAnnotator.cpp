@@ -71,8 +71,8 @@ void SymbolAnnotator::visit(ItemConstNode *node) {
   node->type_->accept(*this);
   node->value_->accept(*this);
   auto type = typeNodeToType(node->type_.get());
-  auto var_info = std::make_shared<SymbolVariableInfo>(node->ID_, type, true);
-  current_scope_->addVarible(node->ID_, std::move(var_info));
+  auto const_info = std::make_shared<SymbolConstInfo>(node->ID_, type);
+  current_scope_->addConst(node->ID_, std::move(const_info));
 }
 
 void SymbolAnnotator::visit(ItemFnNode *node) {

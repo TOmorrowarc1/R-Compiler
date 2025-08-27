@@ -674,12 +674,15 @@ void SemanticChecker::visit(ExprStructNode *node) {
   }
   auto struct_type = dynamic_shared_ptr_cast<StructDef>(type_def->getType());
   for (auto &field : node->fields_) {
+    // Sugar TODO: same name exprPath to field name can be omitted.
     field.expr->accept(*this);
     auto field_type = field.expr->value_info_->getType();
     auto member_type = struct_type->getMember(field.ID);
     if (!member_type || !field_type->isEqual(member_type.get())) {
-      throw std::runtime_error("Field " + field.ID +
-                               " type mismatch in struct.");
+      throw std::runtime_error(field.ID + ": type mismatch in struct.");
+    }
+    if (node->fields_.size() != struct_type->getMemNum()) {
+      throw std::runtime_error("Field count mismatch in struct.");
     }
   }
   auto struct_type_kind = std::make_shared<TypeKindPath>(struct_type);

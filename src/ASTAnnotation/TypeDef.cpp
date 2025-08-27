@@ -100,6 +100,8 @@ auto StructDef::getMember(const std::string &name) const
   return nullptr;
 }
 
+auto StructDef::getMemNum() const -> size_t { return members_.size(); }
+
 EnumDef::EnumDef(const std::string &name) : TypeDef(name) {}
 
 EnumDef::EnumDef(const std::string &name,
