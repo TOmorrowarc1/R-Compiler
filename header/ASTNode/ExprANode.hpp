@@ -2,12 +2,10 @@
 #include "ASTNode.hpp"
 
 class ValueInfo;
-class ConstValueInfo;
 
 class ExprNode : public ASTNode {
 public:
   std::unique_ptr<ValueInfo> value_info_;
-  std::unique_ptr<ConstValueInfo> const_value_;
 
   ExprNode(Position position) : ASTNode(position), value_info_(nullptr) {}
   virtual ~ExprNode() = default;

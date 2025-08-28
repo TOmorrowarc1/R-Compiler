@@ -92,25 +92,11 @@ void SymbolAnnotator::visit(ItemFnNode *node) {
 
 // Visit a struct item node and collect its fields.
 void SymbolAnnotator::visit(ItemStructNode *node) {
-  auto type_def = current_scope_->getType(node->ID_)->getType();
-  auto struct_def = std::dynamic_pointer_cast<StructDef>(type_def);
-  for (const auto &field : node->fields_) {
-    field.type->accept(*this);
-    auto field_type = typeNodeToType(field.type.get());
-    if (!struct_def->addMember(field.identifier, field_type)) {
-      throw std::runtime_error("Duplicate member name: " + field.identifier);
-    }
-  }
+
 }
 
 void SymbolAnnotator::visit(ItemEnumNode *node) {
-  auto type_def = current_scope_->getType(node->ID_)->getType();
-  auto enum_def = std::dynamic_pointer_cast<EnumDef>(type_def);
-  for (const auto &variant : node->variants_) {
-    if (!enum_def->addVariant(variant)) {
-      throw std::runtime_error("Duplicate variant name: " + variant);
-    }
-  }
+ 
 }
 
 void SymbolAnnotator::visit(ItemImplNode *node) {

@@ -8,12 +8,15 @@ class ConstValue;
 class ConstInfo {
 private:
   std::shared_ptr<TypeKind> type_;
-  std::unique_ptr<ConstValue> const_value_;
+  std::shared_ptr<ConstValue> const_value_;
 
 public:
+  // Two constructors: one for expr, one for const definition.
+  ConstInfo(std::shared_ptr<TypeKind> type);
   ConstInfo(std::shared_ptr<TypeKind> type,
-            std::unique_ptr<ConstValue> const_value);
+            std::unique_ptr<ConstValue> &&const_value);
   ~ConstInfo();
+  auto setConstValue(const ConstInfo *rhs) -> bool;
   auto getType() const -> std::shared_ptr<TypeKind>;
-  auto getConstValue() const -> const std::unique_ptr<ConstValue> &;
+  auto getConstValue() const -> std::shared_ptr<ConstValue>;
 };

@@ -15,4 +15,6 @@ public:
   PathNode(std::vector<PathSegment> &&segments, Position position);
   ~PathNode();
   void accept(Visitor &visitor) override;
+  auto getPathIndexName(uint32_t index) const -> std::string;
+  auto size() const -> uint32_t;
 };

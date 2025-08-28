@@ -22,13 +22,3 @@ public:
   auto getValue() const -> int32_t;
   void setValue(int32_t const_value);
 };
-
-class ConstValueInfo {
-private:
-  int32_t const_value_;
-
-public:
-  ConstValueInfo(int32_t const_value);
-  ~ConstValueInfo();
-  auto getValue() const -> int32_t;
-};

@@ -70,14 +70,13 @@ public:
 class SymbolConstInfo : public SymbolInfo {
 private:
   std::string name_;
-  std::unique_ptr<ConstInfo> const_info_;
+  std::shared_ptr<ConstInfo> const_info_;
 
 public:
-  SymbolConstInfo(const std::string &name,
-                  std::unique_ptr<ConstInfo> &&const_info);
+  SymbolConstInfo(const std::string &name);
   ~SymbolConstInfo();
   auto getName() const -> const std::string &;
   auto getType() const -> std::shared_ptr<TypeKind>;
-  auto getValue() -> std::shared_ptr<ConstValue>;
-  void setValue(int32_t value);
+  auto getValue() const -> std::shared_ptr<ConstValue>;
+  void setValue(std::shared_ptr<ConstInfo> &&const_info);
 };

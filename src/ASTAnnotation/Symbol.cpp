@@ -1,7 +1,9 @@
 #include "Symbol.hpp"
+#include "ConstInfo.hpp"
 #include "TypeDef.hpp"
 #include "TypeKind.hpp"
 #include <stdexcept>
+
 
 SymbolVariableInfo::SymbolVariableInfo(const std::string &name,
                                        std::shared_ptr<TypeKind> type,
@@ -44,24 +46,19 @@ auto SymbolTypeInfo::getType() const -> std::shared_ptr<TypeDef> {
   return type_;
 }
 
-SymbolConstInfo::SymbolConstInfo(const std::string &name,
-                                 std::shared_ptr<TypeKind> type)
-    : SymbolInfo(), name_(name), type_(std::move(type)) {}
+SymbolConstInfo::SymbolConstInfo(const std::string &name)
+    : SymbolInfo(), name_(name), const_info_(nullptr) {}
 SymbolConstInfo::~SymbolConstInfo() = default;
 auto SymbolConstInfo::getName() const -> const std::string & { return name_; }
 auto SymbolConstInfo::getType() const -> std::shared_ptr<TypeKind> {
-  return type_;
-}
-auto SymbolConstInfo::calcValue() -> std::pair<int32_t, bool> {
-  int32_t result = 0;
-  if (value_.isValid()) {
-    result = value_.getValue();
-  } else if (value_.isTouched()) {
-    throw std::runtime_error(
-        "Cyclic dependency detected when evaluating const " + name_);
-  } else {
-    value_.touch();
+  if (const_info_ == nullptr) {
+    throw std::runtime_error("ConstInfo is not set for const: " + name_);
   }
-  return std::pair<int32_t, bool>(result, value_.isValid());
+  return const_info_->getType();
 }
-void SymbolConstInfo::setValue(int32_t value) { value_.setValue(value); }
+auto SymbolConstInfo::getValue() const -> std::shared_ptr<ConstValue> {
+  return const_info_->getConstValue();
+}
+void SymbolConstInfo::setValue(std::shared_ptr<ConstInfo> &&const_info) {
+  const_info_ = std::move(const_info);
+}
