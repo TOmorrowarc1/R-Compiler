@@ -20,30 +20,27 @@ public:
 };
 
 class ExprLiteralBoolNode : public ExprLiteralNode {
-private:
+public:
   bool value_;
 
-public:
   ExprLiteralBoolNode(bool value, Position position);
   ~ExprLiteralBoolNode();
   void accept(Visitor &visitor) override;
 };
 
 class ExprLiteralCharNode : public ExprLiteralNode {
-private:
+public:
   uint32_t value_;
 
-public:
   ExprLiteralCharNode(uint32_t value, Position position);
   ~ExprLiteralCharNode();
   void accept(Visitor &visitor) override;
 };
 
 class ExprLiteralStringNode : public ExprLiteralNode {
-private:
+public:
   std::string value_;
 
-public:
   ExprLiteralStringNode(const std::string &value, Position position);
   ~ExprLiteralStringNode();
   void accept(Visitor &visitor) override;
