@@ -1,6 +1,12 @@
 #pragma once
 #include "TypeDef.hpp"
 
+/*
+The instance of TypeKind represents what type of a var/const/field it is.
+It can be a PathType, an ArrayType, a ReferenceType, or a PossibleType that
+serves for numbers.
+*/
+
 class TypeKind {
 public:
   TypeKind() = default;

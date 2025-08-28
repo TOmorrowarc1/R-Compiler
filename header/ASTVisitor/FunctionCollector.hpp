@@ -3,21 +3,26 @@
 #include "Visitor.hpp"
 
 /*
-Traverse a part of the ASTNode tree recursively to calculate value of constants,
-supporting basic arithmetic operations and parentheses between numbers. However,
-the fowarding defination(decalaration) of const has not been supported yet.
+The third pass collects function signatures and implies types functions by their
+impl blocks in the subtree.
 */
+class TypeKind;
+class TypeNode;
 
-class ConstEvaluator : public Visitor {
+class FunctionCollector : public Visitor {
 private:
   Scope *current_scope_;
+
+  auto isStructConst(const PathNode *path_node) -> bool;
   auto getPathIndexName(const PathNode *path_node, uint32_t index)
       -> std::string;
-  auto judgeNum(const ExprNode *node) -> bool;
+  auto typeNodeToType(const TypeNode *type_node) -> std::shared_ptr<TypeKind>;
+  auto fnNodeToFunc(const ItemFnNode *node)
+      -> std::shared_ptr<SymbolFunctionInfo>;
 
 public:
-  ConstEvaluator(Scope *initial_scope);
-  ~ConstEvaluator() override;
+  FunctionCollector(Scope *initial_scope);
+  ~FunctionCollector() override;
 
   void visit(ASTRootNode *node) override;
 
@@ -28,7 +33,6 @@ public:
   void visit(ItemImplNode *node) override;
   void visit(ItemTraitNode *node) override;
 
-  void visit(ExprNode* node);
   void visit(ExprArrayNode *node) override;
   void visit(ExprArrayIndexNode *node) override;
   void visit(ExprBlockNode *node) override;

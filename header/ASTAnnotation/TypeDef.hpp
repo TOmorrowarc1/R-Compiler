@@ -6,6 +6,12 @@
 #include <unordered_map>
 #include <vector>
 
+/*
+The TypeDef class represents a PathType, which is fixed by a unique symbol.
+It can be either a StructDef(contains inline types) or an EnumDef, and implied
+by all impl blocks in the subtree of the scope it is in.
+*/
+
 class TypeKind;
 class SymbolFunctionInfo;
 class SymbolConstInfo;

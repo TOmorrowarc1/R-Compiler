@@ -3,23 +3,28 @@
 #include "Visitor.hpp"
 
 /*
-The first pass builds up the Scope tree and gathers names for all self-define
-types.
+The second pass implies types by their members and impls, collects function
+signatures and const items.
 */
-
 class TypeKind;
 class TypeNode;
+class ConstEvaluator;
 
-class SymbolCollector : public Visitor {
+class ConstTypeEvaluator : public Visitor {
 private:
   Scope *current_scope_;
+  ConstEvaluator *const_evaluator_;
 
-  auto addStructType(const std::string &type_name) -> bool;
-  auto addEnumType(const std::string &type_name) -> bool;
+  auto isStructConst(const PathNode *path_node) -> bool;
+  auto getPathIndexName(const PathNode *path_node, uint32_t index)
+      -> std::string;
+  auto typeNodeToType(const TypeNode *type_node) -> std::shared_ptr<TypeKind>;
+  auto fnNodeToFunc(const ItemFnNode *node)
+      -> std::shared_ptr<SymbolFunctionInfo>;
 
 public:
-  SymbolCollector(Scope *initial_scope);
-  ~SymbolCollector() override;
+  ConstTypeEvaluator(Scope *initial_scope);
+  ~ConstTypeEvaluator() override;
 
   void visit(ASTRootNode *node) override;
 
