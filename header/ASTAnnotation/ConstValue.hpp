@@ -85,5 +85,5 @@ public:
   ConstValueArray(std::vector<std::shared_ptr<ConstValue>> &&elements);
   ~ConstValueArray() override;
   auto clone() const -> std::unique_ptr<ConstValue> override;
-  auto getElement(int32_t index) const -> const std::shared_ptr<ConstValue>;
+  auto getElement(uint32_t index) const -> const std::shared_ptr<ConstValue>;
 };
