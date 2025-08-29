@@ -36,14 +36,10 @@ struct LoopContext {
 class SemanticChecker : public Visitor {
 private:
   Scope *current_scope_;
-  std::unique_ptr<ConstEvaluator> const_evaluator_;
+  ConstEvaluator *const_evaluator_;
   std::shared_ptr<TypeDef> current_impl_type_;
   std::stack<std::shared_ptr<TypeKind>> fn_type_stack_;
   std::stack<std::shared_ptr<LoopContext>> loop_type_stack_;
-
-  auto getPathIndexName(const PathNode *path_node, uint32_t index)
-      -> std::string;
-  auto typeNodeToType(TypeNode *type_node) -> std::shared_ptr<TypeKind>;
 
   auto bindVarSymbol(const PatternNode *pattern_node,
                      std::shared_ptr<TypeKind> type) -> bool;
@@ -51,7 +47,7 @@ private:
   auto judgeTypeEqual(const ExprNode *node, const std::string &name) -> bool;
 
 public:
-  SemanticChecker(Scope *initial_scope);
+  SemanticChecker(Scope *initial_scope, ConstEvaluator *const_evaluator);
   ~SemanticChecker() override;
 
   void visit(ASTRootNode *node) override;

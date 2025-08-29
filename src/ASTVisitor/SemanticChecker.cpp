@@ -9,47 +9,12 @@ auto LoopContext::breakAdd(std::shared_ptr<TypeKind> type) -> bool {
   return !loop_type || loop_type->isEqual(type.get());
 }
 
-SemanticChecker::SemanticChecker(Scope *initial_scope)
-    : current_scope_(initial_scope) {
-  const_evaluator_ = std::make_unique<ConstEvaluator>(initial_scope);
+SemanticChecker::SemanticChecker(Scope *initial_scope,
+                                 ConstEvaluator *const_evaluator)
+    : current_scope_(initial_scope), const_evaluator_(const_evaluator) {
+  const_evaluator_->bindScopePointer(current_scope_);
 }
 SemanticChecker::~SemanticChecker() = default;
-
-auto SemanticChecker::typeNodeToType(TypeNode *type_node)
-    -> std::shared_ptr<TypeKind> {
-  if (type_node == nullptr) {
-    return std::make_shared<TypeKindPath>(
-        current_scope_->getType("unit")->getType());
-  }
-  if (is_instance_of<TypePathNode, TypeNode>(type_node)) {
-    const auto *type_path = dynamic_cast<const TypePathNode *>(type_node);
-    std::string type_name = getPathIndexName(type_path->path_.get(), 0);
-    return std::make_shared<TypeKindPath>(
-        current_scope_->getType(type_name)->getType());
-  }
-  if (is_instance_of<TypeArrayNode, TypeNode>(type_node)) {
-    const auto *type_array = dynamic_cast<const TypeArrayNode *>(type_node);
-    auto type = SemanticChecker::typeNodeToType(type_array->type_.get());
-    int32_t length;
-    if (type_array->length_ != nullptr) {
-      const_evaluator_->visit(type_array->length_.get());
-      length = type_array->length_.get()->const_value_->getValue();
-    } else {
-      throw std::runtime_error("Array length cannot be null");
-    }
-    return std::make_shared<TypeKindArray>(type, length);
-  }
-  throw std::runtime_error("Unsupported type node for symbol collection");
-  return nullptr;
-}
-
-auto SemanticChecker::getPathIndexName(const PathNode *path_node,
-                                       uint32_t index) -> std::string {
-  if (index >= path_node->segments_.size()) {
-    throw std::out_of_range("Index out of range for path segments");
-  }
-  return path_node->segments_[index].name;
-}
 
 auto SemanticChecker::bindVarSymbol(const PatternNode *pattern_node,
                                     std::shared_ptr<TypeKind> type) -> bool {
@@ -105,11 +70,6 @@ void SemanticChecker::visit(ASTRootNode *node) {
 void SemanticChecker::visit(ItemConstNode *node) {
   node->type_->accept(*this);
   node->value_->accept(*this);
-  auto type = typeNodeToType(node->type_.get());
-  if (!node->value_->value_info_->getType()->isEqual(type.get())) {
-    throw std::runtime_error("Type mismatch in let statement initialization");
-  }
-  const_evaluator_->visit(node);
 }
 
 void SemanticChecker::visit(ItemFnNode *node) {
@@ -129,14 +89,15 @@ void SemanticChecker::visit(ItemFnNode *node) {
     }
     for (auto &param : node->parameters_) {
       if (param.pattern) {
-        auto type = typeNodeToType(param.type.get());
+        auto type = const_evaluator_->evaluateType(param.type.get());
         bindVarSymbol(param.pattern.get(), type);
       } else {
         throw std::runtime_error(
             "Parameters must have a pattern in function definitions");
       }
     }
-    auto return_type_kind = typeNodeToType(node->return_type_.get());
+    auto return_type_kind =
+        const_evaluator_->evaluateType(node->return_type_.get());
     fn_type_stack_.push(return_type_kind);
     node->body_->accept(*this);
     if (!node->body_->value_info_->getType()->isEqual(return_type_kind.get())) {
@@ -156,7 +117,7 @@ void SemanticChecker::visit(ItemStructNode *node) {
 void SemanticChecker::visit(ItemEnumNode *node) {}
 
 void SemanticChecker::visit(ItemImplNode *node) {
-  auto impl_type = typeNodeToType(node->type_.get());
+  auto impl_type = const_evaluator_->evaluateType(node->type_.get());
   if (!is_instance_of<TypeKindPath, TypeKind>(impl_type.get())) {
     throw std::runtime_error("Impl type must be a path type");
   }
@@ -166,19 +127,9 @@ void SemanticChecker::visit(ItemImplNode *node) {
     if (item.function) {
       item.function->accept(*this);
     } else if (item.constant) {
-      auto const_info = current_impl_type_->getConst(item.constant->ID_);
-      auto const_type = typeNodeToType(node->type_.get());
-      item.constant->value_->accept(*this);
-      const_evaluator_->visit(item.constant->value_.get());
-      if (!item.constant->value_->value_info_->getType()->isEqual(
-              const_type.get())) {
-        throw std::runtime_error(
-            "Type mismatch in let statement initialization");
-      }
-      const_info->setValue(item.constant->value_->const_value_->getValue());
+      item.constant->accept(*this);
     } else {
-      throw std::runtime_error(
-          "ItemImplNode currently does not support constants");
+      throw std::runtime_error("Item in Impl cannot be empty.");
     }
   }
   current_impl_type_ = nullptr;
@@ -274,7 +225,7 @@ void SemanticChecker::visit(ExprCallNode *node) {
   auto path = dynamic_cast<ExprPathNode *>(node->caller_.get())->path_.get();
   std::shared_ptr<SymbolFunctionInfo> function_info;
   if (path->segments_.size() == 1) {
-    auto function_name = getPathIndexName(path, 0);
+    auto function_name = path->getPathIndexName(0);
     auto function = current_scope_->getSymbol(function_name);
     if (!function ||
         !is_instance_of<SymbolFunctionInfo, SymbolInfo>(function.get())) {
@@ -282,7 +233,7 @@ void SemanticChecker::visit(ExprCallNode *node) {
     }
     function_info = std::dynamic_pointer_cast<SymbolFunctionInfo>(function);
   } else {
-    auto type_name = getPathIndexName(path, 0);
+    auto type_name = path->getPathIndexName(0);
     auto type = current_scope_->getType(type_name)->getType();
     auto function = type->getAssociatedFunction(path->segments_[1].name);
     function_info = function;
@@ -575,11 +526,11 @@ void SemanticChecker::visit(ExprOperUnaryNode *node) {
 
 void SemanticChecker::visit(ExprPathNode *node) {
   if (node->path_->segments_.size() == 2) {
-    auto type_name = getPathIndexName(node->path_.get(), 0);
+    auto type_name = node->path_->getPathIndexName(0);
     auto type = current_scope_->getType(type_name)->getType();
     if (is_instance_of<EnumDef, TypeDef>(type.get())) {
       auto enum_def = dynamic_cast<EnumDef *>(type.get());
-      auto variant_name = getPathIndexName(node->path_.get(), 1);
+      auto variant_name = node->path_->getPathIndexName(1);
       if (!enum_def->getVariant(variant_name)) {
         throw std::runtime_error("Enum variant not found in enum.");
       }
@@ -588,23 +539,17 @@ void SemanticChecker::visit(ExprPathNode *node) {
     } else if (is_instance_of<StructDef, TypeDef>(type.get())) {
       // Here we lost the const item.
       auto struct_def = dynamic_cast<StructDef *>(type.get());
-      auto const_info =
-          struct_def->getConst(getPathIndexName(node->path_.get(), 1));
+      auto const_info = struct_def->getConst(node->path_->getPathIndexName(1));
       if (!const_info) {
-        throw std::runtime_error("Struct member not found in struct.");
+        throw std::runtime_error("Const member not found in struct.");
       }
       auto const_type = const_info->getType();
-      auto const_value = const_info->calcValue();
-      if (!const_value.second) {
-        throw std::runtime_error("Const value has not been calculated.");
-      }
-      node->const_value_ = std::make_unique<ConstValueInfo>(const_value.first);
       node->value_info_ = std::make_unique<ValueInfo>(const_type, false, false);
     } else {
       throw std::runtime_error("Path must be a type or enum.");
     }
   } else {
-    auto variable_name = getPathIndexName(node->path_.get(), 0);
+    auto variable_name = node->path_->getPathIndexName(0);
     auto variable = current_scope_->getSymbol(variable_name);
     if (!variable ||
         !is_instance_of<SymbolVariableInfo, SymbolInfo>(variable.get())) {
@@ -648,7 +593,7 @@ void SemanticChecker::visit(ExprMethodNode *node) {
     throw std::runtime_error(
         "Method call requires a path with only one segment");
   }
-  auto method_name = getPathIndexName(path, 0);
+  auto method_name = path->getPathIndexName(0);
   auto method = current_scope_->getSymbol(method_name);
   method_info = std::dynamic_pointer_cast<SymbolFunctionInfo>(method);
   if (method_info->getParametersType().size() != node->parameters_.size()) {
@@ -666,7 +611,7 @@ void SemanticChecker::visit(ExprMethodNode *node) {
 }
 
 void SemanticChecker::visit(ExprStructNode *node) {
-  std::string name = getPathIndexName(node->path_->path_.get(), 0);
+  std::string name = node->path_->path_->getPathIndexName(0);
   auto type_def = current_scope_->getType(name);
   if (!type_def ||
       !is_instance_of<StructDef, TypeDef>(type_def->getType().get())) {
@@ -710,7 +655,7 @@ void SemanticChecker::visit(StmtLetNode *node) {
       throw std::runtime_error("ID pattern no type infer.");
     }
     node->type_->accept(*this);
-    auto type = typeNodeToType(node->type_.get());
+    auto type = const_evaluator_->evaluateType(node->type_.get());
     bindVarSymbol(node->pattern_.get(), type);
     if (node->init_value_) {
       node->init_value_->accept(*this);
