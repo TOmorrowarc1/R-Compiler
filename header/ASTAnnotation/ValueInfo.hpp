@@ -19,6 +19,4 @@ public:
   void setLeftValue(bool is_left_value);
   auto isMutable() const -> bool;
   void setMutable(bool is_mutable);
-  auto getValue() const -> int32_t;
-  void setValue(int32_t const_value);
 };

@@ -18,10 +18,3 @@ void ValueInfo::setLeftValue(bool is_left_value) {
 auto ValueInfo::isMutable() const -> bool { return is_mutable_; }
 
 void ValueInfo::setMutable(bool is_mutable) { is_mutable_ = is_mutable; }
-
-ConstValueInfo::ConstValueInfo(int32_t const_value)
-    : const_value_(const_value) {}
-
-ConstValueInfo::~ConstValueInfo() = default;
-
-auto ConstValueInfo::getValue() const -> int32_t { return const_value_; }

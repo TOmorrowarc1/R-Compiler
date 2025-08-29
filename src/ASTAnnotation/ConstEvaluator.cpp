@@ -20,6 +20,9 @@ auto StatusRecorder::touch() -> bool {
 auto StatusRecorder::isValid() const -> bool { return status_ == VAILD; }
 void StatusRecorder::setVaild() { status_ = VAILD; }
 
+SymbolStatus::SymbolStatus() : node(nullptr), status() {}
+SymbolStatus::SymbolStatus(ASTNode *target) : node(target), status() {}
+
 ConstEvaluator::ConstEvaluator() { current_scope_ = nullptr; }
 
 ConstEvaluator::~ConstEvaluator() = default;
@@ -30,12 +33,14 @@ void ConstEvaluator::bindScopePointer(Scope *current_scope) {
 
 void ConstEvaluator::attachNodeToTypeDef(ASTNode *node,
                                          const std::string &symbol) {
-  type_def_symbols.emplace(symbol, node);
+  SymbolStatus status(node);
+  type_def_symbols.emplace(symbol, status);
 }
 
 void ConstEvaluator::attachNodeToConst(ASTNode *node,
                                        const std::string &symbol) {
-  const_symbols.emplace(symbol, node);
+  SymbolStatus status(node);
+  const_symbols.emplace(symbol, status);
 }
 
 void ConstEvaluator::attachNodeToStructConst(ASTNode *node,
@@ -85,7 +90,8 @@ auto ConstEvaluator::evaluateExprValue(ExprNode *node)
     std::vector<std::shared_ptr<ConstValue>> elements;
     auto array_node = static_cast<ExprArrayNode *>(node);
     if (array_node->length_ != nullptr) {
-      auto length_const = evaluateExprValue(array_node->length_.get());
+      auto length_const =
+          evaluateExprValue(array_node->length_.get())->getConstValue();
       auto length_value = dynamic_shared_ptr_cast<ConstValueInt>(length_const);
       if (length_value == nullptr) {
         throw std::runtime_error("Array length must be a constant integer");
@@ -127,7 +133,8 @@ auto ConstEvaluator::evaluateExprValue(ExprNode *node)
     if (array_value == nullptr) {
       throw std::runtime_error("Array expression must be a constant array");
     }
-    auto index_const = evaluateExprValue(index_node->index_.get());
+    auto index_const =
+        evaluateExprValue(index_node->index_.get())->getConstValue();
     auto index_value = dynamic_shared_ptr_cast<ConstValueInt>(index_const);
     if (index_value == nullptr) {
       throw std::runtime_error("Array index must be a constant integer");
@@ -452,6 +459,8 @@ auto ConstEvaluator::evaluateExprValue(ExprNode *node)
         std::make_shared<ConstValueStruct>(std::move(field_values));
     return std::make_shared<ConstInfo>(struct_type, struct_value);
   }
+  throw std::runtime_error("Unsupported expression node for const eval.");
+  return nullptr;
 }
 
 void ConstEvaluator::evaluateTypeSymbol(const std::string &symbol) {

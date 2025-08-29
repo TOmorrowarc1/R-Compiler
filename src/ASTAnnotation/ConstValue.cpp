@@ -37,7 +37,8 @@ ConstValueStruct::ConstValueStruct(
 }
 ConstValueStruct::~ConstValueStruct() = default;
 auto ConstValueStruct::clone() const -> std::unique_ptr<ConstValue> {
-  return std::make_unique<ConstValueStruct>(std::move(fields_));
+  auto fields_copy = fields_;
+  return std::make_unique<ConstValueStruct>(std::move(fields_copy));
 }
 auto ConstValueStruct::getField(const std::string &name) const
     -> const std::shared_ptr<ConstValue> {
@@ -65,7 +66,8 @@ ConstValueArray::ConstValueArray(
 }
 ConstValueArray::~ConstValueArray() = default;
 auto ConstValueArray::clone() const -> std::unique_ptr<ConstValue> {
-  return std::make_unique<ConstValueArray>(std::move(elements_));
+  auto elements_copy = elements_;
+  return std::make_unique<ConstValueArray>(std::move(elements_copy));
 }
 auto ConstValueArray::getElement(uint32_t index) const
     -> const std::shared_ptr<ConstValue> {

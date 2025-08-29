@@ -8,9 +8,9 @@ ConstInfo::ConstInfo(std::shared_ptr<TypeKind> type) {
   const_value_ = nullptr;
 }
 ConstInfo::ConstInfo(std::shared_ptr<TypeKind> type,
-                     std::unique_ptr<ConstValue> &&const_value) {
+                     std::shared_ptr<ConstValue> const_value) {
   type_ = type;
-  const_value_ = std::move(const_value);
+  const_value_ = const_value;
 }
 ConstInfo::~ConstInfo() = default;
 auto ConstInfo::setConstValue(const ConstInfo *rhs) -> bool {

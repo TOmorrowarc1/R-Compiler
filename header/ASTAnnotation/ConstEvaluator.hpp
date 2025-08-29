@@ -29,6 +29,7 @@ private:
 
 public:
   StatusRecorder();
+  StatusRecorder(const StatusRecorder &other) = default;
   ~StatusRecorder();
   auto touch() -> bool;
   auto isValid() const -> bool;
@@ -38,6 +39,9 @@ public:
 struct SymbolStatus {
   ASTNode *node;
   StatusRecorder status;
+  SymbolStatus();
+  SymbolStatus(ASTNode *target);
+  SymbolStatus(const SymbolStatus &other) = default;
 };
 
 class ConstEvaluator {

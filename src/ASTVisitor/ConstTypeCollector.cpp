@@ -29,9 +29,7 @@ auto ConstTypeCollector::addEnumType(const std::string &type_name) -> bool {
 }
 
 auto ConstTypeCollector::addConstSymbol(const std::string &name) -> bool {
-  auto blank_type = std::make_shared<TypeKindPath>(
-      current_scope_->getType("unit")->getType());
-  auto const_info = std::make_shared<SymbolConstInfo>(name, blank_type);
+  auto const_info = std::make_shared<SymbolConstInfo>(name);
   if (impl_type_name_.empty()) {
     return current_scope_->addConst(name, const_info);
   }
