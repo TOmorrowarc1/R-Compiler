@@ -6,22 +6,21 @@
 The third pass collects function signatures and implies types functions by their
 impl blocks in the subtree.
 */
+
 class TypeKind;
 class TypeNode;
+class ConstEvaluator;
 
 class FunctionCollector : public Visitor {
 private:
   Scope *current_scope_;
+  ConstEvaluator *const_evaluator_;
 
-  auto isStructConst(const PathNode *path_node) -> bool;
-  auto getPathIndexName(const PathNode *path_node, uint32_t index)
-      -> std::string;
-  auto typeNodeToType(const TypeNode *type_node) -> std::shared_ptr<TypeKind>;
   auto fnNodeToFunc(const ItemFnNode *node)
       -> std::shared_ptr<SymbolFunctionInfo>;
 
 public:
-  FunctionCollector(Scope *initial_scope);
+  FunctionCollector(Scope *initial_scope, ConstEvaluator *const_evaluator);
   ~FunctionCollector() override;
 
   void visit(ASTRootNode *node) override;

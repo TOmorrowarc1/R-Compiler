@@ -8,29 +8,11 @@
 
 ConstTypeEvaluator::ConstTypeEvaluator(Scope *initial_scope,
                                        ConstEvaluator *const_evaluator)
-    : current_scope_(initial_scope), const_evaluator_(const_evaluator) {}
+    : current_scope_(initial_scope), const_evaluator_(const_evaluator) {
+  const_evaluator_->bindScopePointer(current_scope_);
+}
 
 ConstTypeEvaluator::~ConstTypeEvaluator() = default;
-
-// Convert a function node to a new-created symbol function info.
-auto ConstTypeEvaluator::fnNodeToFunc(const ItemFnNode *node)
-    -> std::shared_ptr<SymbolFunctionInfo> {
-  std::vector<std::shared_ptr<TypeKind>> parameters;
-  auto return_type = const_evaluator_->evaluateType(node->return_type_.get());
-  for (const auto &param : node->parameters_) {
-    parameters.push_back(const_evaluator_->evaluateType(param.type.get()));
-  }
-  return std::make_shared<SymbolFunctionInfo>(node->ID_, return_type,
-                                              std::move(parameters));
-}
-
-auto ConstTypeEvaluator::getPathIndexName(const PathNode *path_node,
-                                          uint32_t index) -> std::string {
-  if (index >= path_node->segments_.size()) {
-    throw std::out_of_range("Index out of range for path segments");
-  }
-  return path_node->segments_[index].name;
-}
 
 void ConstTypeEvaluator::visit(ASTRootNode *node) {
   for (auto &item : node->items_) {
@@ -56,7 +38,6 @@ void ConstTypeEvaluator::visit(ItemFnNode *node) {
     node->body_->accept(*this);
     current_scope_ = current_scope_->getParent();
   }
-  current_scope_->addFunction(node->ID_, fnNodeToFunc(node));
 }
 
 // Visit a struct item node and collect its fields.
@@ -73,28 +54,11 @@ void ConstTypeEvaluator::visit(ItemImplNode *node) {
     throw std::runtime_error("Impl type must be a path type");
   }
   const auto type_path = dynamic_cast<const TypePathNode *>(node->type_.get());
-  std::string type_name = getPathIndexName(type_path->path_.get(), 0);
+  std::string type_name = type_path->path_->getPathIndexName(0);
   auto type_def = current_scope_->getType(type_name)->getType();
   for (const auto &item : node->items_) {
     if (item.function) {
       item.function->accept(*this);
-      auto func = fnNodeToFunc(item.function.get());
-      if (item.function->fn_type_ == FnType::Fn) {
-        if (type_def->addAssociatedFunction(func->getName(), func)) {
-          throw CompilerException("Duplicate associated function name: ",
-                                  node->position_);
-        }
-      } else {
-        if (item.function->fn_type_ == FnType::MutMethod) {
-          func->setFnType(SymbolFunctionInfo::FnType::MutMethod);
-        } else {
-          func->setFnType(SymbolFunctionInfo::FnType::Method);
-        }
-        if (!type_def->addMethod(func->getName(), std::move(func))) {
-          throw CompilerException("Duplicate method name: " + func->getName(),
-                                  node->position_);
-        }
-      }
     } else {
       item.constant->accept(*this);
       const_evaluator_->evaluateStructConst(type_name, item.constant->ID_);

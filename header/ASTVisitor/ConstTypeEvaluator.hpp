@@ -3,9 +3,11 @@
 #include "Visitor.hpp"
 
 /*
-The second pass implies types by their members and impls, collects function
-signatures and const items.
+The second pass calculate all constants and types in a question-drived way
+recursively, following the DFS sequence on the scope tree between dependent
+blocks.
 */
+
 class TypeKind;
 class TypeNode;
 class ConstEvaluator;
@@ -14,13 +16,6 @@ class ConstTypeEvaluator : public Visitor {
 private:
   Scope *current_scope_;
   ConstEvaluator *const_evaluator_;
-
-  auto isStructConst(const PathNode *path_node) -> bool;
-  auto getPathIndexName(const PathNode *path_node, uint32_t index)
-      -> std::string;
-  auto typeNodeToType(const TypeNode *type_node) -> std::shared_ptr<TypeKind>;
-  auto fnNodeToFunc(const ItemFnNode *node)
-      -> std::shared_ptr<SymbolFunctionInfo>;
 
 public:
   ConstTypeEvaluator(Scope *initial_scope, ConstEvaluator *const_evaluator);
