@@ -20,7 +20,7 @@ private:
   auto addEnumType(const std::string &type_name) -> bool;
 
 public:
-  ConstTypeCollector(Scope *initial_scope);
+  ConstTypeCollector(Scope *initial_scope, ConstEvaluator *const_evaluator);
   ~ConstTypeCollector() override;
 
   void visit(ASTRootNode *node) override;
