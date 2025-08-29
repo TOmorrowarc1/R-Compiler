@@ -609,10 +609,12 @@ auto parseExprLiteralIntNode(TokenStream &stream)
         end_pos = i;
         switch (str[i]) {
         case 'i':
-          int_type = ExprLiteralIntNode::IntType::I32;
+          int_type = str[i + 1] == '3' ? ExprLiteralIntNode::IntType::I32
+                                       : ExprLiteralIntNode::IntType::ISIZE;
           break;
         case 'u':
-          int_type = ExprLiteralIntNode::IntType::U32;
+          int_type = str[i + 1] == '3' ? ExprLiteralIntNode::IntType::U32
+                                       : ExprLiteralIntNode::IntType::USIZE;
           break;
         default:
           throw CompilerException("Unknown suffix in int literal.", position);

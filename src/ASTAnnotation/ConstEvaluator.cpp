@@ -27,8 +27,8 @@ ConstEvaluator::ConstEvaluator() { current_scope_ = nullptr; }
 
 ConstEvaluator::~ConstEvaluator() = default;
 
-void ConstEvaluator::bindScopePointer(Scope *current_scope) {
-  current_scope_ = &current_scope;
+void ConstEvaluator::bindScopePointer(Scope **current_scope) {
+  current_scope_ = current_scope;
 }
 
 void ConstEvaluator::addBuiltInSymbol(const std::string &symbol) {

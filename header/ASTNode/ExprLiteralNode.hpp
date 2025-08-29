@@ -10,7 +10,7 @@ public:
 
 class ExprLiteralIntNode : public ExprLiteralNode {
 public:
-  enum class IntType { I32, U32, NUM };
+  enum class IntType { I32, U32, ISIZE, USIZE, NUM };
   IntType int_type_;
   int32_t value_;
 

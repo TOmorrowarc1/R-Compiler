@@ -1,6 +1,8 @@
 #include "SemanticChecker.hpp"
 #include "ASTNodeTotal.hpp"
 #include "ConstEvaluator.hpp"
+#include "ConstInfo.hpp"
+#include "ConstValue.hpp"
 #include "Symbol.hpp"
 #include "TypeKind.hpp"
 #include "cast.hpp"
@@ -12,7 +14,7 @@ auto LoopContext::breakAdd(std::shared_ptr<TypeKind> type) -> bool {
 SemanticChecker::SemanticChecker(Scope *initial_scope,
                                  ConstEvaluator *const_evaluator)
     : current_scope_(initial_scope), const_evaluator_(const_evaluator) {
-  const_evaluator_->bindScopePointer(current_scope_);
+  const_evaluator_->bindScopePointer(&current_scope_);
 }
 SemanticChecker::~SemanticChecker() = default;
 
@@ -47,7 +49,6 @@ auto SemanticChecker::bindVarSymbol(const PatternNode *pattern_node,
 auto SemanticChecker::judgeTypeEqual(const ExprNode *node,
                                      const std::string &name) -> bool {
   auto value_type = node->value_info_->getType();
-  auto target_type = current_scope_->getType(name)->getType();
   if (name == "num") {
     auto i32_type = current_scope_->getType("i32")->getType();
     auto u32_type = current_scope_->getType("u32")->getType();
@@ -58,6 +59,7 @@ auto SemanticChecker::judgeTypeEqual(const ExprNode *node,
     auto possi_type = std::make_shared<TypeKindPossi>(std::move(type_vector));
     return value_type->isEqual(possi_type.get());
   }
+  auto target_type = current_scope_->getType(name)->getType();
   return value_type->isTypePath(target_type.get());
 }
 
@@ -154,7 +156,10 @@ void SemanticChecker::visit(ExprArrayNode *node) {
     if (!judgeTypeEqual(node->length_.get(), "usize")) {
       throw std::runtime_error("Array length must be usize.");
     }
-    length = dynamic_cast<ExprLiteralIntNode *>(node->length_.get())->value_;
+    auto length_info = const_evaluator_->evaluateExprValue(node->length_.get())
+                           ->getConstValue();
+    auto length_value = dynamic_shared_ptr_cast<ConstValueInt>(length_info);
+    length = length_value->getValue();
   }
   length = length == 0 ? node->elements_.size() : length;
   auto array_type = std::make_shared<TypeKindArray>(element_type, length);
@@ -338,8 +343,14 @@ void SemanticChecker::visit(ExprLiteralIntNode *node) {
   case ExprLiteralIntNode::IntType::I32:
     type_kind = std::make_shared<TypeKindPath>(i32_type);
     break;
+  case ExprLiteralIntNode::IntType::ISIZE:
+    type_kind = std::make_shared<TypeKindPath>(isize_type);
+    break;
   case ExprLiteralIntNode::IntType::U32:
     type_kind = std::make_shared<TypeKindPath>(u32_type);
+    break;
+  case ExprLiteralIntNode::IntType::USIZE:
+    type_kind = std::make_shared<TypeKindPath>(usize_type);
     break;
   case ExprLiteralIntNode::IntType::NUM:
     type_kind =
@@ -549,17 +560,24 @@ void SemanticChecker::visit(ExprPathNode *node) {
       throw std::runtime_error("Path must be a type or enum.");
     }
   } else {
-    auto variable_name = node->path_->getPathIndexName(0);
-    auto variable = current_scope_->getSymbol(variable_name);
-    if (!variable ||
-        !is_instance_of<SymbolVariableInfo, SymbolInfo>(variable.get())) {
-      throw std::runtime_error("Variable " + variable_name + " not found");
+    auto symbol_name = node->path_->getPathIndexName(0);
+    auto symbol_info = current_scope_->getSymbol(symbol_name);
+    if (!symbol_info) {
+      throw std::runtime_error("Symbol " + symbol_name + " not found");
     }
-    auto variable_info =
-        std::dynamic_pointer_cast<SymbolVariableInfo>(variable);
-    auto type = variable_info->getType();
-    bool is_mutable = variable_info->isMutable();
-    node->value_info_ = std::make_unique<ValueInfo>(type, true, is_mutable);
+    if (is_instance_of<SymbolVariableInfo, SymbolInfo>(symbol_info.get())) {
+      auto variable_info =
+          std::dynamic_pointer_cast<SymbolVariableInfo>(symbol_info);
+      auto type = variable_info->getType();
+      bool is_mutable = variable_info->isMutable();
+      node->value_info_ = std::make_unique<ValueInfo>(type, true, is_mutable);
+    } else if (is_instance_of<SymbolConstInfo, SymbolInfo>(symbol_info.get())) {
+      auto const_info = std::dynamic_pointer_cast<SymbolConstInfo>(symbol_info);
+      auto type = const_info->getType();
+      node->value_info_ = std::make_unique<ValueInfo>(type, false, false);
+    } else {
+      throw std::runtime_error("Unsupported symbol type in path expr.");
+    }
   }
 }
 

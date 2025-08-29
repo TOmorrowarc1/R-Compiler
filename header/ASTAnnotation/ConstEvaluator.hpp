@@ -55,7 +55,7 @@ private:
 public:
   ConstEvaluator();
   ~ConstEvaluator();
-  void bindScopePointer(Scope *current_scope);
+  void bindScopePointer(Scope **current_scope);
   void addBuiltInSymbol(const std::string &symbol);
   void attachNodeToTypeDef(ASTNode *node, const std::string &symbol);
   void attachNodeToConst(ASTNode *node, const std::string &symbol);

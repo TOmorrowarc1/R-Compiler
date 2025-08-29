@@ -9,7 +9,7 @@
 ConstTypeCollector::ConstTypeCollector(Scope *initial_scope,
                                        ConstEvaluator *const_evaluator)
     : current_scope_(initial_scope), const_evaluator_(const_evaluator) {
-  const_evaluator_->bindScopePointer(current_scope_);
+  const_evaluator_->bindScopePointer(&current_scope_);
 }
 
 ConstTypeCollector::~ConstTypeCollector() = default;
