@@ -1,6 +1,6 @@
 #pragma once
-#include "Scope.hpp"
 
+class Scope;
 class ASTRootNode;
 
 void ASTAnnotate(ASTRootNode *root, Scope *initial_scope);

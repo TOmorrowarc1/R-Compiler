@@ -31,6 +31,12 @@ void ConstEvaluator::bindScopePointer(Scope *current_scope) {
   current_scope_ = &current_scope;
 }
 
+void ConstEvaluator::addBuiltInSymbol(const std::string &symbol) {
+  SymbolStatus status;
+  status.status.setVaild();
+  type_def_symbols.emplace(symbol, status);
+}
+
 void ConstEvaluator::attachNodeToTypeDef(ASTNode *node,
                                          const std::string &symbol) {
   SymbolStatus status(node);

@@ -1,4 +1,6 @@
-#include "ScopeBuiltInInit.hpp"
+#include "BuiltInInit.hpp"
+#include "ConstEvaluator.hpp"
+#include "Scope.hpp"
 #include "Symbol.hpp"
 #include "TypeKind.hpp"
 
@@ -9,6 +11,14 @@ const std::vector<std::shared_ptr<TypeDef>> BUILTIN = {
     std::make_shared<TypeDef>("str"),   std::make_shared<TypeDef>("unit"),
 };
 
+void scopeBuiltInInit(Scope *scope);
+void evaluatorBuiltInInit(ConstEvaluator *evaluator);
+
+void builtInInit(Scope *global_scope, ConstEvaluator *evaluator) {
+  scopeBuiltInInit(global_scope);
+  evaluatorBuiltInInit(evaluator);
+}
+
 auto getTypeKind(Scope *global_scope, const std::string &type_name)
     -> std::shared_ptr<TypeKind> {
   auto type_def = global_scope->getType(type_name)->getType();
@@ -18,7 +28,7 @@ auto getTypeKind(Scope *global_scope, const std::string &type_name)
   return nullptr;
 }
 
-void scopeBuildInInit(Scope *global_scope) {
+void scopeBuiltInInit(Scope *global_scope) {
   // Add built-in types.
   for (const auto &type : BUILTIN) {
     auto type_symbol = std::make_shared<SymbolTypeInfo>(type->getName(), type);
@@ -104,5 +114,13 @@ void scopeBuildInInit(Scope *global_scope) {
     type_def->addMethod("len", func);
     // for reference.
     // fn as_str (&self) -> &str
+  }
+}
+
+void evaluatorBuiltInInit(ConstEvaluator *evaluator) {
+  SymbolStatus status;
+  status.status.setVaild();
+  for (auto item : BUILTIN) {
+    evaluator->addBuiltInSymbol(item->getName());
   }
 }
