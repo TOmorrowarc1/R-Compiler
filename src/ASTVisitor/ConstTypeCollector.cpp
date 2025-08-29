@@ -4,6 +4,7 @@
 #include "Symbol.hpp"
 #include "TypeKind.hpp"
 #include "cast.hpp"
+#include "exception.hpp"
 
 ConstTypeCollector::ConstTypeCollector(Scope *initial_scope,
                                        ConstEvaluator *const_evaluator)
@@ -27,6 +28,17 @@ auto ConstTypeCollector::addEnumType(const std::string &type_name) -> bool {
   return current_scope_->addType(type_name, new_symbol_type);
 }
 
+auto ConstTypeCollector::addConstSymbol(const std::string &name) -> bool {
+  auto blank_type = std::make_shared<TypeKindPath>(
+      current_scope_->getType("unit")->getType());
+  auto const_info = std::make_shared<SymbolConstInfo>(name, blank_type);
+  if (impl_type_name_.empty()) {
+    return current_scope_->addConst(name, const_info);
+  }
+  auto type_def = current_scope_->getType(impl_type_name_)->getType();
+  return type_def->addConst(name, const_info);
+}
+
 void ConstTypeCollector::visit(ASTRootNode *node) {
   for (auto &item : node->items_) {
     item->accept(*this);
@@ -36,6 +48,15 @@ void ConstTypeCollector::visit(ASTRootNode *node) {
 void ConstTypeCollector::visit(ItemConstNode *node) {
   node->type_->accept(*this);
   node->value_->accept(*this);
+  if (!addConstSymbol(node->ID_)) {
+    throw CompilerException("Duplicate constant name: " + node->ID_,
+                            node->position_);
+  }
+  if (impl_type_name_.empty()) {
+    const_evaluator_->attachNodeToConst(node, node->ID_);
+  } else {
+    const_evaluator_->attachNodeToStructConst(node, impl_type_name_, node->ID_);
+  }
 }
 
 void ConstTypeCollector::visit(ItemFnNode *node) {
@@ -70,6 +91,12 @@ void ConstTypeCollector::visit(ItemEnumNode *node) {
 }
 
 void ConstTypeCollector::visit(ItemImplNode *node) {
+  auto type_path = dynamic_cast<TypePathNode *>(node->type_.get());
+  if (type_path == nullptr) {
+    throw CompilerException("Impl type must be a path type", node->position_);
+  }
+  auto type_name = type_path->path_->getPathIndexName(0);
+  impl_type_name_ = type_name;
   for (auto &item : node->items_) {
     if (item.constant) {
       item.constant->accept(*this);
@@ -77,6 +104,7 @@ void ConstTypeCollector::visit(ItemImplNode *node) {
       item.function->accept(*this);
     }
   }
+  impl_type_name_.clear();
 }
 
 void ConstTypeCollector::visit(ItemTraitNode *node) {}

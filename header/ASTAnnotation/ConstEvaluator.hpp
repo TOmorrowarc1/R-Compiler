@@ -48,9 +48,6 @@ private:
   std::unordered_map<std::string, std::unordered_map<std::string, SymbolStatus>>
       struct_const_symbols;
 
-  auto evaluateType(TypeNode *node) -> std::shared_ptr<TypeKind>;
-  auto evaluateExprValue(ExprNode *node) -> std::shared_ptr<ConstInfo>;
-  
 public:
   ConstEvaluator();
   ~ConstEvaluator();
@@ -63,4 +60,6 @@ public:
   void evaluateConstSymbol(const std::string &symbol);
   void evaluateStructConst(const std::string &struct_name,
                            const std::string &symbol);
+  auto evaluateType(TypeNode *node) -> std::shared_ptr<TypeKind>;
+  auto evaluateExprValue(ExprNode *node) -> std::shared_ptr<ConstInfo>;
 };

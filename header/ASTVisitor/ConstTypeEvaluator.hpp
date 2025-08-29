@@ -23,7 +23,7 @@ private:
       -> std::shared_ptr<SymbolFunctionInfo>;
 
 public:
-  ConstTypeEvaluator(Scope *initial_scope);
+  ConstTypeEvaluator(Scope *initial_scope, ConstEvaluator *const_evaluator);
   ~ConstTypeEvaluator() override;
 
   void visit(ASTRootNode *node) override;
