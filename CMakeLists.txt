@@ -70,17 +70,20 @@ set(EXECUTABLE_SOURCES
   src/Parser/ParserPattern.cpp
   src/Parser/ParserStmt.cpp
   src/Parser/ParserType.cpp
+  src/ASTAnnotation/ConstEvaluator.cpp
+  src/ASTAnnotation/ConstInfo.cpp
+  src/ASTAnnotation/ConstValue.cpp
   src/ASTAnnotation/Scope.cpp
   src/ASTAnnotation/Symbol.cpp
-  src/ASTAnnotation/TypeKind.cpp
   src/ASTAnnotation/TypeDef.cpp
+  src/ASTAnnotation/TypeKind.cpp
   src/ASTAnnotation/ValueInfo.cpp
+  src/ASTVisitor/ConstTypeCollector.cpp
+  src/ASTVisitor/ConstTypeEvaluator.cpp
+  src/ASTVisitor/FunctionCollector.cpp
   src/ASTVisitor/SemanticChecker.cpp
-  src/ASTVisitor/SymbolCollector.cpp
-  src/ASTVisitor/SymbolAnnotator.cpp
-  src/ASTVisitor/ScopeBuiltInInit.cpp
-  src/ASTVisitor/ConstEvaluator.cpp
   src/ASTAnnotator/ASTAnnotator.cpp
+  src/ASTAnnotator/ScopeBuiltInInit.cpp
   src/utils/position.cpp
   src/utils/exception.cpp
 )
