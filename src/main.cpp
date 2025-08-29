@@ -2,9 +2,11 @@
 #include "ASTRootNode.hpp"
 #include "Lexer.hpp"
 #include "Parser.hpp"
+#include "Scope.hpp"
 #include "exception.hpp"
 #include <iostream>
 #include <sstream>
+
 
 int main() {
   std::stringstream buffer;

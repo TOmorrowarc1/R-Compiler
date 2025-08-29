@@ -83,7 +83,7 @@ set(EXECUTABLE_SOURCES
   src/ASTVisitor/FunctionCollector.cpp
   src/ASTVisitor/SemanticChecker.cpp
   src/ASTAnnotator/ASTAnnotator.cpp
-  src/ASTAnnotator/ScopeBuiltInInit.cpp
+  src/ASTAnnotator/BuiltInInit.cpp
   src/utils/position.cpp
   src/utils/exception.cpp
 )
