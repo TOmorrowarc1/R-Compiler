@@ -45,6 +45,8 @@ private:
                      std::shared_ptr<TypeKind> type) -> bool;
 
   auto judgeTypeEqual(const ExprNode *node, const std::string &name) -> bool;
+  auto judgeTypeEqual(const TypeKind *lhs, const TypeKind *rhs, bool allow_cast)
+      -> bool;
 
 public:
   SemanticChecker(Scope *initial_scope, ConstEvaluator *const_evaluator);

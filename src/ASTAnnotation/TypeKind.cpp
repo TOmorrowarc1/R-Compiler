@@ -89,29 +89,33 @@ auto TypeKindArray::getType() const -> const std::shared_ptr<TypeKind> {
 }
 auto TypeKindArray::getSize() const -> uint32_t { return size; }
 
-TypeKindRefer::TypeKindRefer(std::shared_ptr<TypeKind> type_kind,
-                             bool is_mutable)
-    : TypeKind(), type_kind_(std::move(type_kind)), is_mutable_(is_mutable) {}
-
+TypeKindRefer::TypeKindRefer(std::shared_ptr<TypeKind> type_kind, bool is_mut)
+    : TypeKind(), type_kind_(std::move(type_kind)), is_mut_ref_(is_mut) {}
 TypeKindRefer::~TypeKindRefer() = default;
-
 auto TypeKindRefer::isEqual(const TypeKind *other) const -> bool {
-  if (const auto *otherRefer = dynamic_cast<const TypeKindRefer *>(other)) {
+  const auto *otherRefer = dynamic_cast<const TypeKindRefer *>(other);
+  if (otherRefer != nullptr) {
     return type_kind_->isEqual(otherRefer->getType().get()) &&
-           is_mutable_ == otherRefer->isMutable();
+           is_mut_ref_ == otherRefer->is_mut_ref_;
   }
   return false;
 }
-
 auto TypeKindRefer::isTypePath(const TypeDef *typeDef) const -> bool {
-  return type_kind_->isTypePath(typeDef);
+  return false;
 }
-
+auto TypeKindRefer::canCast(const TypeKind *other) const -> bool {
+  if (const auto *otherRefer = dynamic_cast<const TypeKindRefer *>(other)) {
+    return is_mut_ref_ == otherRefer->is_mut_ref_ &&
+           type_kind_->isEqual(otherRefer);
+  }
+  if (const auto *otherPath = dynamic_cast<const TypeKindPath *>(other)) {
+    return type_kind_->isEqual(otherPath);
+  }
+}
 auto TypeKindRefer::getType() const -> const std::shared_ptr<TypeKind> {
   if (type_kind_ == nullptr) {
     throw std::runtime_error("TypeKindRefer type_kind_ is null");
   }
   return type_kind_;
 }
-
-auto TypeKindRefer::isMutable() const -> bool { return is_mutable_; }
+auto TypeKindRefer::isMutRef() const -> bool { return is_mut_ref_; }

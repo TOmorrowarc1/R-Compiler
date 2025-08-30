@@ -86,6 +86,11 @@ auto ConstEvaluator::evaluateType(TypeNode *node) -> std::shared_ptr<TypeKind> {
     int32_t length = length_int->getValue();
     return std::make_shared<TypeKindArray>(type_inside, length);
   }
+  if(is_instance_of<TypeReferNode, TypeNode>(node)) {
+    const auto *type_refer = dynamic_cast<const TypeReferNode *>(node);
+    auto type_inside = evaluateType(type_refer->type_.get());
+    return std::make_shared<TypeKindRefer>(type_inside, type_refer->is_mutable_);
+  }
   throw std::runtime_error("Unsupported type node for symbol collection");
   return nullptr;
 }

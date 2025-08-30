@@ -58,13 +58,14 @@ public:
 class TypeKindRefer : public TypeKind {
 private:
   std::shared_ptr<TypeKind> type_kind_;
-  bool is_mutable_;
+  bool is_mut_ref_;
 
 public:
-  TypeKindRefer(std::shared_ptr<TypeKind> type_kind, bool is_mutable);
+  TypeKindRefer(std::shared_ptr<TypeKind> type_kind, bool is_mut);
   ~TypeKindRefer() override;
   auto isEqual(const TypeKind *other) const -> bool override;
   auto isTypePath(const TypeDef *typeDef) const -> bool override;
+  auto canCast(const TypeKind *other) const -> bool;
   auto getType() const -> const std::shared_ptr<TypeKind>;
-  auto isMutable() const -> bool;
+  auto isMutRef() const -> bool;
 };

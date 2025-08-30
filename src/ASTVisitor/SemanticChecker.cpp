@@ -34,7 +34,7 @@ auto SemanticChecker::bindVarSymbol(const PatternNode *pattern_node,
       throw std::runtime_error("Pattern refer type must be a reference type");
     }
     auto refer_type = std::dynamic_pointer_cast<TypeKindRefer>(type);
-    if (refer_type->isMutable() != refer_pattern->is_mutable_) {
+    if (refer_type->isMutRef() != refer_pattern->is_mutable_) {
       throw std::runtime_error("Pattern refer type mismatch");
     }
     return bindVarSymbol(refer_pattern->pattern_.get(), refer_type->getType());
@@ -61,6 +61,15 @@ auto SemanticChecker::judgeTypeEqual(const ExprNode *node,
   }
   auto target_type = current_scope_->getType(name)->getType();
   return value_type->isTypePath(target_type.get());
+}
+
+auto SemanticChecker::judgeTypeEqual(const TypeKind *lhs, const TypeKind *rhs,
+                                     bool allow_cast) -> bool {
+  if (allow_cast && is_instance_of<TypeKindRefer, TypeKind>(lhs)) {
+    auto lhs_refer = dynamic_cast<const TypeKindRefer *>(lhs);
+    return lhs_refer->isEqual(rhs) || lhs_refer->canCast(rhs);
+  }
+  return lhs->isEqual(rhs);
 }
 
 void SemanticChecker::visit(ASTRootNode *node) {
@@ -102,7 +111,8 @@ void SemanticChecker::visit(ItemFnNode *node) {
         const_evaluator_->evaluateType(node->return_type_.get());
     fn_type_stack_.push(return_type_kind);
     node->body_->accept(*this);
-    if (!node->body_->value_info_->getType()->isEqual(return_type_kind.get())) {
+    auto expr_type = node->body_->value_info_->getType().get();
+    if (!judgeTypeEqual(expr_type, return_type_kind.get(), true)) {
       throw std::runtime_error("Function return type mismatch");
     }
     fn_type_stack_.pop();
@@ -527,7 +537,7 @@ void SemanticChecker::visit(ExprOperUnaryNode *node) {
     auto refer_type = std::dynamic_pointer_cast<TypeKindRefer>(operand_type);
     node->value_info_ = std::make_unique<ValueInfo>(
         refer_type->getType(), node->operand_->value_info_->isLeftValue(),
-        refer_type->isMutable());
+        refer_type->isMutRef());
     break;
   }
   default:
