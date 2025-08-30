@@ -69,3 +69,11 @@ public:
   auto getType() const -> const std::shared_ptr<TypeKind>;
   auto isMutRef() const -> bool;
 };
+
+class TypeKindNever : public TypeKind {
+public:
+  TypeKindNever();
+  ~TypeKindNever() override;
+  auto isEqual(const TypeKind *other) const -> bool override;
+  auto isTypePath(const TypeDef *typeDef) const -> bool override;
+};

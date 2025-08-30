@@ -7,8 +7,20 @@
 #include "TypeKind.hpp"
 #include "cast.hpp"
 
+auto judgeTypeEqual(const TypeKind *lhs, const TypeKind *rhs, bool allow_cast)
+    -> bool;
+
+auto judgeTypeEqual(const TypeKind *lhs, const TypeKind *rhs, bool allow_cast)
+    -> bool {
+  if (allow_cast && is_instance_of<TypeKindRefer, TypeKind>(lhs)) {
+    auto lhs_refer = dynamic_cast<const TypeKindRefer *>(lhs);
+    return lhs_refer->isEqual(rhs) || lhs_refer->canCast(rhs);
+  }
+  return lhs->isEqual(rhs);
+}
+
 auto LoopContext::breakAdd(std::shared_ptr<TypeKind> type) -> bool {
-  return !loop_type || loop_type->isEqual(type.get());
+  return !loop_type || judgeTypeEqual(loop_type.get(), type.get(), true);
 }
 
 SemanticChecker::SemanticChecker(Scope *initial_scope,
@@ -61,15 +73,6 @@ auto SemanticChecker::judgeTypeEqual(const ExprNode *node,
   }
   auto target_type = current_scope_->getType(name)->getType();
   return value_type->isTypePath(target_type.get());
-}
-
-auto SemanticChecker::judgeTypeEqual(const TypeKind *lhs, const TypeKind *rhs,
-                                     bool allow_cast) -> bool {
-  if (allow_cast && is_instance_of<TypeKindRefer, TypeKind>(lhs)) {
-    auto lhs_refer = dynamic_cast<const TypeKindRefer *>(lhs);
-    return lhs_refer->isEqual(rhs) || lhs_refer->canCast(rhs);
-  }
-  return lhs->isEqual(rhs);
 }
 
 void SemanticChecker::visit(ASTRootNode *node) {
@@ -260,7 +263,8 @@ void SemanticChecker::visit(ExprCallNode *node) {
   for (int i = 0; i < node->arguments_.size(); ++i) {
     node->arguments_[i]->accept(*this);
     auto arg_type = node->arguments_[i]->value_info_->getType();
-    if (!arg_type->isEqual(function_info->getParametersType()[i].get())) {
+    auto param_type = function_info->getParametersType()[i];
+    if (!judgeTypeEqual(arg_type.get(), param_type.get(), true)) {
       throw std::runtime_error("Function call parameters type mismatch");
     }
   }
@@ -296,11 +300,12 @@ void SemanticChecker::visit(ExprReturnNode *node) {
   }
   node->value_->accept(*this);
   auto value_type = node->value_->value_info_->getType();
-  if (!value_type->isEqual(fn_type_stack_.top().get())) {
+  if (!judgeTypeEqual(value_type.get(), fn_type_stack_.top().get(), true)) {
     throw std::runtime_error("Return type mismatch");
   }
+  auto never_type = current_scope_->getType("never")->getType();
   node->value_info_ =
-      std::make_unique<ValueInfo>(std::move(value_type), false, false);
+      std::make_unique<ValueInfo>(std::move(never_type), false, false);
 }
 
 void SemanticChecker::visit(ExprContinueNode *node) {

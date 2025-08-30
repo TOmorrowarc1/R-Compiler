@@ -34,6 +34,9 @@ void scopeBuiltInInit(Scope *global_scope) {
     auto type_symbol = std::make_shared<SymbolTypeInfo>(type->getName(), type);
     global_scope->addType(type->getName(), type_symbol);
   }
+  auto never_type = std::make_shared<TypeDef>("never");
+  auto never_symbol = std::make_shared<SymbolTypeInfo>("never", never_type);
+  global_scope->addType("never", never_symbol);
 
   // Add built-in functions.
   {
