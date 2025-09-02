@@ -162,11 +162,10 @@ auto parseItemConstNode(TokenStream &stream) -> std::unique_ptr<ItemConstNode> {
   } else {
     throw CompilerException("Expected ':' after Const name", position);
   }
-  if (stream.peek().type != TokenType::ASSIGN) {
-    throw CompilerException("Expected '=' after Const type", position);
+  if (stream.peek().type == TokenType::ASSIGN) {
+    stream.next();
+    value = parseExprNode(stream);
   }
-  stream.next();
-  value = parseExprNode(stream);
   return std::make_unique<ItemConstNode>(name, std::move(type),
                                          std::move(value), position);
 }
@@ -270,7 +269,7 @@ auto parseItemTraitNode(TokenStream &stream) -> std::unique_ptr<ItemTraitNode> {
     items.push_back(parseItemAssociatedItem(stream));
   }
   return std::make_unique<ItemTraitNode>(trait_name, std::move(items),
-                                        trait_name, position);
+                                         trait_name, position);
 }
 
 auto parseItemImplNode(TokenStream &stream) -> std::unique_ptr<ItemImplNode> {

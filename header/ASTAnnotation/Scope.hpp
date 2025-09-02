@@ -7,6 +7,7 @@
 
 class SymbolInfo;
 class SymbolTypeInfo;
+class SymbolTraitInfo;
 class SymbolFunctionInfo;
 class SymbolVariableInfo;
 class SymbolConstInfo;
@@ -19,6 +20,7 @@ private:
   std::unordered_map<std::string, std::shared_ptr<SymbolConstInfo>> consts_;
   std::unordered_map<std::string, std::shared_ptr<SymbolInfo>> symbols_;
   std::unordered_map<std::string, std::shared_ptr<SymbolTypeInfo>> types_;
+  std::unordered_map<std::string, std::shared_ptr<SymbolTraitInfo>> traits_;
   auto getConstSymbol(const std::string &name) const
       -> std::shared_ptr<SymbolConstInfo>;
 
@@ -38,6 +40,10 @@ public:
       -> bool;
   auto getType(const std::string &name) const
       -> std::shared_ptr<SymbolTypeInfo>;
+  auto addTrait(const std::string &name,
+                std::shared_ptr<SymbolTraitInfo> symbol) -> bool;
+  auto getTrait(const std::string &name) const
+      -> std::shared_ptr<SymbolTraitInfo>;
   auto addNextChildScope() -> Scope *;
   auto getNextChildScope() -> Scope *;
   void resetIndex();

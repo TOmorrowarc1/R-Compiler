@@ -1,9 +1,9 @@
 #include "Symbol.hpp"
 #include "ConstInfo.hpp"
+#include "TraitDef.hpp"
 #include "TypeDef.hpp"
 #include "TypeKind.hpp"
 #include <stdexcept>
-
 
 SymbolVariableInfo::SymbolVariableInfo(const std::string &name,
                                        std::shared_ptr<TypeKind> type,
@@ -44,6 +44,15 @@ SymbolTypeInfo::~SymbolTypeInfo() = default;
 auto SymbolTypeInfo::getName() const -> const std::string & { return name_; }
 auto SymbolTypeInfo::getType() const -> std::shared_ptr<TypeDef> {
   return type_;
+}
+
+SymbolTraitInfo::SymbolTraitInfo(const std::string &name,
+                                 std::shared_ptr<TraitDef> trait)
+    : SymbolInfo(), name_(name), trait_(std::move(trait)) {}
+SymbolTraitInfo::~SymbolTraitInfo() = default;
+auto SymbolTraitInfo::getName() const -> const std::string & { return name_; }
+auto SymbolTraitInfo::getTrait() const -> std::shared_ptr<TraitDef> {
+  return trait_;
 }
 
 SymbolConstInfo::SymbolConstInfo(const std::string &name)

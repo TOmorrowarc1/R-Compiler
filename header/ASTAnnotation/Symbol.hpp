@@ -6,6 +6,7 @@
 
 class TypeDef;
 class TypeKind;
+class TraitDef;
 class ConstInfo;
 class ConstValue;
 
@@ -65,6 +66,18 @@ public:
   ~SymbolTypeInfo();
   auto getName() const -> const std::string &;
   auto getType() const -> std::shared_ptr<TypeDef>;
+};
+
+class SymbolTraitInfo : public SymbolInfo {
+private:
+  std::string name_;
+  std::shared_ptr<TraitDef> trait_;
+
+public:
+  SymbolTraitInfo(const std::string &name, std::shared_ptr<TraitDef> trait);
+  ~SymbolTraitInfo();
+  auto getName() const -> const std::string &;
+  auto getTrait() const -> std::shared_ptr<TraitDef>;
 };
 
 class SymbolConstInfo : public SymbolInfo {

@@ -30,16 +30,16 @@ public:
   virtual ~TypeDef();
   auto getName() const -> const std::string &;
   auto addConst(const std::string &name,
-                    std::shared_ptr<SymbolConstInfo> type_const) -> bool;
+                std::shared_ptr<SymbolConstInfo> type_const) -> bool;
   auto getConst(const std::string &name) const
       -> std::shared_ptr<SymbolConstInfo>;
   auto addMethod(const std::string &name,
                  std::shared_ptr<SymbolFunctionInfo> method) -> bool;
+  auto getMethod(const std::string &name) const
+      -> std::shared_ptr<SymbolFunctionInfo>;
   auto addAssociatedFunction(const std::string &name,
                              std::shared_ptr<SymbolFunctionInfo> function)
       -> bool;
-  auto getMethod(const std::string &name) const
-      -> std::shared_ptr<SymbolFunctionInfo>;
   auto getAssociatedFunction(const std::string &name) const
       -> std::shared_ptr<SymbolFunctionInfo>;
 };

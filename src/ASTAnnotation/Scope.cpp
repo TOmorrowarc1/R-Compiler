@@ -90,6 +90,28 @@ auto Scope::getType(const std::string &name) const
   return nullptr;
 }
 
+auto Scope::getTrait(const std::string &name) const
+    -> std::shared_ptr<SymbolTraitInfo> {
+  auto it = traits_.find(name);
+  if (it != traits_.end()) {
+    return it->second;
+  }
+  if (parent_) {
+    return parent_->getTrait(name);
+  }
+  throw std::runtime_error("Trait not found: " + name);
+  return nullptr;
+}
+
+auto Scope::addTrait(const std::string &name,
+                     std::shared_ptr<SymbolTraitInfo> symbol) -> bool {
+  if (traits_.find(name) != traits_.end()) {
+    return false;
+  }
+  traits_[name] = std::move(symbol);
+  return true;
+}
+
 auto Scope::addNextChildScope() -> Scope * {
   auto child = std::make_unique<Scope>(this);
   children_.push_back(std::move(child));
