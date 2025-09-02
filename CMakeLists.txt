@@ -48,6 +48,7 @@ set(EXECUTABLE_SOURCES
   src/ASTNode/ItemFnNode.cpp
   src/ASTNode/ItemImplNode.cpp
   src/ASTNode/ItemStructNode.cpp
+  src/ASTNode/ItemTraitNode.cpp
   src/ASTNode/PathNode.cpp
   src/ASTNode/PatternIDNode.cpp
   src/ASTNode/PatternLiteralNode.cpp
@@ -82,6 +83,7 @@ set(EXECUTABLE_SOURCES
   src/ASTVisitor/ConstTypeEvaluator.cpp
   src/ASTVisitor/FunctionCollector.cpp
   src/ASTVisitor/SemanticChecker.cpp
+  src/ASTVisitor/TraitCollector.cpp
   src/ASTAnnotator/ASTAnnotator.cpp
   src/ASTAnnotator/BuiltInInit.cpp
   src/utils/position.cpp

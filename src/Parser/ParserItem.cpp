@@ -7,6 +7,7 @@ auto parseItemFnNode(TokenStream &stream) -> std::unique_ptr<ItemFnNode>;
 auto parseItemConstNode(TokenStream &stream) -> std::unique_ptr<ItemConstNode>;
 auto parseItemStructNode(TokenStream &stream)
     -> std::unique_ptr<ItemStructNode>;
+auto parseItemTraitNode(TokenStream &stream) -> std::unique_ptr<ItemTraitNode>;
 auto parseItemEnumNode(TokenStream &stream) -> std::unique_ptr<ItemEnumNode>;
 auto parseItemImplNode(TokenStream &stream) -> std::unique_ptr<ItemImplNode>;
 auto parseFnParameters(TokenStream &stream) -> std::vector<ItemFnPara>;
@@ -29,6 +30,8 @@ auto parseItemNode(TokenStream &stream) -> std::unique_ptr<ItemNode> {
     return parseItemStructNode(stream);
   case TokenType::ENUM:
     return parseItemEnumNode(stream);
+  case TokenType::TRAIT:
+    return parseItemTraitNode(stream);
   case TokenType::IMPL:
     return parseItemImplNode(stream);
   default:
@@ -250,11 +253,39 @@ auto parseItemEnumNode(TokenStream &stream) -> std::unique_ptr<ItemEnumNode> {
   return std::make_unique<ItemEnumNode>(ID, std::move(variants), position);
 }
 
+auto parseItemTraitNode(TokenStream &stream) -> std::unique_ptr<ItemTraitNode> {
+  Position position = stream.peek().line;
+  std::string trait_name;
+  std::vector<ItemAssociatedItem> items;
+  stream.next();
+  if (stream.peek().type != TokenType::STRINGLITERAL) {
+    throw CompilerException("Impl for trait no name.", position);
+  }
+  trait_name = stream.next().content;
+  if (stream.peek().type != TokenType::LEFT_BRACE) {
+    throw CompilerException("Impl needs { after the type.", position);
+  }
+  stream.next();
+  while (stream.peek().type != TokenType::RIGHT_BRACE) {
+    items.push_back(parseItemAssociatedItem(stream));
+  }
+  return std::make_unique<ItemTraitNode>(trait_name, std::move(items),
+                                        trait_name, position);
+}
+
 auto parseItemImplNode(TokenStream &stream) -> std::unique_ptr<ItemImplNode> {
   Position position = stream.peek().line;
   std::unique_ptr<TypeNode> type;
   std::vector<ItemAssociatedItem> items;
+  std::string trait_name;
   stream.next();
+  if (stream.peekNum(1).type == TokenType::FOR) {
+    if (stream.peek().type != TokenType::STRINGLITERAL) {
+      throw CompilerException("Impl for trait no name.", position);
+    }
+    trait_name = stream.next().content;
+    stream.next();
+  }
   type = parseTypeNode(stream);
   if (stream.peek().type != TokenType::LEFT_BRACE) {
     throw CompilerException("Impl needs { after the type.", position);
@@ -264,7 +295,7 @@ auto parseItemImplNode(TokenStream &stream) -> std::unique_ptr<ItemImplNode> {
     items.push_back(parseItemAssociatedItem(stream));
   }
   return std::make_unique<ItemImplNode>(std::move(type), std::move(items),
-                                        position);
+                                        trait_name, position);
 }
 
 auto parseItemAssociatedItem(TokenStream &stream) -> ItemAssociatedItem {
