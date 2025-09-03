@@ -5,7 +5,7 @@
 
 ExprBlockNode::ExprBlockNode(
     std::vector<std::unique_ptr<StmtNode>> &&statements,
-    std::unique_ptr<ExprBlockOutNode> &&return_value, Position position)
+    std::unique_ptr<ExprNode> &&return_value, Position position)
     : ExprBlockInNode(position), statements_(std::move(statements)),
       return_value_(std::move(return_value)) {}
 ExprBlockNode::~ExprBlockNode() = default;

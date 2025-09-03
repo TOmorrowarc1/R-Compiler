@@ -6,11 +6,10 @@ class StmtNode;
 class ExprBlockNode : public ExprBlockInNode {
 public:
   std::vector<std::unique_ptr<StmtNode>> statements_;
-  std::unique_ptr<ExprBlockOutNode> return_value_;
+  std::unique_ptr<ExprNode> return_value_;
 
   ExprBlockNode(std::vector<std::unique_ptr<StmtNode>> &&statements,
-                std::unique_ptr<ExprBlockOutNode> &&return_value,
-                Position position);
+                std::unique_ptr<ExprNode> &&return_value, Position position);
   ~ExprBlockNode();
   void accept(Visitor &visitor) override;
 };

@@ -461,7 +461,7 @@ auto parseStructField(TokenStream &stream) -> ExprStructField {
 auto parseExprBlockNode(TokenStream &stream) -> std::unique_ptr<ExprBlockNode> {
   Position position = stream.peek().line;
   std::vector<std::unique_ptr<StmtNode>> statements;
-  std::unique_ptr<ExprBlockOutNode> return_value;
+  std::unique_ptr<ExprNode> return_value;
   if (stream.next().type != TokenType::LEFT_BRACE) {
     throw CompilerException("The block expr no left brace.", position);
   }
@@ -486,33 +486,19 @@ auto parseExprBlockNode(TokenStream &stream) -> std::unique_ptr<ExprBlockNode> {
     default:
       auto expr = parseExprNode(stream);
       if (stream.peek().type == TokenType::SEMICOLON) {
+        stream.next();
         auto stmt = std::make_unique<StmtExprNode>(std::move(expr), position);
         statements.push_back(std::move(stmt));
       } else if (stream.peek().type == TokenType::RIGHT_BRACE) {
         return_value = std::move(expr);
-      }
-      if (is_instance_of<ExprBlockOutNode, ExprNode>(expr)) {
-        if (stream.peek().type == TokenType::SEMICOLON) {
-          stream.next();
-
-        } else {
-          return_value = std::move(
-              dynamic_unique_ptr_cast<ExprBlockOutNode, ExprNode>(expr));
-          end_flag = true;
-        }
       } else {
-        if (stream.peek().type == TokenType::SEMICOLON) {
-          stream.next();
+        if (is_instance_of<ExprBlockOutNode, ExprNode>(expr)) {
+          throw CompilerException(
+              "The block out expr should followed by a semicolon.", position);
         }
         auto stmt = std::make_unique<StmtExprNode>(std::move(expr), position);
         statements.push_back(std::move(stmt));
       }
-    }
-    if (end_flag) {
-      if (stream.peek().type != TokenType::RIGHT_BRACE) {
-        throw CompilerException("The block expr missed right brace.", position);
-      }
-      break;
     }
   }
   stream.next();
