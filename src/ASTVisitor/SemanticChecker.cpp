@@ -4,8 +4,10 @@
 #include "ConstInfo.hpp"
 #include "ConstValue.hpp"
 #include "Symbol.hpp"
+#include "TraitDef.hpp"
 #include "TypeKind.hpp"
 #include "cast.hpp"
+#include "exception.hpp"
 
 auto judgeTypeEqual(const TypeKind *lhs, const TypeKind *rhs, bool allow_cast)
     -> bool;
@@ -73,6 +75,66 @@ auto SemanticChecker::judgeTypeEqual(const ExprNode *node,
   }
   auto target_type = current_scope_->getType(name)->getType();
   return value_type->isTypePath(target_type.get());
+}
+
+auto SemanticChecker::judgeTypeEqual(const TypeKind *lhs, const TypeKind *rhs,
+                                     bool allow_cast) -> bool {
+  return ::judgeTypeEqual(lhs, rhs, allow_cast);
+}
+
+auto SemanticChecker::fnNodeToFunc(const ItemFnNode *node)
+    -> std::shared_ptr<SymbolFunctionInfo> {
+  std::vector<std::shared_ptr<TypeKind>> parameters;
+  auto return_type = const_evaluator_->evaluateType(node->return_type_.get());
+  for (const auto &param : node->parameters_) {
+    parameters.push_back(const_evaluator_->evaluateType(param.type.get()));
+  }
+  return std::make_shared<SymbolFunctionInfo>(node->ID_, return_type,
+                                              std::move(parameters));
+}
+
+auto SemanticChecker::implCheck(ItemImplNode *node) -> bool {
+  Position position = node->position_;
+  auto target_trait = current_scope_->getTrait(node->trait_name_)->getTrait();
+  auto all_consts = target_trait->getAllConst();
+  auto all_functions = target_trait->getAllFunction();
+  if (is_instance_of<TypePathNode, TypeNode>(node->type_)) {
+    auto type_path = dynamic_cast<const TypePathNode *>(node->type_.get());
+    auto type_name = type_path->path_->getPathIndexName(0);
+    auto type_def = current_scope_->getType(type_name)->getType();
+    for (auto &item : node->items_) {
+      if (item.constant) {
+        auto impl_const = type_def->getConst(item.constant->ID_);
+        auto iter = all_consts.find(item.constant->ID_);
+        if (iter == all_consts.end()) {
+          throw CompilerException(
+              "Impl does not have such const: " + item.constant->ID_, position);
+        }
+        if (!iter->second->getType()->isEqual(impl_const->getType().get())) {
+          throw CompilerException(
+              "Const type mismatch for const: " + item.constant->ID_, position);
+        }
+        all_consts.erase(iter);
+      } else {
+        auto impl_func = fnNodeToFunc(item.function.get());
+        auto iter = all_functions.find(item.function->ID_);
+        if (iter == all_functions.end()) {
+          throw CompilerException("Impl does not have such function: " +
+                                      item.function->ID_,
+                                  position);
+        }
+        if (!iter->second->isEqual(impl_func.get())) {
+          throw CompilerException("Function signature mismatch for function: " +
+                                      item.function->ID_,
+                                  position);
+        }
+        all_functions.erase(iter);
+      }
+    }
+  } else {
+    throw std::runtime_error("Impl type must be a path type");
+  }
+  return all_consts.empty() && all_functions.empty();
 }
 
 void SemanticChecker::visit(ASTRootNode *node) {

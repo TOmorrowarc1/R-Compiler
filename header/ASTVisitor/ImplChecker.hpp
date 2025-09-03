@@ -1,60 +1,26 @@
 #pragma once
 #include "Scope.hpp"
 #include "Visitor.hpp"
-#include <stack>
 
 /*
-The third pass is semantic check, in which we realize characteristics below:
-1. Name Existence: A name must be defined before it is used, including
-variables, functions, types, methods, etc.
-2. Type Correctness: The type of an expression must match the expected type,
-such as assignment, function call, etc.
-3. Place Expression: Everything on the lhs of the = should be place expr.
-4. Mutability Correctness: A mutable variable must be declared as mutable, and
-everything modified is either a mutable var or a mutable reference.
-5. Pattern Correctness: Patterns must match the structure of the value they
-are matching against when are irrefutable.
-6. Control Flow context: Control flow statements like `break`, `continue`, and
-`return` must be used in the correct context, such as loops or functions.
-7. Const Evaluation: Constants must be evaluated at compile time, and their
-values must be known at compile time.
-8. Match Patterns: Match arms must cover all possible cases, and patterns must
-be valid for the type they are matching against.
-9. Recursive Type Definitions: Types can be defined recursively, but must be
-well-formed and not lead to infinite recursion.
+The core mission of the fourth pass is to check if impl blocks for traits
+satisfy boundaries launched by definitions of traits.
 */
 
 class TypeKind;
-class TypeDef;
+class TypeNode;
 class ConstEvaluator;
 
-struct LoopContext {
-  std::shared_ptr<TypeKind> loop_type;
-  auto breakAdd(std::shared_ptr<TypeKind> type) -> bool;
-};
-
-class SemanticChecker : public Visitor {
+class ImplChecker : public Visitor {
 private:
   Scope *current_scope_;
   ConstEvaluator *const_evaluator_;
-  std::shared_ptr<TypeDef> current_impl_type_;
-  std::stack<std::shared_ptr<TypeKind>> fn_type_stack_;
-  std::stack<std::shared_ptr<LoopContext>> loop_type_stack_;
 
-  auto bindVarSymbol(const PatternNode *pattern_node,
-                     std::shared_ptr<TypeKind> type) -> bool;
-
-  auto judgeTypeEqual(const ExprNode *node, const std::string &name) -> bool;
-  auto judgeTypeEqual(const TypeKind *lhs, const TypeKind *rhs, bool allow_cast)
-      -> bool;
-
-  auto fnNodeToFunc(const ItemFnNode *node)
-      -> std::shared_ptr<SymbolFunctionInfo>;
-  auto implCheck(ItemImplNode *node) -> bool;
+  auto ImplChecker::implCheck(ItemImplNode *node) -> bool;
 
 public:
-  SemanticChecker(Scope *initial_scope, ConstEvaluator *const_evaluator);
-  ~SemanticChecker() override;
+  ImplChecker(Scope *initial_scope, ConstEvaluator *const_evaluator);
+  ~ImplChecker() override;
 
   void visit(ASTRootNode *node) override;
 
