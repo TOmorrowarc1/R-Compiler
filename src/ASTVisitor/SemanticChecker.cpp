@@ -365,9 +365,8 @@ void SemanticChecker::visit(ExprReturnNode *node) {
   if (!judgeTypeEqual(value_type.get(), fn_type_stack_.top().get(), true)) {
     throw std::runtime_error("Return type mismatch");
   }
-  auto never_type = current_scope_->getType("never")->getType();
-  auto never_kind = std::make_shared<TypeKindPath>(never_type);
-  node->value_info_ = std::make_unique<ValueInfo>(never_kind, false, false);
+  auto never_type = std::make_shared<TypeKindNever>();
+  node->value_info_ = std::make_unique<ValueInfo>(never_type, false, false);
 }
 
 void SemanticChecker::visit(ExprContinueNode *node) {
