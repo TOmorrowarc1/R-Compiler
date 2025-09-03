@@ -9,6 +9,8 @@ The ConstEvaluator controls the evaluation of constant expressions and type
 definitions. Evaluate() functions perform evaluations and adjust info of symbols
 in scopes, after which use the getSymbol() of scope can retrieve the updated
 symbol information.
+Three types of symbols are tracked: type definitions, constant items out of
+type, and constants in impls and traits.
 */
 
 class ASTNode;
@@ -50,7 +52,9 @@ private:
   std::unordered_map<std::string, SymbolStatus> type_def_symbols;
   std::unordered_map<std::string, SymbolStatus> const_symbols;
   std::unordered_map<std::string, std::unordered_map<std::string, SymbolStatus>>
-      struct_const_symbols;
+      type_const_symbols;
+  std::unordered_map<std::string, std::unordered_map<std::string, SymbolStatus>>
+      trait_const_symbols;
 
 public:
   ConstEvaluator();
@@ -59,12 +63,16 @@ public:
   void addBuiltInSymbol(const std::string &symbol);
   void attachNodeToTypeDef(ASTNode *node, const std::string &symbol);
   void attachNodeToConst(ASTNode *node, const std::string &symbol);
-  void attachNodeToStructConst(ASTNode *node, const std::string &struct_name,
-                               const std::string &symbol);
+  void attachNodeToTypeConst(ASTNode *node, const std::string &struct_name,
+                             const std::string &symbol);
+  void attachNodeToTraitConst(ASTNode *node, const std::string &trait_name,
+                              const std::string &symbol);
   void evaluateTypeSymbol(const std::string &symbol);
   void evaluateConstSymbol(const std::string &symbol);
-  void evaluateStructConst(const std::string &struct_name,
-                           const std::string &symbol);
+  void evaluateTypeConst(const std::string &struct_name,
+                         const std::string &symbol);
+  void evaluateTraitConst(const std::string &trait_name,
+                          const std::string &symbol);
   auto evaluateType(TypeNode *node) -> std::shared_ptr<TypeKind>;
   auto evaluateExprValue(ExprNode *node) -> std::shared_ptr<ConstInfo>;
 };

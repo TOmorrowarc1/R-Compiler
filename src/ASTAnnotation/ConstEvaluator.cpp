@@ -4,6 +4,7 @@
 #include "ConstValue.hpp"
 #include "Scope.hpp"
 #include "Symbol.hpp"
+#include "TraitDef.hpp"
 #include "TypeKind.hpp"
 #include "cast.hpp"
 #include <stdexcept>
@@ -49,10 +50,18 @@ void ConstEvaluator::attachNodeToConst(ASTNode *node,
   const_symbols.emplace(symbol, status);
 }
 
-void ConstEvaluator::attachNodeToStructConst(ASTNode *node,
-                                             const std::string &struct_name,
-                                             const std::string &symbol) {
-  struct_const_symbols[struct_name].emplace(symbol, node);
+void ConstEvaluator::attachNodeToTypeConst(ASTNode *node,
+                                           const std::string &struct_name,
+                                           const std::string &symbol) {
+  SymbolStatus status(node);
+  type_const_symbols[struct_name].emplace(symbol, status);
+}
+
+void ConstEvaluator::attachNodeToTraitConst(ASTNode *node,
+                                            const std::string &trait_name,
+                                            const std::string &symbol) {
+  SymbolStatus status(node);
+  trait_const_symbols[trait_name].emplace(symbol, status);
 }
 
 auto ConstEvaluator::evaluateType(TypeNode *node) -> std::shared_ptr<TypeKind> {
@@ -86,10 +95,11 @@ auto ConstEvaluator::evaluateType(TypeNode *node) -> std::shared_ptr<TypeKind> {
     int32_t length = length_int->getValue();
     return std::make_shared<TypeKindArray>(type_inside, length);
   }
-  if(is_instance_of<TypeReferNode, TypeNode>(node)) {
+  if (is_instance_of<TypeReferNode, TypeNode>(node)) {
     const auto *type_refer = dynamic_cast<const TypeReferNode *>(node);
     auto type_inside = evaluateType(type_refer->type_.get());
-    return std::make_shared<TypeKindRefer>(type_inside, type_refer->is_mutable_);
+    return std::make_shared<TypeKindRefer>(type_inside,
+                                           type_refer->is_mutable_);
   }
   throw std::runtime_error("Unsupported type node for symbol collection");
   return nullptr;
@@ -405,7 +415,7 @@ auto ConstEvaluator::evaluateExprValue(ExprNode *node)
     } else if (path_node->path_->size() == 2) {
       std::string struct_name = path_node->path_->getPathIndexName(0);
       std::string var_name = path_node->path_->getPathIndexName(1);
-      evaluateStructConst(struct_name, var_name);
+      evaluateTypeConst(struct_name, var_name);
       auto type_def = (*current_scope_)->getType(struct_name)->getType();
       auto const_symbol_info = type_def->getConst(var_name);
       if (!const_symbol_info) {
@@ -543,15 +553,15 @@ void ConstEvaluator::evaluateConstSymbol(const std::string &symbol) {
   symbol_status.status.setVaild();
 }
 
-void ConstEvaluator::evaluateStructConst(const std::string &struct_name,
-                                         const std::string &symbol) {
+void ConstEvaluator::evaluateTypeConst(const std::string &struct_name,
+                                       const std::string &symbol) {
   std::string name = struct_name + "::" + symbol;
-  if (struct_const_symbols.find(struct_name) == struct_const_symbols.end() ||
-      struct_const_symbols[struct_name].find(symbol) ==
-          struct_const_symbols[struct_name].end()) {
-    throw std::runtime_error("Struct const symbol not found: " + name);
+  if (type_const_symbols.find(struct_name) == type_const_symbols.end() ||
+      type_const_symbols[struct_name].find(symbol) ==
+          type_const_symbols[struct_name].end()) {
+    throw std::runtime_error("Type const symbol not found: " + name);
   }
-  auto symbol_status = struct_const_symbols[struct_name][symbol];
+  auto symbol_status = type_const_symbols[struct_name][symbol];
   if (symbol_status.status.isValid()) {
     return;
   }
@@ -570,6 +580,46 @@ void ConstEvaluator::evaluateStructConst(const std::string &struct_name,
     const_info->setConstValue(const_value.get());
     auto type_def = (*current_scope_)->getType(struct_name)->getType();
     auto const_symbol_info = type_def->getConst(symbol);
+    if (!const_symbol_info) {
+      throw std::runtime_error("Const symbol does not exist: " + symbol);
+    }
+    const_symbol_info->setValue(std::move(const_value));
+  } else {
+    throw std::runtime_error("Unsupported const node for symbol: " + symbol);
+  }
+  symbol_status.status.setVaild();
+}
+
+void ConstEvaluator::evaluateTraitConst(const std::string &trait_name,
+                                        const std::string &symbol) {
+  std::string name = trait_name + "::" + symbol;
+  if (trait_const_symbols.find(trait_name) == trait_const_symbols.end() ||
+      trait_const_symbols[trait_name].find(symbol) ==
+          trait_const_symbols[trait_name].end()) {
+    throw std::runtime_error("Trait const symbol not found: " + name);
+  }
+  auto symbol_status = trait_const_symbols[trait_name][symbol];
+  if (symbol_status.status.isValid()) {
+    return;
+  }
+  if (!symbol_status.status.touch()) {
+    throw std::runtime_error("Cyclic dependency detected in const: " + name);
+  }
+  auto node = symbol_status.node;
+  if (node == nullptr) {
+    throw std::runtime_error("Trait const node is null: " + name);
+  }
+  if (is_instance_of<ItemConstNode, ASTNode>(node)) {
+    auto const_node = dynamic_cast<ItemConstNode *>(node);
+    auto const_type = evaluateType(const_node->type_.get());
+    auto const_value = evaluateExprValue(const_node->value_.get());
+    if (!const_value->getType()->isEqual(const_type.get())) {
+      throw std::runtime_error("Const value type mismatch: " + symbol);
+    }
+    auto const_info = std::make_shared<ConstInfo>(std::move(const_type));
+    const_info->setConstValue(const_value.get());
+    auto trait_def = (*current_scope_)->getTrait(trait_name)->getTrait();
+    auto const_symbol_info = trait_def->getConst(symbol);
     if (!const_symbol_info) {
       throw std::runtime_error("Const symbol does not exist: " + symbol);
     }
