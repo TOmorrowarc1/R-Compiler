@@ -22,7 +22,11 @@ auto judgeTypeEqual(const TypeKind *lhs, const TypeKind *rhs, bool allow_cast)
 }
 
 auto LoopContext::breakAdd(std::shared_ptr<TypeKind> type) -> bool {
-  return !loop_type || judgeTypeEqual(loop_type.get(), type.get(), true);
+  if (!loop_type) {
+    loop_type = type;
+    return true;
+  }
+  return judgeTypeEqual(loop_type.get(), type.get(), true);
 }
 
 SemanticChecker::SemanticChecker(Scope *initial_scope,
@@ -345,15 +349,16 @@ void SemanticChecker::visit(ExprBreakNode *node) {
   if (loop_type_stack_.empty()) {
     throw std::runtime_error("Break statement not in a loop");
   }
-  std::shared_ptr<TypeKind> value_type = std::make_shared<TypeKindPath>(
-      current_scope_->getType("unit")->getType());
+  auto unit_type = current_scope_->getType("unit")->getType();
+  std::shared_ptr<TypeKind> value_type =
+      std::make_shared<TypeKindPath>(unit_type);
   if (node->value_) {
     node->value_->accept(*this);
     value_type = node->value_->value_info_->getType();
   }
   loop_type_stack_.top()->breakAdd(value_type);
-  node->value_info_ =
-      std::make_unique<ValueInfo>(std::move(value_type), false, false);
+  auto never_type = std::make_shared<TypeKindNever>();
+  node->value_info_ = std::make_unique<ValueInfo>(never_type, false, false);
 }
 
 void SemanticChecker::visit(ExprReturnNode *node) {
@@ -464,8 +469,7 @@ void SemanticChecker::visit(ExprLoopNode *node) {
   node->loop_body_->accept(*this);
   auto body_type = loop_type_stack_.top()->loop_type;
   if (!body_type) {
-    auto unit_type = current_scope_->getType("unit")->getType();
-    body_type = std::make_shared<TypeKindPath>(unit_type);
+    body_type = std::make_shared<TypeKindNever>();
   }
   loop_type_stack_.pop();
   node->value_info_ =
