@@ -34,6 +34,34 @@ auto TraitDef::getAllConst() const
   return consts;
 }
 
+auto TraitDef::addFunction(const std::string &name,
+                           std::shared_ptr<SymbolFunctionInfo> function)
+    -> bool {
+  if (trait_functions_.find(name) != trait_functions_.end()) {
+    return false;
+  }
+  trait_functions_.emplace(name, std::move(function));
+  return true;
+}
+
+auto TraitDef::getFunction(const std::string &name) const
+    -> std::shared_ptr<SymbolFunctionInfo> {
+  auto iter = trait_functions_.find(name);
+  if (iter != trait_functions_.end()) {
+    return iter->second;
+  }
+  return nullptr;
+}
+
+auto TraitDef::getAllFunction() const
+    -> std::vector<std::shared_ptr<SymbolFunctionInfo>> {
+  std::vector<std::shared_ptr<SymbolFunctionInfo>> functions;
+  for (auto &pair : trait_functions_) {
+    functions.push_back(pair.second);
+  }
+  return functions;
+}
+
 auto TraitDef::addMethod(const std::string &name,
                          std::shared_ptr<SymbolFunctionInfo> method) -> bool {
   if (trait_methods_.find(name) != trait_methods_.end()) {

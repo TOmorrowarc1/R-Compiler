@@ -24,6 +24,7 @@ private:
   std::unordered_map<std::string, std::shared_ptr<SymbolFunctionInfo>> methods_;
   std::unordered_map<std::string, std::shared_ptr<SymbolFunctionInfo>>
       associated_functions_;
+  std::set<std::string> impl_traits_;
 
 public:
   TypeDef(const std::string &name);
@@ -42,6 +43,7 @@ public:
       -> bool;
   auto getAssociatedFunction(const std::string &name) const
       -> std::shared_ptr<SymbolFunctionInfo>;
+  auto addImplTrait(const std::string &trait_name) -> bool;
 };
 
 class StructDef : public TypeDef {

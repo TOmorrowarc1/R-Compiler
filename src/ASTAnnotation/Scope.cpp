@@ -70,7 +70,7 @@ auto Scope::getSymbol(const std::string &name) const
 
 auto Scope::addType(const std::string &name,
                     std::shared_ptr<SymbolTypeInfo> type) -> bool {
-  if (types_.find(name) != types_.end()) {
+  if (types_.find(name) != types_.end() || getTrait(name) != nullptr) {
     return false;
   }
   types_[name] = std::move(type);
@@ -90,6 +90,15 @@ auto Scope::getType(const std::string &name) const
   return nullptr;
 }
 
+auto Scope::addTrait(const std::string &name,
+                     std::shared_ptr<SymbolTraitInfo> symbol) -> bool {
+  if (traits_.find(name) != traits_.end() || getType(name) != nullptr) {
+    return false;
+  }
+  traits_[name] = std::move(symbol);
+  return true;
+}
+
 auto Scope::getTrait(const std::string &name) const
     -> std::shared_ptr<SymbolTraitInfo> {
   auto it = traits_.find(name);
@@ -101,15 +110,6 @@ auto Scope::getTrait(const std::string &name) const
   }
   throw std::runtime_error("Trait not found: " + name);
   return nullptr;
-}
-
-auto Scope::addTrait(const std::string &name,
-                     std::shared_ptr<SymbolTraitInfo> symbol) -> bool {
-  if (traits_.find(name) != traits_.end()) {
-    return false;
-  }
-  traits_[name] = std::move(symbol);
-  return true;
 }
 
 auto Scope::addNextChildScope() -> Scope * {

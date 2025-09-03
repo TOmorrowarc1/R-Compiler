@@ -64,6 +64,14 @@ auto TypeDef::getAssociatedFunction(const std::string &name) const
   return nullptr;
 }
 
+auto TypeDef::addImplTrait(const std::string &trait_name) -> bool {
+  if (impl_traits_.count(trait_name) != 0) {
+    return false;
+  }
+  impl_traits_.insert(trait_name);
+  return true;
+}
+
 StructDef::StructDef(const std::string &name) : TypeDef(name) {}
 
 StructDef::StructDef(const std::string &name,
