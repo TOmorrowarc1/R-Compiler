@@ -3,6 +3,7 @@
 #include "ConstEvaluator.hpp"
 #include "ConstTypeCollector.hpp"
 #include "Symbol.hpp"
+#include "TraitDef.hpp"
 #include "TypeKind.hpp"
 #include "cast.hpp"
 #include "exception.hpp"
@@ -26,15 +27,10 @@ void ConstTypeEvaluator::visit(ItemConstNode *node) {
   node->value_->accept(*this);
   if (ctx_name_.empty()) {
     const_evaluator_->evaluateConstSymbol(node->ID_);
-    return;
   } else if (context_.top() == ContextType::IN_TYPE_DEF) {
     const_evaluator_->evaluateTypeConst(ctx_name_.top(), node->ID_);
-    return;
   } else {
-    if (node->value_ != nullptr) {
-      const_evaluator_->evaluateTraitConst(ctx_name_.top(), node->ID_);
-    }
-    return;
+    const_evaluator_->evaluateTraitConst(ctx_name_.top(), node->ID_);
   }
 }
 

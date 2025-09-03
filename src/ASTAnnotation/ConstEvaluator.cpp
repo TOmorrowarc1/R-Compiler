@@ -583,7 +583,7 @@ void ConstEvaluator::evaluateTypeConst(const std::string &struct_name,
     if (!const_symbol_info) {
       throw std::runtime_error("Const symbol does not exist: " + symbol);
     }
-    const_symbol_info->setValue(std::move(const_value));
+    const_symbol_info->setValue(std::move(const_info));
   } else {
     throw std::runtime_error("Unsupported const node for symbol: " + symbol);
   }
@@ -606,24 +606,23 @@ void ConstEvaluator::evaluateTraitConst(const std::string &trait_name,
     throw std::runtime_error("Cyclic dependency detected in const: " + name);
   }
   auto node = symbol_status.node;
-  if (node == nullptr) {
-    throw std::runtime_error("Trait const node is null: " + name);
-  }
   if (is_instance_of<ItemConstNode, ASTNode>(node)) {
     auto const_node = dynamic_cast<ItemConstNode *>(node);
     auto const_type = evaluateType(const_node->type_.get());
-    auto const_value = evaluateExprValue(const_node->value_.get());
-    if (!const_value->getType()->isEqual(const_type.get())) {
-      throw std::runtime_error("Const value type mismatch: " + symbol);
-    }
     auto const_info = std::make_shared<ConstInfo>(std::move(const_type));
-    const_info->setConstValue(const_value.get());
+    if (const_node->value_ != nullptr) {
+      auto const_value = evaluateExprValue(const_node->value_.get());
+      if (!const_value->getType()->isEqual(const_type.get())) {
+        throw std::runtime_error("Const value type mismatch: " + symbol);
+      }
+      const_info->setConstValue(const_value.get());
+    }
     auto trait_def = (*current_scope_)->getTrait(trait_name)->getTrait();
     auto const_symbol_info = trait_def->getConst(symbol);
     if (!const_symbol_info) {
       throw std::runtime_error("Const symbol does not exist: " + symbol);
     }
-    const_symbol_info->setValue(std::move(const_value));
+    const_symbol_info->setValue(std::move(const_info));
   } else {
     throw std::runtime_error("Unsupported const node for symbol: " + symbol);
   }
