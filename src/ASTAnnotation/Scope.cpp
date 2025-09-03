@@ -86,7 +86,6 @@ auto Scope::getType(const std::string &name) const
   if (parent_) {
     return parent_->getType(name);
   }
-  throw std::runtime_error("Type not found: " + name);
   return nullptr;
 }
 
@@ -108,7 +107,6 @@ auto Scope::getTrait(const std::string &name) const
   if (parent_) {
     return parent_->getTrait(name);
   }
-  throw std::runtime_error("Trait not found: " + name);
   return nullptr;
 }
 
