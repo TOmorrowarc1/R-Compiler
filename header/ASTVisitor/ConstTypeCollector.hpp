@@ -14,13 +14,18 @@ class TypeNode;
 class ConstEvaluator;
 
 class ConstTypeCollector : public Visitor {
+public:
+  enum class ContextType : bool { IN_TYPE_DEF, IN_TRAIT_DEF };
+
 private:
   Scope *current_scope_;
   ConstEvaluator *const_evaluator_;
-  std::stack<std::string> type_name_;
+  std::stack<std::string> ctx_name_;
+  std::stack<ContextType> context_;
 
-  auto addStructType(const std::string &type_name) -> bool;
-  auto addEnumType(const std::string &type_name) -> bool;
+  auto addStructSymbol(const std::string &type_name) -> bool;
+  auto addEnumSymbol(const std::string &type_name) -> bool;
+  auto addTraitSymbol(const std::string &name) -> bool;
   auto addConstSymbol(const std::string &name) -> bool;
 
 public:
