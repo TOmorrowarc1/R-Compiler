@@ -22,6 +22,7 @@
 #include "ItemImplNode.hpp"
 #include "ItemStructNode.hpp"
 #include "ItemTraitNode.hpp"
+#include "ItemTraitNode.hpp"
 #include "PathNode.hpp"
 #include "PatternIDNode.hpp"
 #include "PatternLiteralNode.hpp"

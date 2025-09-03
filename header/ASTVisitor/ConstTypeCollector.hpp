@@ -13,7 +13,7 @@ class TypeKind;
 class TypeNode;
 class ConstEvaluator;
 
-enum class ContextType : bool { IN_TYPE_DEF, IN_TRAIT_DEF };
+enum class ContextType { IN_TYPE_DEF, IN_TRAIT_DEF };
 
 class ConstTypeCollector : public Visitor {
 private:

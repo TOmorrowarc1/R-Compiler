@@ -1,5 +1,7 @@
 #include "ItemTraitNode.hpp"
 #include "ItemImplNode.hpp"
+#include "ItemConstNode.hpp"
+#include "ItemFnNode.hpp"
 #include "Visitor.hpp"
 
 ItemTraitNode::ItemTraitNode(const std::string &name,

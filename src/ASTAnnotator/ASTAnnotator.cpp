@@ -4,7 +4,7 @@
 #include "ConstEvaluator.hpp"
 #include "ConstTypeCollector.hpp"
 #include "ConstTypeEvaluator.hpp"
-#include "FunctionCollector.hpp"
+#include "FuncTraitCollector.hpp"
 #include "Scope.hpp"
 #include "SemanticChecker.hpp"
 
@@ -17,8 +17,8 @@ void ASTAnnotate(ASTRootNode *root, Scope *initial_scope) {
   ConstTypeEvaluator evaluator(initial_scope, &const_evaluator);
   root->accept(evaluator);
   initial_scope->resetIndex();
-  FunctionCollector function_collector(initial_scope, &const_evaluator);
-  root->accept(function_collector);
+  FuncTraitCollector func_trait_collector(initial_scope, &const_evaluator);
+  root->accept(func_trait_collector);
   initial_scope->resetIndex();
   SemanticChecker checker(initial_scope, &const_evaluator);
   root->accept(checker);

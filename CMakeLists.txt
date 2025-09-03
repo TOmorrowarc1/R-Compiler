@@ -76,14 +76,14 @@ set(EXECUTABLE_SOURCES
   src/ASTAnnotation/ConstValue.cpp
   src/ASTAnnotation/Scope.cpp
   src/ASTAnnotation/Symbol.cpp
+  src/ASTAnnotation/TraitDef.cpp
   src/ASTAnnotation/TypeDef.cpp
   src/ASTAnnotation/TypeKind.cpp
   src/ASTAnnotation/ValueInfo.cpp
   src/ASTVisitor/ConstTypeCollector.cpp
   src/ASTVisitor/ConstTypeEvaluator.cpp
-  src/ASTVisitor/FunctionCollector.cpp
+  src/ASTVisitor/FuncTraitCollector.cpp
   src/ASTVisitor/SemanticChecker.cpp
-  src/ASTVisitor/TraitCollector.cpp
   src/ASTAnnotator/ASTAnnotator.cpp
   src/ASTAnnotator/BuiltInInit.cpp
   src/utils/position.cpp

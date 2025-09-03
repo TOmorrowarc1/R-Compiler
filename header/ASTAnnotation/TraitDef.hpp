@@ -19,6 +19,7 @@ private:
 
 public:
   TraitDef();
+  TraitDef(const std::string &name);
   ~TraitDef();
   auto addConst(const std::string &name,
                 std::shared_ptr<SymbolConstInfo> trait_const) -> bool;

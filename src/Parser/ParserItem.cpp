@@ -269,7 +269,7 @@ auto parseItemTraitNode(TokenStream &stream) -> std::unique_ptr<ItemTraitNode> {
     items.push_back(parseItemAssociatedItem(stream));
   }
   return std::make_unique<ItemTraitNode>(trait_name, std::move(items),
-                                         trait_name, position);
+                                         position);
 }
 
 auto parseItemImplNode(TokenStream &stream) -> std::unique_ptr<ItemImplNode> {

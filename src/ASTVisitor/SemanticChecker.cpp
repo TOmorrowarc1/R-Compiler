@@ -366,8 +366,8 @@ void SemanticChecker::visit(ExprReturnNode *node) {
     throw std::runtime_error("Return type mismatch");
   }
   auto never_type = current_scope_->getType("never")->getType();
-  node->value_info_ =
-      std::make_unique<ValueInfo>(std::move(never_type), false, false);
+  auto never_kind = std::make_shared<TypeKindPath>(never_type);
+  node->value_info_ = std::make_unique<ValueInfo>(never_kind, false, false);
 }
 
 void SemanticChecker::visit(ExprContinueNode *node) {

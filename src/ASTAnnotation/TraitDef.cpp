@@ -5,6 +5,8 @@
 
 TraitDef::TraitDef() = default;
 
+TraitDef::TraitDef(const std::string &name) : name_(name) {}
+
 TraitDef::~TraitDef() = default;
 
 auto TraitDef::addConst(const std::string &name,

@@ -2,7 +2,6 @@
 #include "ItemConstNode.hpp"
 #include "ItemFnNode.hpp"
 #include "TypeANode.hpp"
-#include "ValueInfo.hpp"
 #include "Visitor.hpp"
 
 ItemImplNode::ItemImplNode(std::unique_ptr<TypeNode> &&type,
