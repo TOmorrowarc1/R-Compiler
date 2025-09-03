@@ -3,25 +3,29 @@
 #include "Visitor.hpp"
 
 /*
-The third pass collects function signatures and implies types functions by their
-impl blocks in the subtree.
+There are 2 objects of the third pass after all symbols of types are
+collected, members are filled and constants are evaluated:
+1. Collect all boundaries(const except) in traits that serves as interfaces
+defination in the fourth path for impl blocks.
+2. Collect all signatures of functions. no matter they are in or out of types.
 */
 
 class TypeKind;
 class TypeNode;
 class ConstEvaluator;
 
-class FunctionCollector : public Visitor {
+class FuncTraitCollector : public Visitor {
 private:
   Scope *current_scope_;
   ConstEvaluator *const_evaluator_;
+  bool in_type_;
 
   auto fnNodeToFunc(const ItemFnNode *node)
       -> std::shared_ptr<SymbolFunctionInfo>;
 
 public:
-  FunctionCollector(Scope *initial_scope, ConstEvaluator *const_evaluator);
-  ~FunctionCollector() override;
+  FuncTraitCollector(Scope *initial_scope, ConstEvaluator *const_evaluator);
+  ~FuncTraitCollector() override;
 
   void visit(ASTRootNode *node) override;
 
