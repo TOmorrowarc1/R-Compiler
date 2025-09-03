@@ -95,6 +95,7 @@ auto parseSelfPara(TokenStream &stream) -> FnType {
       throw CompilerException("Expected the self after '&' or '&mut'",
                               position);
     }
+    stream.next();
     if (stream.peek().type != TokenType::RIGHT_PAREN &&
         stream.peek().type != TokenType::COMMA) {
       throw CompilerException("Expected ')' or ',' after self parameter",
@@ -293,6 +294,7 @@ auto parseItemImplNode(TokenStream &stream) -> std::unique_ptr<ItemImplNode> {
   while (stream.peek().type != TokenType::RIGHT_BRACE) {
     items.push_back(parseItemAssociatedItem(stream));
   }
+  stream.next();
   return std::make_unique<ItemImplNode>(std::move(type), std::move(items),
                                         trait_name, position);
 }

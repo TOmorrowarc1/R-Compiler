@@ -250,6 +250,10 @@ void SemanticChecker::visit(ExprArrayIndexNode *node) {
   node->array_->accept(*this);
   node->index_->accept(*this);
   auto array_type = node->array_->value_info_->getType();
+  if (is_instance_of<TypeKindRefer, TypeKind>(array_type.get())) {
+    array_type =
+        std::dynamic_pointer_cast<TypeKindRefer>(array_type)->getType();
+  }
   if (!is_instance_of<TypeKindArray, TypeKind>(array_type.get())) {
     throw std::runtime_error("Array index operation requires an array type");
   }
@@ -495,21 +499,34 @@ void SemanticChecker::visit(ExprWhileNode *node) {
 }
 
 void SemanticChecker::visit(ExprOperBinaryNode *node) {
+  if (node->op_ == BinaryOperator::AS_CAST) {
+    node->lhs_->accept(*this);
+    auto lhs_type = node->lhs_->value_info_->getType();
+    auto rhs_type_node = dynamic_cast<ExprPathNode *>(node->rhs_.get());
+    if (rhs_type_node == nullptr) {
+      throw std::runtime_error("As-cast rhs must be a type path");
+    }
+    auto type_name = rhs_type_node->path_->getPathIndexName(0);
+    auto type_def = current_scope_->getType(type_name)->getType();
+    auto type_def_name = type_def->getName();
+    if (!judgeTypeEqual(node->lhs_.get(), "num")) {
+      throw std::runtime_error("As-cast only supports numeric types");
+    }
+    if (type_def_name != "i32" && type_def_name != "u32" &&
+        type_def_name != "isize" && type_def_name != "usize") {
+      throw std::runtime_error("As-cast only supports numeric types");
+    }
+    node->value_info_ =
+        std::make_unique<ValueInfo>(std::make_shared<TypeKindPath>(type_def),
+                                    node->lhs_->value_info_->isLeftValue(),
+                                    node->lhs_->value_info_->isMutable());
+    return;
+  }
   node->lhs_->accept(*this);
   node->rhs_->accept(*this);
   auto lhs_type = node->lhs_->value_info_->getType();
   auto rhs_type = node->rhs_->value_info_->getType();
   switch (node->op_) {
-  case BinaryOperator::AS_CAST:
-    if (!judgeTypeEqual(node->lhs_.get(), "num")) {
-      throw std::runtime_error("The lhs type is not number");
-    }
-    if (!judgeTypeEqual(node->rhs_.get(), "num")) {
-      throw std::runtime_error("The rhs type is not number");
-    }
-    node->value_info_ =
-        std::make_unique<ValueInfo>(std::move(rhs_type), false, false);
-    break;
   case BinaryOperator::ASSIGN: {
     if (!lhs_type->isEqual(rhs_type.get())) {
       throw std::runtime_error("Assignment requires types to match");
@@ -664,6 +681,10 @@ void SemanticChecker::visit(ExprPathNode *node) {
 void SemanticChecker::visit(ExprFieldNode *node) {
   node->instance_->accept(*this);
   auto instance_type = node->instance_->value_info_->getType();
+  if (is_instance_of<TypeKindRefer, TypeKind>(instance_type.get())) {
+    instance_type =
+        std::dynamic_pointer_cast<TypeKindRefer>(instance_type)->getType();
+  }
   auto path_type = dynamic_cast<TypeKindPath *>(instance_type.get());
   if (!path_type) {
     throw std::runtime_error("Instance requires a path type");

@@ -18,8 +18,8 @@ auto StatusRecorder::touch() -> bool {
   }
   return false;
 }
-auto StatusRecorder::isValid() const -> bool { return status_ == VAILD; }
-void StatusRecorder::setVaild() { status_ = VAILD; }
+auto StatusRecorder::isValid() const -> bool { return status_ == VALID; }
+void StatusRecorder::setVaild() { status_ = VALID; }
 
 SymbolStatus::SymbolStatus() : node(nullptr), status() {}
 SymbolStatus::SymbolStatus(ASTNode *target) : node(target), status() {}
@@ -488,7 +488,7 @@ void ConstEvaluator::evaluateTypeSymbol(const std::string &symbol) {
   if (type_def_symbols.find(symbol) == type_def_symbols.end()) {
     throw std::runtime_error("Type symbol not found: " + symbol);
   }
-  auto symbol_status = type_def_symbols[symbol];
+  auto& symbol_status = type_def_symbols[symbol];
   if (symbol_status.status.isValid()) {
     return;
   }
@@ -518,13 +518,14 @@ void ConstEvaluator::evaluateTypeSymbol(const std::string &symbol) {
   } else {
     throw std::runtime_error("Unsupported type def node for symbol: " + symbol);
   }
+  symbol_status.status.setVaild();
 }
 
 void ConstEvaluator::evaluateConstSymbol(const std::string &symbol) {
   if (const_symbols.find(symbol) == const_symbols.end()) {
     throw std::runtime_error("Const symbol not found: " + symbol);
   }
-  auto symbol_status = const_symbols[symbol];
+  auto& symbol_status = const_symbols[symbol];
   if (symbol_status.status.isValid()) {
     return;
   }
@@ -561,7 +562,7 @@ void ConstEvaluator::evaluateTypeConst(const std::string &struct_name,
           type_const_symbols[struct_name].end()) {
     throw std::runtime_error("Type const symbol not found: " + name);
   }
-  auto symbol_status = type_const_symbols[struct_name][symbol];
+  auto& symbol_status = type_const_symbols[struct_name][symbol];
   if (symbol_status.status.isValid()) {
     return;
   }
@@ -598,7 +599,7 @@ void ConstEvaluator::evaluateTraitConst(const std::string &trait_name,
           trait_const_symbols[trait_name].end()) {
     throw std::runtime_error("Trait const symbol not found: " + name);
   }
-  auto symbol_status = trait_const_symbols[trait_name][symbol];
+  auto& symbol_status = trait_const_symbols[trait_name][symbol];
   if (symbol_status.status.isValid()) {
     return;
   }

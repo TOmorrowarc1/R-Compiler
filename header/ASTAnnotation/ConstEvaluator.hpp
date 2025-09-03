@@ -26,7 +26,7 @@ class ConstInfo;
 
 class StatusRecorder {
 private:
-  enum Status { UNTOUCH, CALC, VAILD };
+  enum Status { UNTOUCH, CALC, VALID };
   Status status_;
 
 public:

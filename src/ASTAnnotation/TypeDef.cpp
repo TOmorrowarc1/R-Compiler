@@ -29,7 +29,8 @@ auto TypeDef::getConst(const std::string &name) const
 
 auto TypeDef::addMethod(const std::string &name,
                         std::shared_ptr<SymbolFunctionInfo> method) -> bool {
-  if (methods_.find(name) != methods_.end()) {
+  auto iter = methods_.find(name);
+  if (iter != methods_.end()) {
     return false;
   }
   methods_.emplace(name, std::move(method));
@@ -39,7 +40,8 @@ auto TypeDef::addMethod(const std::string &name,
 auto TypeDef::addAssociatedFunction(
     const std::string &name, std::shared_ptr<SymbolFunctionInfo> function)
     -> bool {
-  if (associated_functions_.find(name) != associated_functions_.end()) {
+  auto iter = associated_functions_.find(name);
+  if (iter != associated_functions_.end()) {
     return false;
   }
   associated_functions_.emplace(name, std::move(function));

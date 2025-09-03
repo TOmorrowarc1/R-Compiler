@@ -77,7 +77,7 @@ void FuncTraitCollector::visit(ItemImplNode *node) {
       item.function->accept(*this);
       auto func = fnNodeToFunc(item.function.get());
       if (item.function->fn_type_ == FnType::Fn) {
-        if (type_def->addAssociatedFunction(func->getName(), func)) {
+        if (!type_def->addAssociatedFunction(func->getName(), func)) {
           throw CompilerException("Duplicate associated function name: ",
                                   node->position_);
         }
@@ -87,7 +87,7 @@ void FuncTraitCollector::visit(ItemImplNode *node) {
         } else {
           func->setFnType(SymbolFunctionInfo::FnType::Method);
         }
-        if (!type_def->addMethod(func->getName(), std::move(func))) {
+        if (!type_def->addMethod(func->getName(), func)) {
           throw CompilerException("Duplicate method name: " + func->getName(),
                                   node->position_);
         }
@@ -107,7 +107,7 @@ void FuncTraitCollector::visit(ItemTraitNode *node) {
       item.function->accept(*this);
       auto func = fnNodeToFunc(item.function.get());
       if (item.function->fn_type_ == FnType::Fn) {
-        if (trait_def->addFunction(func->getName(), func)) {
+        if (!trait_def->addFunction(func->getName(), func)) {
           throw CompilerException("Duplicate function name: ", node->position_);
         }
       } else {
@@ -116,7 +116,7 @@ void FuncTraitCollector::visit(ItemTraitNode *node) {
         } else {
           func->setFnType(SymbolFunctionInfo::FnType::Method);
         }
-        if (!trait_def->addMethod(func->getName(), std::move(func))) {
+        if (!trait_def->addMethod(func->getName(), func)) {
           throw CompilerException("Duplicate method name: " + func->getName(),
                                   node->position_);
         }

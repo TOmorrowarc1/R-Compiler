@@ -73,7 +73,8 @@ const std::vector<bindPower> led_powers = {
     {TokenType::AS, 21, 22},
 
     {TokenType::LEFT_PAREN, 0, 0},
-    {TokenType::LEFT_BRACKET, 21, 0},
+    {TokenType::LEFT_BRACKET, 24, 0},
+    {TokenType::DOT, 25, 0},
     {TokenType::LEFT_BRACE, 0, 0},
 
     {TokenType::RIGHT_PAREN, 0, 0},
@@ -232,6 +233,7 @@ auto parseNudExprNode(TokenStream &stream, int32_t power)
   Position position = stream.peek().line;
   switch (stream.peek().type) {
   case TokenType::IDENTIFIER:
+  case TokenType::SELF:
     return parseExprNudPathNode(stream);
   case TokenType::CHARLITERAL:
     return parseExprLiteralCharNode(stream);
@@ -287,8 +289,7 @@ auto parseLedExprNode(TokenStream &stream, const Token &token,
                       std::unique_ptr<ExprNode> &&lhs)
     -> std::unique_ptr<ExprNode> {
   Position position = token.line;
-  switch (token.type) {
-  case TokenType::LEFT_BRACKET: {
+  if (token.type == TokenType::LEFT_BRACKET) {
     auto index = parseExprNode(stream);
     if (stream.peek().type != TokenType::RIGHT_BRACKET) {
       throw CompilerException("Lost ] after an index.", position);
@@ -296,8 +297,7 @@ auto parseLedExprNode(TokenStream &stream, const Token &token,
     stream.next();
     return std::make_unique<ExprArrayIndexNode>(std::move(lhs),
                                                 std::move(index), position);
-  }
-  case TokenType::DOT: {
+  } else if (token.type == TokenType::DOT) {
     auto next_token = stream.next();
     if (next_token.type != TokenType::IDENTIFIER) {
       throw CompilerException("Except id after the dot.", position);
@@ -324,7 +324,6 @@ auto parseLedExprNode(TokenStream &stream, const Token &token,
                                               std::move(parameters), position);
     }
     return std::make_unique<ExprFieldNode>(std::move(lhs), ID, position);
-  }
   }
   int32_t right_power = OpPowerRecoder::getInstance().getRightLed(token.type);
   auto rhs = parseExprNode(stream, right_power);
@@ -451,7 +450,7 @@ auto parseStructField(TokenStream &stream) -> ExprStructField {
   if (stream.peek().type != TokenType::IDENTIFIER) {
     throw CompilerException("Fields are without identifier.", position);
   }
-  std::string ID = stream.next().content;
+  field.ID = stream.next().content;
   if (stream.peek().type == TokenType::COLON) {
     stream.next();
     field.expr = parseExprNode(stream);
@@ -486,11 +485,16 @@ auto parseExprBlockNode(TokenStream &stream) -> std::unique_ptr<ExprBlockNode> {
       break;
     default:
       auto expr = parseExprNode(stream);
+      if (stream.peek().type == TokenType::SEMICOLON) {
+        auto stmt = std::make_unique<StmtExprNode>(std::move(expr), position);
+        statements.push_back(std::move(stmt));
+      } else if (stream.peek().type == TokenType::RIGHT_BRACE) {
+        return_value = std::move(expr);
+      }
       if (is_instance_of<ExprBlockOutNode, ExprNode>(expr)) {
         if (stream.peek().type == TokenType::SEMICOLON) {
           stream.next();
-          auto stmt = std::make_unique<StmtExprNode>(std::move(expr), position);
-          statements.push_back(std::move(stmt));
+
         } else {
           return_value = std::move(
               dynamic_unique_ptr_cast<ExprBlockOutNode, ExprNode>(expr));
@@ -737,7 +741,8 @@ auto parseExprOperUnaryNode(TokenStream &stream)
     -> std::unique_ptr<ExprOperUnaryNode> {
   Position position = stream.peek().line;
   UnaryOperator op;
-  switch (stream.next().type) {
+  Token token = stream.next();
+  switch (token.type) {
   case TokenType::MINUS:
     op = UnaryOperator::NEGATE;
     break;
@@ -757,7 +762,6 @@ auto parseExprOperUnaryNode(TokenStream &stream)
   default:
     throw CompilerException("Unexpected token in unary operator.", position);
   }
-  Token token = stream.next();
   auto expr = parseExprNode(
       stream, OpPowerRecoder::getInstance().getRightNud(token.type));
   return std::make_unique<ExprOperUnaryNode>(op, std::move(expr), position);

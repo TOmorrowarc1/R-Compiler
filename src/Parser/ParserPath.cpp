@@ -5,7 +5,9 @@ auto parsePathSegment(TokenStream &stream) -> PathSegment;
 
 auto parsePathNode(TokenStream &stream) -> std::unique_ptr<PathNode> {
   Position position = stream.peek().line;
-  if (stream.peek().type != TokenType::IDENTIFIER) {
+  if (stream.peek().type != TokenType::IDENTIFIER &&
+      stream.peek().type != TokenType::SELF &&
+      stream.peek().type != TokenType::SELF_TYPE) {
     throw CompilerException("Unexpected token in path parsing", position);
   }
   std::vector<PathSegment> segments;
@@ -24,10 +26,10 @@ auto parsePathSegment(TokenStream &stream) -> PathSegment {
     return {PathSegmentType::IDENTIFER, stream.next().content};
   case TokenType::SELF:
     stream.next();
-    return {PathSegmentType::SELF, ""};
+    return {PathSegmentType::SELF, "self"};
   case TokenType::SELF_TYPE:
     stream.next();
-    return {PathSegmentType::SELF_TYPE, ""};
+    return {PathSegmentType::SELF_TYPE, "Self"};
   }
   throw CompilerException("Unexpected token in path simple node parsing",
                           position);
