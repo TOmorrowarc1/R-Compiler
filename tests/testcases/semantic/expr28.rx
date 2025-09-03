@@ -19,12 +19,12 @@ impl Point {
 }
 
 fn main() {
-    let p = Point { x: 3, y: 4 };
-    let distance = p.distance_from_origin();
-    let arr = [distance, distance + 1, distance + 2];
-    let index = (distance % 3;
-    printInt(arr[index]);
-    if distance > 20 {
+    let p: Point = Point { x: 3, y: 4 };
+    let distance: i32 = p.distance_from_origin();
+    let arr: [i32; 3] = [distance, distance + 1, distance + 2];
+    let index: i32 = (distance % 3;
+    printInt(arr[index as usize]);
+    if (distance > 20) {
         printInt(distance);
     }
     exit(0);

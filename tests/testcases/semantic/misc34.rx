@@ -9,6 +9,7 @@ Comment: Minimum Spanning Tree using Kruskal's Algorithm with Union-Find
 
 // Minimum Spanning Tree using Kruskal's Algorithm
 // With Union-Find (Disjoint Set Union) data structure
+#[derive(Copy, Clone)]
 struct Edge {
     src: i32,
     dest: i32,
@@ -39,13 +40,13 @@ impl Edge {
 
 impl UnionFind {
     fn new(vertices: i32) -> UnionFind {
-        let mut uf = UnionFind {
+        let mut uf: UnionFind = UnionFind {
             parent: [0; 100],
             rank: [0; 100],
             vertex_count: vertices,
         };
         
-        let mut i = 0;
+        let mut i: i32 = 0;
         while (i < vertices) {
             uf.parent[i as usize] = i;
             uf.rank[i as usize] = 0;
@@ -63,8 +64,8 @@ impl UnionFind {
     }
     
     fn union(&mut self, x: i32, y: i32) -> bool {
-        let root_x = self.find(x);
-        let root_y = self.find(y);
+        let root_x: i32 = self.find(x);
+        let root_y: i32 = self.find(y);
         
         if (root_x == root_y) {
             return false; // Already in same set
@@ -87,8 +88,8 @@ impl UnionFind {
     }
     
     fn count_components(&mut self) -> i32 {
-        let mut components = 0;
-        let mut i = 0;
+        let mut components: i32 = 0;
+        let mut i: i32 = 0;
         
         while (i < self.vertex_count) {
             if (self.parent[i as usize] == i) {
@@ -118,10 +119,10 @@ impl Graph {
     }
     
     fn partition(&mut self, low: i32, high: i32) -> i32 {
-        let pivot_weight = self.edges[high as usize].weight;
-        let mut i = low - 1;
+        let pivot_weight: i32 = self.edges[high as usize].weight;
+        let mut i: i32 = low - 1;
         
-        let mut j = low;
+        let mut j: i32 = low;
         while (j < high) {
             if (self.edges[j as usize].weight <= pivot_weight) {
                 i += 1;
@@ -136,14 +137,14 @@ impl Graph {
     
     fn quick_sort(&mut self, low: i32, high: i32) {
         if (low < high) {
-            let pi = self.partition(low, high);
+            let pi: i32 = self.partition(low, high);
             self.quick_sort(low, pi - 1);
             self.quick_sort(pi + 1, high);
         }
     }
     
     fn swap_edges(&mut self, i: i32, j: i32) {
-        let temp = self.edges[i as usize];
+        let temp: Edge = self.edges[i as usize];
         self.edges[i as usize] = self.edges[j as usize];
         self.edges[j as usize] = temp;
     }
@@ -156,15 +157,15 @@ impl Graph {
     
     fn kruskal_mst(&mut self) -> [Edge; 100] {
         let mut result: [Edge; 100] = [Edge::new(-1, -1, -1); 100];
-        let mut result_count = 0;
-        let mut uf = UnionFind::new(self.vertex_count);
+        let mut result_count: i32 = 0;
+        let mut uf: UnionFind = UnionFind::new(self.vertex_count);
         
         // Sort edges by weight
         self.sort_edges();
         
-        let mut i = 0;
+        let mut i: i32 = 0;
         while (i < self.edge_count && result_count < self.vertex_count - 1) {
-            let edge = self.edges[i as usize];
+            let edge: Edge = self.edges[i as usize];
             
             if (uf.union(edge.src, edge.dest)) {
                 result[result_count as usize] = edge;
@@ -178,10 +179,10 @@ impl Graph {
     }
     
     fn calculate_mst_weight(&mut self) -> i32 {
-        let mst = self.kruskal_mst();
-        let mut total_weight = 0;
+        let mst: [Edge; 100] = self.kruskal_mst();
+        let mut total_weight: i32 = 0;
         
-        let mut i = 0;
+        let mut i: i32 = 0;
         while (i < 100 && mst[i as usize].src != -1) {
             total_weight += mst[i as usize].weight;
             i += 1;
@@ -191,11 +192,11 @@ impl Graph {
     }
     
     fn is_connected_graph(&mut self) -> bool {
-        let mut uf = UnionFind::new(self.vertex_count);
+        let mut uf: UnionFind = UnionFind::new(self.vertex_count);
         
-        let mut i = 0;
+        let mut i: i32 = 0;
         while (i < self.edge_count) {
-            let edge = self.edges[i as usize];
+            let edge: Edge = self.edges[i as usize];
             uf.union(edge.src, edge.dest);
             i += 1;
         }
@@ -204,10 +205,10 @@ impl Graph {
     }
     
     fn count_mst_edges(&mut self) -> i32 {
-        let mst = self.kruskal_mst();
-        let mut count = 0;
+        let mst: [Edge; 100] = self.kruskal_mst();
+        let mut count: i32 = 0;
         
-        let mut i = 0;
+        let mut i: i32 = 0;
         while (i < 100 && mst[i as usize].src != -1) {
             count += 1;
             i += 1;
@@ -218,23 +219,23 @@ impl Graph {
 }
 
 fn main() {
-    let vertices = readInt();
-    let mut graph = Graph::new(vertices);
+    let vertices: i32 = getInt();
+    let mut graph: Graph = Graph::new(vertices);
     
-    let edges = readInt();
-    let mut i = 0;
+    let edges: i32 = getInt();
+    let mut i: i32 = 0;
     while (i < edges) {
-        let src = readInt();
-        let dest = readInt();
-        let weight = readInt();
+        let src: i32 = getInt();
+        let dest: i32 = getInt();
+        let weight: i32 = getInt();
         graph.add_edge(src, dest, weight);
         i += 1;
     }
     
-    let operation = readInt();
+    let operation: i32 = getInt();
     
     if (operation == 1) { // Calculate MST weight
-        let mst_weight = graph.calculate_mst_weight();
+        let mst_weight: i32 = graph.calculate_mst_weight();
         printInt(mst_weight);
     } else if (operation == 2) { // Check if graph is connected
         if (graph.is_connected_graph()) {
@@ -243,10 +244,10 @@ fn main() {
             printInt(0);
         }
     } else if (operation == 3) { // Count MST edges
-        let edge_count = graph.count_mst_edges();
+        let edge_count: i32 = graph.count_mst_edges();
         printInt(edge_count);
     } else if (operation == 4) { // Print MST edges
-        let mst = graph.kruskal_mst();
+        let mst: [Edge; 100] = graph.kruskal_mst();
         i = 0;
         while (i < 100 && mst[i as usize].src != -1) {
             printInt(mst[i as usize].src);

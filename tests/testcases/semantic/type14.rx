@@ -9,7 +9,7 @@ Comment: Type error: inconsistent return types in conditional function
 
 // Complete program with type error: function return type inconsistency
 fn factorial(n: i32) -> i32 {
-    if n <= 1 {
+    if (n <= 1) {
         return 1;
     } else {
         return n * factorial(n - 1);
@@ -17,7 +17,7 @@ fn factorial(n: i32) -> i32 {
 }
 
 fn get_result(choice: bool) -> i32 {
-    if choice {
+    if (choice) {
         return factorial(5);
     } else {
         // Type error: returning string instead of i32
@@ -26,8 +26,8 @@ fn get_result(choice: bool) -> i32 {
 }
 
 fn main() {
-    let input = readInt();
-    let result = get_result(input > 0);
+    let input: i32 = getInt();
+    let result: i32 = get_result(input > 0);
     printInt(result);
     exit(0);
 }

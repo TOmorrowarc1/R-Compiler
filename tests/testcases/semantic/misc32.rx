@@ -35,7 +35,7 @@ impl Graph {
     
     fn add_edge(&mut self, src: i32, dest: i32) {
         if (src >= 0 && src < self.vertex_count && dest >= 0 && dest < self.vertex_count) {
-            let count = self.edge_counts[src as usize];
+            let count: i32 = self.edge_counts[src as usize];
             if (count < 100) {
                 self.adjacency_list[src as usize][count as usize] = dest;
                 self.edge_counts[src as usize] += 1;
@@ -45,14 +45,14 @@ impl Graph {
     }
     
     fn topological_sort(&self) -> [i32; 100] {
-        let mut queue = Queue::new();
+        let mut queue: Queue = Queue::new();
         let mut result: [i32; 100] = [-1; 100];
-        let mut result_index = 0;
+        let mut result_index: i32 = 0;
         let mut temp_in_degree: [i32; 100] = [0; 100];
         
         // Copy in-degree array
-        let mut i = 0;
-        hile (i < self.vertex_count) {
+        let mut i: i32 = 0;
+        while (i < self.vertex_count) {
             temp_in_degree[i as usize] = self.in_degree[i as usize];
             i += 1;
         }
@@ -67,14 +67,14 @@ impl Graph {
         }
         
         while (!queue.is_empty()) {
-            let u = queue.dequeue();
+            let u: i32 = queue.dequeue();
             result[result_index as usize] = u;
             result_index += 1;
             
             // For each neighbor of u
-            let mut j = 0;
+            let mut j: i32 = 0;
             while (j < self.edge_counts[u as usize]) {
-                let v = self.adjacency_list[u as usize][j as usize];
+                let v: i32 = self.adjacency_list[u as usize][j as usize];
                 temp_in_degree[v as usize] -= 1;
                 
                 if (temp_in_degree[v as usize] == 0) {
@@ -89,11 +89,11 @@ impl Graph {
     }
     
     fn has_cycle(&self) -> bool {
-        let topo_result = self.topological_sort();
+        let topo_result: [i32; 100] = self.topological_sort();
         
         // Count valid elements in topological sort
-        let mut count = 0;
-        let mut i = 0;
+        let mut count: i32 = 0;
+        let mut i: i32 = 0;
         while (i < 100 && topo_result[i as usize] != -1) {
             count += 1;
             i += 1;
@@ -106,9 +106,9 @@ impl Graph {
         visited[vertex as usize] = 1;
         rec_stack[vertex as usize] = true;
         
-        let mut i = 0;
+        let mut i: i32 = 0;
         while (i < self.edge_counts[vertex as usize]) {
-            let neighbor = self.adjacency_list[vertex as usize][i as usize];
+            let neighbor: i32 = self.adjacency_list[vertex as usize][i as usize];
             
             if (visited[neighbor as usize] == 0) {
                 if (self.dfs_recursive(visited, rec_stack, neighbor)) {
@@ -129,7 +129,7 @@ impl Graph {
         let mut visited: [i32; 100] = [0; 100];
         let mut rec_stack: [bool; 100] = [false; 100];
         
-        let mut i = 0;
+        let mut i: i32 = 0;
         while (i < self.vertex_count) {
             if (visited[i as usize] == 0) {
                 if (self.dfs_recursive(&mut visited, &mut rec_stack, i)) {
@@ -166,7 +166,7 @@ impl Queue {
             return -1;
         }
         
-        let value = self.data[self.front as usize];
+        let value: i32 = self.data[self.front as usize];
         self.front = (self.front + 1) % 1000;
         self.size -= 1;
         return value;
@@ -178,22 +178,22 @@ impl Queue {
 }
 
 fn main() {
-    let vertices = readInt();
-    let mut graph = Graph::new(vertices);
+    let vertices: i32 = getInt();
+    let mut graph: Graph = Graph::new(vertices);
     
-    let edges = readInt();
-    let mut i = 0;
+    let edges: i32 = getInt();
+    let mut i: i32 = 0;
     while (i < edges) {
-        let src = readInt();
-        let dest = readInt();
+        let src: i32 = getInt();
+        let dest: i32 = getInt();
         graph.add_edge(src, dest);
         i += 1;
     }
     
-    let operation = readInt();
+    let operation: i32 = getInt();
     
     if (operation == 1) { // Topological sort
-        let topo_order = graph.topological_sort();
+        let topo_order: [i32; 100] = graph.topological_sort();
         i = 0;
         while (i < vertices) {
             if (topo_order[i as usize] != -1) {

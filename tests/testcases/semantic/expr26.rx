@@ -13,15 +13,15 @@ struct Data {
 }
 
 fn main() {
-    let data = Data { value: 10, multiplier: 3 };
-    let computed = {
-        let temp = data.value * data.multiplier;
+    let data: Data = Data { value: 10, multiplier: 3 };
+    let computed: i32 = {
+        let temp: i32 = data.value * data.multiplier;
         temp + 5
     };
-    let condition = computed > 30;
-    if condition {
+    let condition: bool = computed > 30;
+    if (condition) {
         printInt(computed);
     }
-    let final_val = computed data.value;
+    let final_val: i32 = computed data.value;
     exit(0);
 }

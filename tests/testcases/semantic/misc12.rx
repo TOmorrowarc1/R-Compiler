@@ -10,7 +10,7 @@ Comment: misc test, palindrome number checker
 // Palindrome number checker
 // Check if a number reads the same forwards and backwards
 fn reverse_number(mut n: i32) -> i32 {
-    let mut reversed = 0;
+    let mut reversed: i32 = 0;
     
     while (n > 0) {
         reversed = reversed * 10 + n % 10;
@@ -25,7 +25,7 @@ fn is_palindrome(n: i32) -> bool {
         return false;
     }
     
-    let reversed = reverse_number(n);
+    let reversed: i32 = reverse_number(n);
     return n == reversed;
 }
 
@@ -34,7 +34,7 @@ fn count_digits(mut n: i32) -> i32 {
         return 1;
     }
     
-    let mut count = 0;
+    let mut count: i32 = 0;
     while (n > 0) {
         count += 1;
         n /= 10;
@@ -44,7 +44,7 @@ fn count_digits(mut n: i32) -> i32 {
 }
 
 fn main() {
-    let n = readInt();
+    let n: i32 = getInt();
     
     if (is_palindrome(n)) {
         let digit_count = count_digits(n);

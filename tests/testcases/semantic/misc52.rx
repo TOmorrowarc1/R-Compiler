@@ -19,15 +19,15 @@ fn hanoi_moves(n: i32) -> i32 {
 
 // Simulate multiple towers with different disc counts
 fn total_hanoi_moves() -> i32 {
-    let mut total_moves = 0;
-    let mut discs = 1;
+    let mut total_moves: i32 = 0;
+    let mut discs: i32 = 1;
     
     while (discs <= 6) {
-        let moves = hanoi_moves(discs);
+        let moves: i32 = hanoi_moves(discs);
         total_moves += moves;
         
         // Add complexity with nested calculation
-        let mut multiplier = 1;
+        let mut multiplier: i32 = 1;
         while (multiplier <= discs) {
             if (multiplier % 2 == 0) {
                 total_moves += 1;
@@ -42,7 +42,7 @@ fn total_hanoi_moves() -> i32 {
 }
 
 fn main() {
-    let result = total_hanoi_moves();
+    let result: i32 = total_hanoi_moves();
     printInt(result);
     exit(0);
 }

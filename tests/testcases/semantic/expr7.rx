@@ -14,6 +14,6 @@ struct Point {
 }
 
 fn main() {
-    let p = Point { x: 10 y: 20 };  // Missing comma between fields
+    let p: Point = Point { x: 10 y: 20 };  // Missing comma between fields
     exit(0);
 }

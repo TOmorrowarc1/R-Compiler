@@ -22,11 +22,11 @@ fn partition_recursive(n: i32, max_val: i32) -> i32 {
 
 // Calculate partition numbers for multiple values
 fn calculate_partition_sum(limit: i32) -> i32 {
-    let mut total = 0;
-    let mut n = 1;
+    let mut total: i32 = 0;
+    let mut n: i32 = 1;
     
     while (n <= limit) {
-        let partitions = partition_recursive(n, n);
+        let partitions: i32 = partition_recursive(n, n);
         total += partitions;
         n += 1;
     }
@@ -35,8 +35,8 @@ fn calculate_partition_sum(limit: i32) -> i32 {
 }
 
 fn main() {
-    let limit = 5;
-    let result = calculate_partition_sum(limit);
+    let limit: i32 = 5;
+    let result: i32 = calculate_partition_sum(limit);
     printInt(result);
     exit(0);
 }

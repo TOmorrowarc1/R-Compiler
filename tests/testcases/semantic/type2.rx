@@ -9,6 +9,6 @@ Comment: Type error: string cannot be used in arithmetic operation
 
 // Type error: string cannot be used in arithmetic operation
 fn main() {
-    let result:str = "hello" + 5;
+    let result: i32 = "hello" + 5;
     exit(0);
 }

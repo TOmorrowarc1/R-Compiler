@@ -9,6 +9,6 @@ Comment: Expression error: Invalid path expression - double colon without identi
 
 // Error: Invalid path expression - double colon without identifier
 fn main() {
-    let x = std::;  // Invalid path - :: followed by semicolon
+    let x: i32 = std::;  // Invalid path - :: followed by semicolon
     exit(0);
 }

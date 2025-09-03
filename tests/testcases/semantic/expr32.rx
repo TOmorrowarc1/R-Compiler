@@ -23,22 +23,22 @@ impl BinaryTreeNode {
     }
 }
 
-fn fibonacci_tree_height(n: i32, memo: [i32; 20]) -> i32 {
-    if n <= 1 {
+fn fibonacci_tree_height(n: i32, mut memo: [i32; 20]) -> i32 {
+    if (n <= 1) {
         return n;
     }
     
-    if memo[n] != -1 {
+    if (memo[n] != -1) {
         return memo[n];
     }
     
-    let left_height = fibonacci_tree_height(n - 1, memo);
-    let right_height = fibonacci_tree_height(n - 2, memo);
+    let left_height: i32 = fibonacci_tree_height(n - 1, memo);
+    let right_height: i32 = fibonacci_tree_height(n - 2, memo);
     
-    let current_height = {
-        let temp_sum = left_height + right_height;
-        let normalized = temp_sum % 100;
-        if normalized > 50 {
+    let current_height: i32 = {
+        let temp_sum: i32 = left_height + right_height;
+        let normalized: i32 = temp_sum % 100;
+        if (normalized > 50) {
             normalized - 25
         } else {
             normalized + 10
@@ -50,21 +50,21 @@ fn fibonacci_tree_height(n: i32, memo: [i32; 20]) -> i32 {
 }
 
 fn calculate_tree_complexity(nodes: [BinaryTreeNode; 5]) -> i32 {
-    let mut total_complexity = 0;
-    let mut index = 0;
+    let mut total_complexity: i32 = 0;
+    let mut index: usize = 0;
     
     loop {
-        if index >= 5 {
+        if (index >= 5) {
             break;
         }
         
-        let node = &nodes[index];
-        let node_value = node.value;
-        let complexity_factor = {
-            let base = node_value * node_value;
-            let modifier = if node.left_child { 2 } else { 1 };
-            let adjusted = base * modifier;
-            if node.right_child {
+        let node: &BinaryTreeNode = &nodes[index];
+        let node_value: i32 = node.value;
+        let complexity_factor: i32 = {
+            let base: i32 = node_value * node_value;
+            let modifier: i32 = if (node.left_child) { 2 } else { 1 };
+            let adjusted: i32 = base * modifier;
+            if (node.right_child) {
                 adjusted + 5
             } else {
                 adjusted - 3
@@ -99,23 +99,23 @@ fn main() {
     tree_nodes[4].left_child = false;
     tree_nodes[4].right_child = false;
     
-    let fib_result = fibonacci_tree_height(8, memo_array);
-    let complexity_result = calculate_tree_complexity(tree_nodes);
+    let fib_result: i32 = fibonacci_tree_height(8, memo_array);
+    let complexity_result: i32 = calculate_tree_complexity(tree_nodes);
     
-    let combined_result = {
-        let weighted_fib = fib_result * 3;
-        let weighted_complexity = complexity_result / 2;
-        let sum = weighted_fib + weighted_complexity;
-        if sum > 100 {
+    let combined_result: i32 = {
+        let weighted_fib: i32 = fib_result * 3;
+        let weighted_complexity: i32 = complexity_result / 2;
+        let sum: i32 = weighted_fib + weighted_complexity;
+        if (sum > 100) {
             sum % 50
         } else {
             sum * 2
         }
     };
     
-    let final_output = if combined_result > 0 {
-        let temp = combined_result + 1;
-        if temp % 2 == 0 {
+    let final_output: i32 = if (combined_result > 0) {
+        let temp: i32 = combined_result + 1;
+        if (temp % 2 == 0) {
             temp / 2
         } else {
             temp * 3 + 1
@@ -124,7 +124,7 @@ fn main() {
         42
     };
     
-    if final_output != 0 && final_output > 0 {
+    if (final_output != 0 && final_output > 0) {
         printInt(final_output;
     } else {
         printInt(0);

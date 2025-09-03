@@ -39,7 +39,7 @@ impl HashTable {
     }
     
     fn hash_function(&self, key: i32) -> i32 {
-        let mut hash_key = key;
+        let mut hash_key: i32 = key;
         if (hash_key < 0) {
             hash_key = -hash_key;
         }
@@ -47,8 +47,8 @@ impl HashTable {
     }
     
     fn insert(&mut self, key: i32, value: i32) -> bool {
-        let mut index = self.hash_function(key);
-        let original_index = index;
+        let mut index: i32 = self.hash_function(key);
+        let original_index: i32 = index;
         
         loop {
             if (!self.entries[index as usize].is_occupied) {
@@ -72,8 +72,8 @@ impl HashTable {
     }
     
     fn get(&self, key: i32) -> i32 {
-        let mut index = self.hash_function(key);
-        let original_index = index;
+        let mut index: i32 = self.hash_function(key);
+        let original_index: i32 = index;
         
         loop {
             if (!self.entries[index as usize].is_occupied) {
@@ -93,22 +93,22 @@ impl HashTable {
 }
 
 fn main() {
-    let mut hash_table = HashTable::new();
-    let n = readInt();
+    let mut hash_table: HashTable = HashTable::new();
+    let n: i32 = getInt();
     
-    let mut i = 0;
+    let mut i: i32 = 0;
     while (i < n) {
-        let operation = readInt();
+        let operation: i32 = getInt();
         
         if (operation == 1) {
             // Insert operation
-            let key = readInt();
-            let value = readInt();
+            let key: i32 = getInt();
+            let value: i32 = getInt();
             hash_table.insert(key, value);
         } else if (operation == 2) {
             // Get operation
-            let key = readInt();
-            let result = hash_table.get(key);
+            let key: i32 = getInt();
+            let result: i32 = hash_table.get(key);
             printInt(result);
         }
         

@@ -25,14 +25,14 @@ impl Graph {
     }
     
     fn add_edge(&mut self, src: i32, dest: i32) {
-        if ((src >= 0 && src < self.vertex_count && dest >= 0 && dest < self.vertex_count)) {
+        if (src >= 0 && src < self.vertex_count && dest >= 0 && dest < self.vertex_count) {
             self.adjacency_matrix[src as usize][dest as usize] = true;
             self.adjacency_matrix[dest as usize][src as usize] = true; // Undirected graph
         }
     }
     
     fn clear_visited(&mut self) {
-        let mut i = 0;
+        let mut i: i32 = 0;
         while (i < self.vertex_count) {
             self.visited[i as usize] = false;
             i += 1;
@@ -43,9 +43,9 @@ impl Graph {
         self.visited[vertex as usize] = true;
         printInt(vertex);
         
-        let mut i = 0;
+        let mut i: i32 = 0;
         while (i < self.vertex_count) {
-            if ((self.adjacency_matrix[vertex as usize][i as usize] && !self.visited[i as usize])) {
+            if (self.adjacency_matrix[vertex as usize][i as usize] && !self.visited[i as usize]) {
                 self.dfs_recursive(i);
             }
             i += 1;
@@ -54,7 +54,7 @@ impl Graph {
     
     fn dfs(&mut self, start_vertex: i32) {
         self.clear_visited();
-        if ((start_vertex >= 0 && start_vertex < self.vertex_count)) {
+        if (start_vertex >= 0 && start_vertex < self.vertex_count) {
             self.dfs_recursive(start_vertex);
         }
     }
@@ -62,14 +62,14 @@ impl Graph {
     fn bfs(&mut self, start_vertex: i32) {
         self.clear_visited();
         
-        if ((start_vertex < 0 || start_vertex >= self.vertex_count)) {
+        if (start_vertex < 0 || start_vertex >= self.vertex_count) {
             return;
         }
         
         // Simple queue implementation using array
         let mut queue: [i32; 100] = [0; 100];
-        let mut front = 0;
-        let mut rear = 0;
+        let mut front: i32 = 0;
+        let mut rear: i32 = 0;
         
         // Enqueue start vertex
         queue[rear as usize] = start_vertex;
@@ -77,13 +77,13 @@ impl Graph {
         self.visited[start_vertex as usize] = true;
         
         while (front < rear) {
-            let current_vertex = queue[front as usize];
+            let current_vertex: i32 = queue[front as usize];
             front += 1;
             printInt(current_vertex);
             
-            let mut i = 0;
+            let mut i: i32 = 0;
             while (i < self.vertex_count) {
-                if ((self.adjacency_matrix[current_vertex as usize][i as usize] && !self.visited[i as usize])) {
+                if (self.adjacency_matrix[current_vertex as usize][i as usize] && !self.visited[i as usize]) {
                     queue[rear as usize] = i;
                     rear += 1;
                     self.visited[i as usize] = true;
@@ -102,7 +102,7 @@ impl Graph {
         
         // Use DFS to find path
         let mut stack: [i32; 100] = [0; 100];
-        let mut top = 0;
+        let mut top: i32 = 0;
         
         stack[top as usize] = src;
         top += 1;
@@ -110,15 +110,15 @@ impl Graph {
         
         while (top > 0) {
             top -= 1;
-            let current = stack[top as usize];
+            let current: i32 = stack[top as usize];
             
             if (current == dest) {
                 return true;
             }
             
-            let mut i = 0;
+            let mut i: i32 = 0;
             while (i < self.vertex_count) {
-                if ((self.adjacency_matrix[current as usize][i as usize] && !self.visited[i as usize])) {
+                if (self.adjacency_matrix[current as usize][i as usize] && !self.visited[i as usize]) {
                     stack[top as usize] = i;
                     top += 1;
                     self.visited[i as usize] = true;
@@ -132,9 +132,9 @@ impl Graph {
     
     fn count_connected_components(&mut self) -> i32 {
         self.clear_visited();
-        let mut components = 0;
+        let mut components: i32 = 0;
         
-        let mut i = 0;
+        let mut i: i32 = 0;
         while (i < self.vertex_count) {
             if (!self.visited[i as usize]) {
                 self.dfs_recursive(i);
@@ -151,9 +151,9 @@ impl Graph {
     }
     
     fn print_adjacency_matrix(&self) {
-        let mut i = 0;
+        let mut i: i32 = 0;
         while (i < self.vertex_count) {
-            let mut j = 0;
+            let mut j: i32 = 0;
             while (j < self.vertex_count) {
                 if (self.adjacency_matrix[i as usize][j as usize]) {
                     printInt(1);
@@ -168,39 +168,39 @@ impl Graph {
 }
 
 fn main() {
-    let vertices = readInt();
-    let mut graph = Graph::new(vertices);
+    let vertices: i32 = getInt();
+    let mut graph: Graph = Graph::new(vertices);
     
-    let edges = readInt();
-    let mut i = 0;
+    let edges: i32 = getInt();
+    let mut i: i32 = 0;
     while (i < edges) {
-        let src = readInt();
-        let dest = readInt();
+        let src: i32 = getInt();
+        let dest: i32 = getInt();
         graph.add_edge(src, dest);
         i += 1;
     }
     
-    let operations = readInt();
+    let operations: i32 = getInt();
     i = 0;
     while (i < operations) {
-        let operation = readInt();
+        let operation: i32 = getInt();
         
         if (operation == 1) { // DFS
-            let start = readInt();
+            let start: i32 = getInt();
             graph.dfs(start);
         } else if (operation == 2) { // BFS
-            let start = readInt();
+            let start: i32 = getInt();
             graph.bfs(start);
         } else if (operation == 3) { // Has path
-            let src = readInt();
-            let dest = readInt();
+            let src: i32 = getInt();
+            let dest: i32 = getInt();
             if (graph.has_path(src, dest)) {
                 printInt(1);
             } else {
                 printInt(0);
             }
         } else if (operation == 4) { // Count connected components
-            let components = graph.count_connected_components();
+            let components: i32 = graph.count_connected_components();
             printInt(components);
         } else if (operation == 5) { // Is connected
             if (graph.is_connected()) {

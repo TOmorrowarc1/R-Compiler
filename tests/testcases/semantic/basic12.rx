@@ -8,10 +8,10 @@ Comment: basic test, multiple errors - return type mismatch, incomplete trait, s
 */
 
 fn main() {
-    let mut deck = Deck::new();
+    let mut deck: Deck = Deck::new();
     deck.shuffle();
-    let top = deck.draw();
-    let sink = top;
+    let top: Card = deck.draw();
+    let sink: Card = top;
     exit(0);
 }
 
@@ -49,7 +49,7 @@ impl Deck {
         if (self.idx >= 52) {
             return 0;
         }
-        let card = self.pile[self.idx];
+        let card: Card = self.pile[self.idx];
         self.idx += 1;
         card
     }

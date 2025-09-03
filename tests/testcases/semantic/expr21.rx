@@ -14,7 +14,7 @@ fn main() {
         let temp: i32 = a + b;
         temp * 2
     }
-    if c > 50 {
+    if (c > 50) {
         printInt(c);
     } else {
         printInt(-c);

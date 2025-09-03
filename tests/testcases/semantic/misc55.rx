@@ -26,29 +26,29 @@ fn stern_diatomic_recursive(n: i32) -> i32 {
     } else if (n % 2 == 0) {
         return stern_diatomic_recursive(n / 2);
     } else {
-        let half = n / 2;
+        let half: i32 = n / 2;
         return stern_diatomic_recursive(half) + stern_diatomic_recursive(half + 1);
     }
 }
 
 // Calculate properties of Stern-Brocot sequence
 fn analyze_stern_sequence() -> i32 {
-    let mut analysis_result = 0;
-    let mut n = 1;
+    let mut analysis_result: i32 = 0;
+    let mut n: i32 = 1;
     
     while (n <= 15) {
-        let stern_val = stern_diatomic_recursive(n);
+        let stern_val: i32 = stern_diatomic_recursive(n);
         analysis_result += stern_val;
         
         // Find GCD patterns in the sequence
         if (n > 1) {
-            let prev_stern = stern_diatomic_recursive(n - 1);
-            let common_divisor = gcd_recursive(stern_val, prev_stern);
+            let prev_stern: i32 = stern_diatomic_recursive(n - 1);
+            let common_divisor: i32 = gcd_recursive(stern_val, prev_stern);
             analysis_result += common_divisor;
         }
         
         // Nested loop for additional mathematical properties
-        let mut factor = 1;
+        let mut factor: i32 = 1;
         while (factor <= stern_val && factor <= 5) {
             if (stern_val % factor == 0) {
                 analysis_result += factor;
@@ -63,7 +63,7 @@ fn analyze_stern_sequence() -> i32 {
 }
 
 fn main() {
-    let result = analyze_stern_sequence();
+    let result: i32 = analyze_stern_sequence();
     printInt(result);
     exit(0);
 }

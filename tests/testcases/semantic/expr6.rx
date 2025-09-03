@@ -9,7 +9,7 @@ Comment: Expression error: Invalid array index expression - missing closing brac
 
 // Error: Invalid array index expression - missing closing bracket
 fn main() {
-    let arr = [1, 2, 3];
-    let val = arr[0;  // Missing closing bracket ]
+    let arr: [i32; 3] = [1, 2, 3];
+    let val: i32 = arr[0;  // Missing closing bracket ]
     exit(0);
 }

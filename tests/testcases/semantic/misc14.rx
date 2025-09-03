@@ -14,8 +14,8 @@ fn power_iterative(base: i32, mut exp: i32) -> i32 {
         return 1;
     }
     
-    let mut result = 1;
-    let mut current_base = base;
+    let mut result: i32 = 1;
+    let mut current_base: i32 = base;
     
     while (exp > 0) {
         if (exp % 2 == 1) {
@@ -36,7 +36,7 @@ fn power_recursive(base: i32, exp: i32) -> i32 {
         return base;
     }
     
-    let half_power = power_recursive(base, exp / 2);
+    let half_power: i32 = power_recursive(base, exp / 2);
     
     if (exp % 2 == 0) {
         return half_power * half_power;
@@ -46,16 +46,16 @@ fn power_recursive(base: i32, exp: i32) -> i32 {
 }
 
 fn main() {
-    let base = readInt();
-    let exponent = readInt();
-    let method = readInt(); // 1 for iterative, 2 for recursive
+    let base: i32 = getInt();
+    let exponent: i32 = getInt();
+    let method: i32 = getInt(); // 1 for iterative, 2 for recursive
     
     if (exponent < 0) {
         printInt(0); // Invalid exponent
         return;
     }
     
-    let result;
+    let result: i32;
     if (method == 1) {
         result = power_iterative(base, exponent);
     } else {

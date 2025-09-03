@@ -21,7 +21,7 @@ fn main() {
     };
     let arr: [i32; 3] = [result, result * 2, result * 3];
     let sum: i32 = arr[0] + arr[1] + arr[2];
-    let final_result = (sum + 10) / ;
+    let final_result: i32 = (sum + 10) / ;
     printInt(final_result);
     exit(0);
 }

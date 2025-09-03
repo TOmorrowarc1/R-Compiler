@@ -9,12 +9,12 @@ Comment: misc test, binary search algorithm
 
 // Binary search algorithm
 // Search for a target value in a sorted array
-fn binary_search(arr: &[i32], target: i32, size: i32) -> i32 {
-    let mut left = 0;
-    let mut right = size - 1;
+fn binary_search(arr: &[i32; 20], target: i32, size: i32) -> i32 {
+    let mut left: i32 = 0;
+    let mut right: i32 = size - 1;
     
     while (left <= right) {
-        let mid = left + (right - left) / 2;
+        let mid: i32 = left + (right - left) / 2;
         
         if (arr[mid as usize] == target) {
             return mid;
@@ -31,19 +31,19 @@ fn binary_search(arr: &[i32], target: i32, size: i32) -> i32 {
 }
 
 fn main() {
-    let n = readInt();
-    let target = readInt();
+    let n: i32 = getInt();
+    let target: i32 = getInt();
     
     let mut arr: [i32; 20] = [0; 20];
-    let mut i = 0;
+    let mut i: i32 = 0;
     
     // Read sorted array
     while (i < n) {
-        arr[i as usize] = readInt();
+        arr[i as usize] = getInt();
         i += 1;
     }
     
-    let result = binary_search(&arr, target, n);
+    let result: i32 = binary_search(&arr, target, n);
     printInt(result);
     exit(0);
 }

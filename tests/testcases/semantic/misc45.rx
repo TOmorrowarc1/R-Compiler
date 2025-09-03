@@ -14,7 +14,7 @@ fn jacobi_symbol(mut a: i32, mut n: i32) -> i32 {
         return 0;
     }
     
-    let mut result = 1;
+    let mut result: i32 = 1;
     
     while (a != 0) {
         while (a % 2 == 0) {
@@ -24,7 +24,7 @@ fn jacobi_symbol(mut a: i32, mut n: i32) -> i32 {
             }
         }
         
-        let temp = a;
+        let temp: i32 = a;
         a = n;
         n = temp;
         
@@ -43,7 +43,7 @@ fn jacobi_symbol(mut a: i32, mut n: i32) -> i32 {
 }
 
 fn power_mod(mut base: i32, mut exp: i32, modulus: i32) -> i32 {
-    let mut result = 1;
+    let mut result: i32 = 1;
     base = base % modulus;
     
     while (exp > 0) {
@@ -68,13 +68,13 @@ fn solovay_strassen_single_test(n: i32, a: i32) -> bool {
         return false;
     }
     
-    let jacobi = jacobi_symbol(a, n);
+    let jacobi: i32 = jacobi_symbol(a, n);
     if (jacobi == 0) {
         return false;
     }
     
-    let fermat = power_mod(a, (n - 1) / 2, n);
-    let jacobi_mod = if (jacobi == -1) { n - 1 } else { jacobi };
+    let fermat: i32 = power_mod(a, (n - 1) / 2, n);
+    let jacobi_mod: i32 = if (jacobi == -1) { n - 1 } else { jacobi };
     
     return fermat == jacobi_mod;
 }
@@ -85,7 +85,7 @@ fn solovay_strassen_recursive(n: i32, witnesses: &[i32; 10], index: i32,
         return passed == total_witnesses;
     }
     
-    let current_witness = witnesses[index];
+    let current_witness: i32 = witnesses[index as usize];
     if (current_witness >= n) {
         return solovay_strassen_recursive(n, witnesses, index + 1, total_witnesses, passed);
     }
@@ -98,8 +98,8 @@ fn solovay_strassen_recursive(n: i32, witnesses: &[i32; 10], index: i32,
 }
 
 fn generate_witnesses(n: i32, witnesses: &mut [i32; 10]) -> i32 {
-    let mut count = 0;
-    let mut current = 2;
+    let mut count: usize = 0;
+    let mut current: i32 = 2;
     
     while (count < 10 && current < n) {
         witnesses[count] = current;
@@ -112,7 +112,7 @@ fn generate_witnesses(n: i32, witnesses: &mut [i32; 10]) -> i32 {
         }
     }
     
-    return count;
+    return count as i32;
 }
 
 fn primality_test_with_precheck(n: i32) -> bool {
@@ -128,7 +128,7 @@ fn primality_test_with_precheck(n: i32) -> bool {
     }
     
     // Check divisibility by small primes
-    let mut i = 5;
+    let mut i: i32 = 5;
     while (i * i <= n) {
         if (n % i == 0 || n % (i + 2) == 0) {
             return false;
@@ -138,7 +138,7 @@ fn primality_test_with_precheck(n: i32) -> bool {
     
     // Run Solovay-Strassen test
     let mut witnesses: [i32; 10] = [0; 10];
-    let witness_count = generate_witnesses(n, &mut witnesses);
+    let witness_count: i32 = generate_witnesses(n, &mut witnesses);
     
     return solovay_strassen_recursive(n, &witnesses, 0, witness_count, 0);
 }
@@ -152,17 +152,17 @@ fn factorization_check_recursive(n: i32, divisor: i32) -> i32 {
         return divisor;
     }
     
-    let next_divisor = if (divisor == 2) { 3 } else { divisor + 2 };
+    let next_divisor: i32 = if (divisor == 2) { 3 } else { divisor + 2 };
     return factorization_check_recursive(n, next_divisor);
 }
 
 fn main() {
-    let n = readInt();
+    let n: i32 = getInt();
     
     if primality_test_with_precheck(n) {
         printInt(1); // Probably prime
     } else {
-        let factor = factorization_check_recursive(n, 2);
+        let factor: i32 = factorization_check_recursive(n, 2);
         printInt(factor); // Show a factor
     }
     exit(0);

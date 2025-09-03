@@ -21,11 +21,11 @@ fn collatz_recursive(n: i32, depth: i32) -> i32 {
 
 // Find maximum collatz sequence length in a range
 fn find_max_collatz_length(start: i32, end: i32) -> i32 {
-    let mut max_length = 0;
-    let mut current = start;
+    let mut max_length: i32 = 0;
+    let mut current: i32 = start;
     
     while (current <= end) {
-        let length = collatz_recursive(current, 0);
+        let length: i32 = collatz_recursive(current, 0);
         if (length > max_length) {
             max_length = length;
         }
@@ -36,9 +36,9 @@ fn find_max_collatz_length(start: i32, end: i32) -> i32 {
 }
 
 fn main() {
-    let start = 1;
-    let end = 10;
-    let result = find_max_collatz_length(start, end);
+    let start: i32 = 1;
+    let end: i32 = 10;
+    let result: i32 = find_max_collatz_length(start, end);
     printInt(result);
     exit(0);
 }

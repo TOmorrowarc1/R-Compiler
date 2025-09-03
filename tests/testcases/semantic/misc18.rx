@@ -23,16 +23,16 @@ impl QuickSort {
     }
     
     fn swap(&mut self, i: i32, j: i32) {
-        let temp = self.data[i as usize];
+        let temp: i32 = self.data[i as usize];
         self.data[i as usize] = self.data[j as usize];
         self.data[j as usize] = temp;
     }
     
     fn partition(&mut self, low: i32, high: i32) -> i32 {
-        let pivot = self.data[high as usize];
-        let mut i = low - 1;
+        let pivot: i32 = self.data[high as usize];
+        let mut i: i32 = low - 1;
         
-        let mut j = low;
+        let mut j: i32 = low;
         while (j < high) {
             if (self.data[j as usize] <= pivot) {
                 i += 1;
@@ -47,7 +47,7 @@ impl QuickSort {
     
     fn quick_sort_recursive(&mut self, low: i32, high: i32) {
         if (low < high) {
-            let pivot_index = self.partition(low, high);
+            let pivot_index: i32 = self.partition(low, high);
             self.quick_sort_recursive(low, pivot_index - 1);
             self.quick_sort_recursive(pivot_index + 1, high);
         }
@@ -68,7 +68,7 @@ impl QuickSort {
     }
     
     fn print_array(&self) {
-        let mut i = 0;
+        let mut i: i32 = 0;
         while (i < self.size) {
             printInt(self.data[i as usize]);
             i += 1;
@@ -77,12 +77,12 @@ impl QuickSort {
 }
 
 fn main() {
-    let mut sorter = QuickSort::new();
-    let n = readInt();
+    let mut sorter: QuickSort = QuickSort::new();
+    let n: i32 = getInt();
     
-    let mut i = 0;
+    let mut i: i32 = 0;
     while (i < n) {
-        let value = readInt();
+        let value: i32 = getInt();
         sorter.insert(value);
         i += 1;
     }

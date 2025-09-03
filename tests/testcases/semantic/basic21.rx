@@ -3,8 +3,8 @@ Test Package: Semantic-1
 Test Target: basic
 Author: Wenxin Zheng
 Time: 2025-08-08
-Verdict: Fail
-Comment: basic test, quicksort implementation using Vec type (not supported)
+Verdict: Pass
+Comment: basic test, quicksort implementation using array type
 */
 
 fn partition(arr: &mut [i32; SIZE], l: usize, r: usize) -> usize {
@@ -35,7 +35,6 @@ fn quicksort(arr: &mut [i32; SIZE], l: usize, r: usize) {
     quicksort(arr, p + 1, r);
 }
 fn main() {
-    let mut v: Vec = Vec::new();
     let mut v: [i32; SIZE] = [0; SIZE];
     let mut n: i32 = 0i32;
     while (n < SIZE as i32) {

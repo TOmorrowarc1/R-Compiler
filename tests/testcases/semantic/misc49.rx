@@ -19,13 +19,13 @@ fn josephus_recursive(n: i32, k: i32) -> i32 {
 
 // Multiple Josephus calculations with different parameters
 fn josephus_variations() -> i32 {
-    let mut total = 0;
-    let mut n = 3;
+    let mut total: i32 = 0;
+    let mut n: i32 = 3;
     
     while (n <= 7) {
-        let mut k = 2;
+        let mut k: i32 = 2;
         while (k <= 4) {
-            let survivor_pos = josephus_recursive(n, k);
+            let survivor_pos: i32 = josephus_recursive(n, k);
             total += survivor_pos + 1; // Convert to 1-indexed position
             k += 1;
         }
@@ -36,7 +36,7 @@ fn josephus_variations() -> i32 {
 }
 
 fn main() {
-    let result = josephus_variations();
+    let result: i32 = josephus_variations();
     printInt(result);
     exit(0);
 }

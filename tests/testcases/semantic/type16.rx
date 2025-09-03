@@ -14,17 +14,17 @@ enum Color {
     Blue,
 }
 
-fn get_color_value(c: Color) -> i32 {
+fn get_color_value(c: &Color) -> i32 {
     // Simplified color value calculation
     return 100;
 }
 
 fn process_colors(colors: [Color; 3]) -> i32 {
-    let mut total = 0;
-    let mut i = 0;
+    let mut total: i32 = 0;
+    let mut i: usize = 0;
     
-    while i < 3 {
-        let value = get_color_value(colors[i]);
+    while (i < 3) {
+        let value: i32 = get_color_value(&colors[i]);
         total = total + value;
         i = i + 1;
     }
@@ -33,11 +33,11 @@ fn process_colors(colors: [Color; 3]) -> i32 {
 }
 
 fn main() {
-    let color_array = [Color::Red, Color::Green, Color::Blue];
-    let total_value = process_colors(color_array);
+    let color_array: [Color; 3] = [Color::Red, Color::Green, Color::Blue];
+    let total_value: i32 = process_colors(color_array);
     
     // Type error: conditional branches return different types
-    let result = if total_value > 200 { 
+    let result: i32 = if (total_value > 200) { 
         total_value 
     } else { 
         "insufficient value" 

@@ -8,7 +8,7 @@ Comment: Expression error: Missing closing bracket in array index expression - c
 */
 
 fn fibonacci(n: i32) -> i32 {
-    if n <= 1 {
+    if (n <= 1) {
         return n;
     } else {
         return fibonacci(n - 1) + fibonacci(n - 2);
@@ -16,16 +16,16 @@ fn fibonacci(n: i32) -> i32 {
 }
 
 fn main() {
-    let input = readInt();
-    let fib_result = fibonacci(input);
-    let processed = {
-        let temp = fib_result + 10;
+    let input: i32 = getInt();
+    let fib_result: i32 = fibonacci(input);
+    let processed: i32 = {
+        let temp: i32 = fib_result + 10;
         temp * 2
     };
-    let condition = processed > 0;
-    if condition {
+    let condition: bool = processed > 0;
+    if (condition) {
         printInt(processed);
     }
-    let array_val = [processed][0;
+    let array_val: i32 = [processed][0];
     exit(0);
 }

@@ -14,17 +14,17 @@ struct Point {
 }
 
 fn calculate_distance(p1: Point, p2: Point) -> i32 {
-    let dx = p1.x - p2.x;
-    let dy = p1.y - p2.y;
+    let dx: i32 = p1.x - p2.x;
+    let dy: i32 = p1.y - p2.y;
     return dx * dx + dy * dy;
 }
 
 fn main() {
-    let point1 = Point { x: 10, y: 20 };
-    let point2 = Point { x: 5, y: 15 };
+    let point1: Point = Point { x: 10, y: 20 };
+    let point2: Point = Point { x: 5, y: 15 };
     
     // Type error: passing string instead of Point
-    let distance = calculate_distance(point1, "invalid");
+    let distance: i32 = calculate_distance(point1, "invalid");
     printInt(distance);
     exit(0);
 }

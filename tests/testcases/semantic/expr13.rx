@@ -1,16 +1,16 @@
 /*
 Test Package: Semantic-1
 Test Target: expr
-Author: Wenxin Zheng
+Author: Ruitian Wang
 Time: 2025-08-08
-Verdict: Fail
-Comment: Expression error: Invalid return expression - missing semicolon after return value
+Verdict: Pass
+Comment: Valid return expression - return statement without semicolon is legal in Rust
 */
 
-// Error: Invalid return expression - missing semicolon after return value
+// Valid: return statement without semicolon is legal in Rust
 fn calculate() -> i32 {
-    let x = 42;
-    return x  // Missing semicolon after return value
+    let x: i32 = 42;
+    return x  // No semicolon needed after return value
 }
 
 fn main() {

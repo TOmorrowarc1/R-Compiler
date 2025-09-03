@@ -3,8 +3,8 @@ Test Package: Semantic-1
 Test Target: expr
 Author: Wenxin Zheng
 Time: 2025-08-08
-Verdict: Fail
-Comment: Complex expression error: Missing semicolon after statement - depth-first search algorithm with graph traversal, complex control flow, and nested data structures
+Verdict: Success
+Comment: Depth-first search algorithm with graph traversal, complex control flow, and nested data structures; printInt returns `()`
 */
 
 struct GraphNode {
@@ -25,19 +25,19 @@ impl GraphNode {
     }
     
     fn add_neighbor(&mut self, neighbor_id: i32) {
-        if self.neighbor_count < 5 {
-            self.neighbors[self.neighbor_count] = neighbor_id;
+        if (self.neighbor_count < 5) {
+            self.neighbors[self.neighbor_count as usize] = neighbor_id;
             self.neighbor_count = self.neighbor_count + 1;
         }
     }
     
     fn has_neighbor(&self, target_id: i32) -> bool {
-        let mut i = 0;
+        let mut i: i32 = 0;
         loop {
-            if i >= self.neighbor_count {
+            if (i >= self.neighbor_count) {
                 break;
             }
-            if self.neighbors[i] == target_id {
+            if (self.neighbors[i as usize] == target_id) {
                 return true;
             }
             i = i + 1;
@@ -46,41 +46,41 @@ impl GraphNode {
     }
 }
 
-fn depth_first_search(graph: [GraphNode; 10], start_node: i32, target_node: i32) -> i32 {
+fn depth_first_search(graph: &mut [GraphNode; 10], start_node: i32, target_node: i32) -> i32 {
     let mut visited_count = 0;
     let mut stack: [i32; 10] = [0; 10];
-    let mut stack_size = 0;
+    let mut stack_size: i32 = 0;
     
-    stack[stack_size] = start_node;
+    stack[stack_size as usize] = start_node;
     stack_size = stack_size + 1;
     
     loop {
-        if stack_size == 0 {
+        if (stack_size == 0) {
             break;
         }
         
         stack_size = stack_size - 1;
-        let current_node = stack[stack_size];
+        let current_node: i32 = stack[stack_size as usize];
         
-        if graph[current_node].visited {
+        if (graph[current_node as usize].visited) {
             continue;
         }
         
         visited_count = visited_count + 1;
         
-        if current_node == target_node {
+        if (current_node == target_node) {
             return visited_count;
         }
         
-        let mut neighbor_index = 0;
+        let mut neighbor_index: i32 = 0;
         loop {
-            if neighbor_index >= graph[current_node].neighbor_count {
+            if (neighbor_index >= graph[current_node as usize].neighbor_count) {
                 break;
             }
             
-            let neighbor = graph[current_node].neighbors[neighbor_index];
-            if !graph[neighbor].visited {
-                stack[stack_size] = neighbor;
+            let neighbor: i32 = graph[current_node as usize].neighbors[neighbor_index as usize];
+            if (!graph[neighbor as usize].visited) {
+                stack[stack_size as usize] = neighbor;
                 stack_size = stack_size + 1;
             }
             
@@ -92,37 +92,37 @@ fn depth_first_search(graph: [GraphNode; 10], start_node: i32, target_node: i32)
 }
 
 fn calculate_graph_metrics(nodes: [GraphNode; 10]) -> i32 {
-    let mut total_edges = 0;
-    let mut max_degree = 0;
-    let mut connected_components = 0;
+    let mut total_edges: i32 = 0;
+    let mut max_degree: i32 = 0;
+    let mut connected_components: i32 = 0;
     
-    let mut node_index = 0;
+    let mut node_index: i32 = 0;
     loop {
-        if node_index >= 10 {
+        if (node_index >= 10) {
             break;
         }
         
-        let current_node = &nodes[node_index];
-        let degree = current_node.neighbor_count;
+        let current_node: &GraphNode = &nodes[node_index as usize];
+        let degree: i32 = current_node.neighbor_count;
         total_edges = total_edges + degree;
         
-        if degree > max_degree {
+        if (degree > max_degree) {
             max_degree = degree;
         }
         
-        if degree > 0 {
+        if (degree > 0) {
             connected_components = connected_components + 1;
         }
         
         node_index = node_index + 1;
     }
     
-    let metric = {
-        let edge_factor = total_edges * 2;
-        let degree_factor = max_degree * max_degree;
-        let component_factor = connected_components * 3;
-        let combined = edge_factor + degree_factor + component_factor;
-        if combined > 50 {
+    let metric: i32 = {
+        let edge_factor: i32 = total_edges * 2;
+        let degree_factor: i32 = max_degree * max_degree;
+        let component_factor: i32 = connected_components * 3;
+        let combined: i32 = edge_factor + degree_factor + component_factor;
+        if (combined > 50) {
             combined % 30
         } else {
             combined + 10
@@ -149,16 +149,16 @@ fn main() {
     graph_nodes[6].add_neighbor(9);
     graph_nodes[7].add_neighbor(0);
     
-    let dfs_result = depth_first_search(graph_nodes, 0, 9);
-    let metrics_result = calculate_graph_metrics(graph_nodes);
+    let dfs_result: i32 = depth_first_search(&mut graph_nodes, 0, 9);
+    let metrics_result: i32 = calculate_graph_metrics(graph_nodes);
     
-    let final_calculation = {
-        let dfs_weighted = if dfs_result > 0 { dfs_result * 5 } else { 10 };
-        let metrics_weighted = metrics_result * 2;
-        let sum = dfs_weighted + metrics_weighted;
-        let processed = {
-            let temp = sum % 100;
-            if temp > 50 {
+    let final_calculation: i32 = {
+        let dfs_weighted: i32 = if (dfs_result > 0) { dfs_result * 5 } else { 10 };
+        let metrics_weighted: i32 = metrics_result * 2;
+        let sum: i32 = dfs_weighted + metrics_weighted;
+        let processed: i32 = {
+            let temp: i32 = sum % 100;
+            if (temp > 50) {
                 temp - 20
             } else {
                 temp + 15
@@ -167,12 +167,12 @@ fn main() {
         processed
     };
     
-    if final_calculation > 0 && final_calculation < 1000 {
-        let output = {
-            let base = final_calculation;
-            let modified = if base % 3 == 0 {
+    if (final_calculation > 0 && final_calculation < 1000) {
+        let output: i32 = {
+            let base: i32 = final_calculation;
+            let modified: i32 = if (base % 3 == 0) {
                 base / 3
-            } else if base % 3 == 1 {
+            } else if (base % 3 == 1) {
                 base * 2
             } else {
                 base + 7
@@ -181,7 +181,7 @@ fn main() {
         };
         printInt(output);
     } else {
-        let default_value = 42;
+        let default_value: i32 = 42;
         printInt(default_value)
     }
     exit(0);

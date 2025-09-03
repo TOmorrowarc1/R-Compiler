@@ -33,10 +33,10 @@ impl Matrix {
     }
     
     fn transpose(&self) -> Matrix {
-        let mut result = Matrix::new(self.cols, self.rows);
-        let mut i = 0;
+        let mut result: Matrix = Matrix::new(self.cols, self.rows);
+        let mut i: i32 = 0;
         while (i < self.rows) {
-            let mut j = 0;
+            let mut j: i32 = 0;
             while (j < self.cols) {
                 result.set(j, i, self.get(i, j));
                 j += 1;
@@ -48,16 +48,15 @@ impl Matrix {
 }
 
 fn main() {
-    let rows = readInt();
-    let cols = readInt();
-    let mut matrix = Matrix::new(rows, cols);
+    let rows: i32 = getInt();
+    let cols: i32 = getInt();
+    let mut matrix: Matrix = Matrix::new(rows, cols);
     
-    // Read matrix elements
-    let mut i = 0;
+    let mut i: i32 = 0;
     while (i < rows) {
-        let mut j = 0;
+        let mut j: i32 = 0;
         while (j < cols) {
-            let value = readInt();
+            let value: i32 = getInt();
             matrix.set(i, j, value);
             j += 1;
         }
@@ -65,10 +64,10 @@ fn main() {
     }
     
     // Transpose and output
-    let transposed = matrix.transpose();
+    let transposed: Matrix = matrix.transpose();
     i = 0;
     while (i < cols) {
-        let mut j = 0;
+        let mut j: i32 = 0;
         while (j < rows) {
             printInt(transposed.get(i, j));
             j += 1;

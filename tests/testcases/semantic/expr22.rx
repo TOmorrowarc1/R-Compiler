@@ -19,10 +19,10 @@ impl Rectangle {
 }
 
 fn main() {
-    let rect = Rectangle { width: 5, height: 3 };
-    let area = rect.area(;
+    let rect: Rectangle = Rectangle { width: 5, height: 3 };
+    let area: i32 = rect.area(;
     printInt(area + 1);
-    if area > 10 {
+    if (area > 10) {
         printInt(42);
     }
     exit(0);

@@ -30,9 +30,9 @@ impl KMPMatcher {
     
     fn set_pattern(&mut self, length: i32) {
         self.pattern_length = length;
-        let mut i = 0;
+        let mut i: i32 = 0;
         while (i < length) {
-            self.pattern[i as usize] = readInt();
+            self.pattern[i as usize] = getInt();
             i += 1;
         }
         self.compute_lps();
@@ -40,16 +40,16 @@ impl KMPMatcher {
     
     fn set_text(&mut self, length: i32) {
         self.text_length = length;
-        let mut i = 0;
+        let mut i: i32 = 0;
         while (i < length) {
-            self.text[i as usize] = readInt();
+            self.text[i as usize] = getInt();
             i += 1;
         }
     }
     
     fn compute_lps(&mut self) {
-        let mut length = 0;
-        let mut i = 1;
+        let mut length: i32 = 0;
+        let mut i: i32 = 1;
         self.lps[0] = 0;
         
         while (i < self.pattern_length) {
@@ -69,9 +69,9 @@ impl KMPMatcher {
     }
     
     fn search(&self) -> i32 {
-        let mut i = 0; // index for text
-        let mut j = 0; // index for pattern
-        let mut matches = 0;
+        let mut i: i32 = 0; // index for text
+        let mut j: i32 = 0; // index for pattern
+        let mut matches: i32 = 0;
         
         while (i < self.text_length) {
             if (self.pattern[j as usize] == self.text[i as usize]) {
@@ -95,8 +95,8 @@ impl KMPMatcher {
     }
     
     fn find_first_occurrence(&self) -> i32 {
-        let mut i = 0; // index for text
-        let mut j = 0; // index for pattern
+        let mut i: i32 = 0; // index for text
+        let mut j: i32 = 0; // index for pattern
         
         while (i < self.text_length) {
             if (self.pattern[j as usize] == self.text[i as usize]) {
@@ -120,18 +120,18 @@ impl KMPMatcher {
 }
 
 fn main() {
-    let mut matcher = KMPMatcher::new();
+    let mut matcher: KMPMatcher = KMPMatcher::new();
     
-    let pattern_length = readInt();
+    let pattern_length: i32 = getInt();
     matcher.set_pattern(pattern_length);
     
-    let text_length = readInt();
+    let text_length: i32 = getInt();
     matcher.set_text(text_length);
     
-    let first_occurrence = matcher.find_first_occurrence();
+    let first_occurrence: i32 = matcher.find_first_occurrence();
     printInt(first_occurrence);
     
-    let total_matches = matcher.search();
+    let total_matches: i32 = matcher.search();
     printInt(total_matches);
     exit(0);
 }

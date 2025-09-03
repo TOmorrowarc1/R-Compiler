@@ -18,18 +18,18 @@ fn calculate_result(a: i32, b: i32) -> i32 {
 }
 
 fn complex_calculation() -> i32 {
-    let x = 10;
-    let y = 20;
-    let intermediate = calculate_result(x, y);
+    let x: i32 = 10;
+    let y: i32 = 20;
+    let intermediate: i32 = calculate_result(x, y);
     
     // Type error: trying to use unit type return value in arithmetic
-    let result = intermediate + perform_operation();
+    let result: i32 = intermediate + perform_operation();
     
     return result;
 }
 
 fn main() {
-    let final_result = complex_calculation();
+    let final_result: i32 = complex_calculation();
     printInt(final_result);
     exit(0);
 }

@@ -10,20 +10,20 @@ Comment: misc test, array operations with maximum finding
 // Find maximum element in array
 // Read n numbers and find the maximum value
 fn main() {
-    let n = readInt();
+    let n: i32 = getInt();
     let mut arr: [i32; 100] = [0; 100];
-    let mut i = 0;
+    let mut i: usize = 0;
     
     // Read array elements
-    while (i < n) {
-        arr[i] = readInt();
+    while (i < n as usize) {
+        arr[i] = getInt();
         i += 1;
     }
     
     // Find maximum
-    let mut max_val = arr[0];
+    let mut max_val: i32 = arr[0];
     i = 1;
-    while (i < n) {
+    while (i < n as usize) {
         if (arr[i] > max_val) {
             max_val = arr[i];
         }

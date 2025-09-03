@@ -8,7 +8,7 @@ Comment: if statement test, empty branch with comments
 */
 
 fn main() {
-    let x : bool = true;
+    let x: bool = true;
     if (x) {
         // Empty branch
     }

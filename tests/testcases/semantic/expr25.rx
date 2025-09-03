@@ -16,8 +16,7 @@ fn main() {
         }
     };
     let arr: [i32; 2] = [result, result + 1];
-    let index: usize = if result > 10  0 
-    exit(0);
-} else { 1 };
+    let index: usize = if (result > 10)  0 } else { 1 };
     printInt(arr[index]);
+    exit(0);
 }

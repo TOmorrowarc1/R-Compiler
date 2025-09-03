@@ -12,7 +12,6 @@ fn main() {
     while (i < 3)
         let val: u32 = i * 2;
         i += 1;
-    
+    }
     exit(0);
-}
 }

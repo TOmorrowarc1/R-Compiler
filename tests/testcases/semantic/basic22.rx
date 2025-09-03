@@ -13,7 +13,7 @@ fn partition(a: &mut [i32; 11], low: usize, high: usize) -> usize {
     let mut j: usize = low;
     while (j < high) {
         if (a[j] < pivot) {
-            let tmp = a[i];
+            let tmp: i32 = a[i];
             a[i] = a[j];
             a[j] = tmp;
             i += 1;
@@ -29,7 +29,7 @@ fn select_k(a: &mut [i32; 11], low: usize, high: usize, k: usize) -> i32 {
     if (low == high) {
         return a[low];
     }
-    let p = partition(a, low, high);
+    let p: usize = partition(a, low, high);
     if (k == p) {
         a[p]
     } else if (k < p) {

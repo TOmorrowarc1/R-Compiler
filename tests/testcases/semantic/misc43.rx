@@ -9,6 +9,7 @@ Comment: Elliptic curve point addition and scalar multiplication over finite fie
 
 // Elliptic curve point addition and scalar multiplication
 // Implements elliptic curve operations over finite fields
+#[derive(Copy, Clone)]
 struct EllipticPoint {
     x: i32,
     y: i32,
@@ -20,13 +21,13 @@ fn mod_inverse(mut a: i32, mut m: i32) -> i32 {
         return 0;
     }
     
-    let m0 = m;
-    let mut x0 = 0;
-    let mut x1 = 1;
+    let m0: i32 = m;
+    let mut x0: i32 = 0;
+    let mut x1: i32 = 1;
     
     while (a > 1) {
-        let q = a / m;
-        let mut t = m;
+        let q: i32 = a / m;
+        let mut t: i32 = m;
         
         m = a % m;
         a = t;
@@ -54,12 +55,12 @@ fn point_add(p1: EllipticPoint, p2: EllipticPoint, a: i32, prime: i32) -> Ellipt
     if (p1.x == p2.x) {
         if (p1.y == p2.y) {
             // Point doubling
-            let numerator = (3 * p1.x * p1.x + a) % prime;
-            let denominator = (2 * p1.y) % prime;
-            let slope = (numerator * mod_inverse(denominator, prime)) % prime;
+            let numerator: i32 = (3 * p1.x * p1.x + a) % prime;
+            let denominator: i32 = (2 * p1.y) % prime;
+            let slope: i32 = (numerator * mod_inverse(denominator, prime)) % prime;
             
-            let x3 = (slope * slope - 2 * p1.x) % prime;
-            let y3 = (slope * (p1.x - x3) - p1.y) % prime;
+            let x3: i32 = (slope * slope - 2 * p1.x) % prime;
+            let y3: i32 = (slope * (p1.x - x3) - p1.y) % prime;
             
             return EllipticPoint {
                 x: if (x3 < 0) { x3 + prime } else { x3 },
@@ -75,12 +76,12 @@ fn point_add(p1: EllipticPoint, p2: EllipticPoint, a: i32, prime: i32) -> Ellipt
         }
     }
     
-    let numerator = (p2.y - p1.y) % prime;
-    let denominator = (p2.x - p1.x) % prime;
-    let slope = (numerator * mod_inverse(denominator, prime)) % prime;
+    let numerator: i32 = (p2.y - p1.y) % prime;
+    let denominator: i32 = (p2.x - p1.x) % prime;
+    let slope: i32 = (numerator * mod_inverse(denominator, prime)) % prime;
     
-    let x3 = (slope * slope - p1.x - p2.x) % prime;
-    let y3 = (slope * (p1.x - x3) - p1.y) % prime;
+    let x3: i32 = (slope * slope - p1.x - p2.x) % prime;
+    let y3: i32 = (slope * (p1.x - x3) - p1.y) % prime;
     
     return EllipticPoint {
         x: if (x3 < 0) { x3 + prime } else { x3 },
@@ -104,17 +105,17 @@ fn scalar_multiply_recursive(k: i32, point: EllipticPoint, a: i32, prime: i32,
     }
     
     if (k % 2 == 0) {
-        let half_point = scalar_multiply_recursive(k / 2, point, a, prime, depth + 1);
+        let half_point: EllipticPoint = scalar_multiply_recursive(k / 2, point, a, prime, depth + 1);
         return point_add(half_point, half_point, a, prime);
     } else {
-        let reduced_point = scalar_multiply_recursive(k - 1, point, a, prime, depth + 1);
+        let reduced_point: EllipticPoint = scalar_multiply_recursive(k - 1, point, a, prime, depth + 1);
         return point_add(point, reduced_point, a, prime);
     }
 }
 
 fn elliptic_curve_order(base_point: EllipticPoint, a: i32, prime: i32) -> i32 {
-    let mut current = base_point;
-    let mut order = 1;
+    let mut current: EllipticPoint = base_point;
+    let mut order: i32 = 1;
     
     while (order < prime + 1) {
         current = point_add(current, base_point, a, prime);
@@ -129,19 +130,19 @@ fn elliptic_curve_order(base_point: EllipticPoint, a: i32, prime: i32) -> i32 {
 }
 
 fn main() {
-    let x = readInt();
-    let y = readInt();
-    let a = readInt();
-    let prime = readInt();
-    let k = readInt();
+    let x: i32 = getInt();
+    let y: i32 = getInt();
+    let a: i32 = getInt();
+    let prime: i32 = getInt();
+    let k: i32 = getInt();
     
-    let point = EllipticPoint {
+    let point: EllipticPoint = EllipticPoint {
         x: x,
         y: y,
         is_infinity: false,
     };
     
-    let result = scalar_multiply_recursive(k, point, a, prime, 0);
+    let result: EllipticPoint = scalar_multiply_recursive(k, point, a, prime, 0);
     
     if (result.is_infinity) {
         printInt(-1);

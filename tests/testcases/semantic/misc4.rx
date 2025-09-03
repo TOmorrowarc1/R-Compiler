@@ -21,14 +21,14 @@ fn is_even(n: i32) -> bool {
 }
 
 fn main() {
-    let n = readInt();
+    let n: i32 = getInt();
     
     if (n < 0) {
         printInt(-1); // Invalid input
         return;
     }
     
-    let result = factorial(n);
+    let result: i32 = factorial(n);
     
     // Check if result is even or odd
     if (is_even(result)) {

@@ -25,12 +25,12 @@ impl MergeSort {
     }
     
     fn merge(&mut self, left: i32, mid: i32, right: i32) {
-        let mut i = left;
-        let mut j = mid + 1;
-        let mut k = left;
+        let mut i: i32 = left;
+        let mut j: i32 = mid + 1;
+        let mut k: i32 = left;
         
         // Copy elements to temporary array for merging
-        let mut idx = left;
+        let mut idx: i32 = left;
         while (idx <= right) {
             self.temp[idx as usize] = self.data[idx as usize];
             idx += 1;
@@ -65,7 +65,7 @@ impl MergeSort {
     
     fn merge_sort_recursive(&mut self, left: i32, right: i32) {
         if (left < right) {
-            let mid = left + (right - left) / 2;
+            let mid: i32 = left + (right - left) / 2;
             self.merge_sort_recursive(left, mid);
             self.merge_sort_recursive(mid + 1, right);
             self.merge(left, mid, right);
@@ -87,7 +87,7 @@ impl MergeSort {
     }
     
     fn print_array(&self) {
-        let mut i = 0;
+        let mut i: i32 = 0;
         while (i < self.size) {
             printInt(self.data[i as usize]);
             i += 1;
@@ -96,12 +96,12 @@ impl MergeSort {
 }
 
 fn main() {
-    let mut sorter = MergeSort::new();
-    let n = readInt();
+    let mut sorter: MergeSort = MergeSort::new();
+    let n: i32 = getInt();
     
-    let mut i = 0;
+    let mut i: i32 = 0;
     while (i < n) {
-        let value = readInt();
+        let value: i32 = getInt();
         sorter.insert(value);
         i += 1;
     }

@@ -9,10 +9,9 @@ Comment: Expression error: Invalid loop expression - missing opening brace in wh
 
 // Error: Invalid loop expression - missing opening brace in while loop
 fn main() {
-    let mut i = 0;
-    while i < 5  // Missing opening brace {
+    let mut i: i32 = 0;
+    while (i < 5)  // Missing opening brace {
         i += 1;
-    
-    exit(0);
 }
+    exit(0);
 }

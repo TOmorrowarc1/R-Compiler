@@ -9,6 +9,7 @@ Comment: Red-Black Tree implementation (self-balancing BST)
 
 // Red-Black Tree implementation (self-balancing BST)
 // Maintains balance through color properties and rotations
+#[derive(Copy, Clone)]
 struct RBNode {
     value: i32,
     color: bool, // true for RED, false for BLACK
@@ -38,7 +39,7 @@ impl RBNode {
 
 impl RedBlackTree {
     fn new() -> RedBlackTree {
-        let mut rb_tree = RedBlackTree {
+        let mut rb_tree: RedBlackTree = RedBlackTree {
             nodes: [RBNode::new(0); 1000],
             root: -1,
             nil_node: 0,
@@ -60,7 +61,7 @@ impl RedBlackTree {
             return -1;
         }
         
-        let index = self.node_count;
+        let index: i32 = self.node_count;
         self.nodes[index as usize] = RBNode::new(value);
         self.nodes[index as usize].left = self.nil_node;
         self.nodes[index as usize].right = self.nil_node;
@@ -83,7 +84,7 @@ impl RedBlackTree {
     }
     
     fn left_rotate(&mut self, x: i32) {
-        let y = self.nodes[x as usize].right;
+        let y: i32 = self.nodes[x as usize].right;
         self.nodes[x as usize].right = self.nodes[y as usize].left;
         
     if (self.nodes[y as usize].left != self.nil_node) {
@@ -105,7 +106,7 @@ impl RedBlackTree {
     }
     
     fn right_rotate(&mut self, y: i32) {
-        let x = self.nodes[y as usize].left;
+        let x: i32 = self.nodes[y as usize].left;
         self.nodes[y as usize].left = self.nodes[x as usize].right;
         
     if (self.nodes[x as usize].right != self.nil_node) {
@@ -129,7 +130,7 @@ impl RedBlackTree {
     fn insert_fixup(&mut self, mut z: i32) {
         while (self.is_red(self.nodes[z as usize].parent)) {
             if (self.nodes[z as usize].parent == self.nodes[self.nodes[self.nodes[z as usize].parent as usize].parent as usize].left) {
-                let y = self.nodes[self.nodes[self.nodes[z as usize].parent as usize].parent as usize].right;
+                let y: i32 = self.nodes[self.nodes[self.nodes[z as usize].parent as usize].parent as usize].right;
                 
                 if (self.is_red(y)) {
                     self.set_color(self.nodes[z as usize].parent, false);
@@ -146,7 +147,7 @@ impl RedBlackTree {
                     self.right_rotate(self.nodes[self.nodes[z as usize].parent as usize].parent);
                 }
             } else {
-                let y = self.nodes[self.nodes[self.nodes[z as usize].parent as usize].parent as usize].left;
+                let y: i32 = self.nodes[self.nodes[self.nodes[z as usize].parent as usize].parent as usize].left;
                 
                 if (self.is_red(y)) {
                     self.set_color(self.nodes[z as usize].parent, false);
@@ -168,13 +169,13 @@ impl RedBlackTree {
     }
     
     fn insert(&mut self, value: i32) {
-        let z = self.create_node(value);
+        let z: i32 = self.create_node(value);
         if (z == -1) {
             return;
         }
         
-        let mut y = self.nil_node;
-        let mut x = self.root;
+        let mut y: i32 = self.nil_node;
+        let mut x: i32 = self.root;
         
         while (x != self.nil_node && x != -1) {
             y = x;
@@ -233,8 +234,8 @@ impl RedBlackTree {
             return 0;
         }
         
-        let left_height = self.get_black_height(self.nodes[node as usize].left);
-        let adjustment = if (self.is_red(node)) { 0 } else { 1 };
+        let left_height: i32 = self.get_black_height(self.nodes[node as usize].left);
+        let adjustment: i32 = if (self.is_red(node)) { 0 } else { 1 };
         return left_height + adjustment;
     }
     
@@ -253,18 +254,18 @@ impl RedBlackTree {
 }
 
 fn main() {
-    let mut rb_tree = RedBlackTree::new();
-    let n = readInt();
+    let mut rb_tree: RedBlackTree = RedBlackTree::new();
+    let n: i32 = getInt();
     
-    let mut i = 0;
+    let mut i: i32 = 0;
     while (i < n) {
-        let operation = readInt();
+        let operation: i32 = getInt();
         
         if (operation == 1) { // Insert
-            let value = readInt();
+            let value: i32 = getInt();
             rb_tree.insert(value);
         } else if (operation == 2) { // Search
-            let value = readInt();
+            let value: i32 = getInt();
             if (rb_tree.search(value)) {
                 printInt(1);
             } else {
@@ -273,7 +274,7 @@ fn main() {
         } else if (operation == 3) { // Inorder traversal
             rb_tree.inorder_traversal();
         } else if (operation == 4) { // Get black height
-            let height = rb_tree.get_black_height(rb_tree.root);
+            let height: i32 = rb_tree.get_black_height(rb_tree.root);
             printInt(height);
         } else if (operation == 5) { // Validate RB properties
             if (rb_tree.validate_rb_properties()) {

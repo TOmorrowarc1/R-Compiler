@@ -9,32 +9,32 @@ Comment: Type error: accessing non-existent field on struct type
 
 // Complete program with type error: struct field access on wrong type
 struct Rectangle {
-    width: f64,
-    height: f64,
+    width: i32,
+    height: i32,
 }
 
 struct Circle {
-    radius: f64,
+    radius: i32,
 }
 
-fn calculate_rectangle_area(rect: Rectangle) -> f64 {
+fn calculate_rectangle_area(rect: &Rectangle) -> i32 {
     return rect.width * rect.height;
 }
 
-fn calculate_circle_area(circle: Circle) -> f64 {
-    let pi = 3.14159;
+fn calculate_circle_area(circle: &Circle) -> i32 {
+    let pi: i32 = 3;
     return pi * circle.radius * circle.radius;
 }
 
 fn main() {
-    let rect = Rectangle { width: 10.0, height: 5.0 };
-    let circle = Circle { radius: 3.0 };
+    let rect: Rectangle = Rectangle { width: 10, height: 5 };
+    let circle: Circle = Circle { radius: 3 };
     
-    let rect_area = calculate_rectangle_area(rect);
-    let circle_area = calculate_circle_area(circle);
+    let rect_area: i32 = calculate_rectangle_area(&rect);
+    let circle_area: i32 = calculate_circle_area(&circle);
     
     // Type error: trying to access Rectangle field on Circle
-    let invalid_access = circle.width;
+    let invalid_access: i32 = circle.width;
     
     printInt(42);  // Placeholder output
     exit(0);

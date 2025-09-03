@@ -43,7 +43,7 @@ impl Graph {
     
     fn add_edge(&mut self, src: i32, dest: i32, weight: i32) {
         if (src >= 0 && src < self.vertex_count && dest >= 0 && dest < self.vertex_count) {
-            let count = self.edge_counts[src as usize];
+            let count: i32 = self.edge_counts[src as usize];
             if (count < 100) {
                 self.adjacency_list[src as usize][count as usize] = Edge::new(dest, weight);
                 self.edge_counts[src as usize] += 1;
@@ -73,7 +73,7 @@ impl PriorityQueue {
             return -1;
         }
         
-        let min_vertex = self.heap[0];
+        let min_vertex: i32 = self.heap[0];
         self.size -= 1;
         self.heap[0] = self.heap[self.size as usize];
         self.distances[0] = self.distances[self.size as usize];
@@ -83,7 +83,7 @@ impl PriorityQueue {
     
     fn heapify_up(&mut self, mut index: i32) {
         while (index > 0) {
-            let parent = (index - 1) / 2;
+            let parent: i32 = (index - 1) / 2;
             if (self.distances[index as usize] >= self.distances[parent as usize]) {
                 break;
             }
@@ -94,9 +94,9 @@ impl PriorityQueue {
     
     fn heapify_down(&mut self, mut index: i32) {
         loop {
-            let left = 2 * index + 1;
-            let right = 2 * index + 2;
-            let mut smallest = index;
+            let left: i32 = 2 * index + 1;
+            let right: i32 = 2 * index + 2;
+            let mut smallest: i32 = index;
             
             if (left < self.size && self.distances[left as usize] < self.distances[smallest as usize]) {
                 smallest = left;
@@ -116,8 +116,8 @@ impl PriorityQueue {
     }
     
     fn swap(&mut self, i: i32, j: i32) {
-        let temp_vertex = self.heap[i as usize];
-        let temp_distance = self.distances[i as usize];
+        let temp_vertex: i32 = self.heap[i as usize];
+        let temp_distance: i32 = self.distances[i as usize];
         
         self.heap[i as usize] = self.heap[j as usize];
         self.distances[i as usize] = self.distances[j as usize];
@@ -134,13 +134,13 @@ impl PriorityQueue {
 fn dijkstra(graph: &Graph, source: i32) -> [i32; 100] {
     let mut distances: [i32; 100] = [2147483647; 100];
     let mut visited: [bool; 100] = [false; 100];
-    let mut pq = PriorityQueue::new();
+    let mut pq: PriorityQueue = PriorityQueue::new();
     
     distances[source as usize] = 0;
     pq.insert(source, 0);
     
     while (!pq.is_empty()) {
-        let u = pq.extract_min();
+        let u: i32 = pq.extract_min();
         
         if (visited[u as usize]) {
             continue;
@@ -148,14 +148,17 @@ fn dijkstra(graph: &Graph, source: i32) -> [i32; 100] {
         
         visited[u as usize] = true;
         
-        let mut i = 0;
+        let mut i: i32 = 0;
         while (i < graph.edge_counts[u as usize]) {
-            let edge = graph.adjacency_list[u as usize][i as usize];
-            let v = edge.dest;
-            let weight = edge.weight;
+            let edge: Edge = Edge {
+                dest: graph.adjacency_list[u as usize][i as usize].dest,
+                weight: graph.adjacency_list[u as usize][i as usize].weight,
+            };
+            let v: i32 = edge.dest;
+            let weight: i32 = edge.weight;
             
             if (!visited[v as usize]) {
-                let new_distance = distances[u as usize] + weight;
+                let new_distance: i32 = distances[u as usize] + weight;
                 if (new_distance < distances[v as usize]) {
                     distances[v as usize] = new_distance;
                     pq.insert(v, new_distance);
@@ -170,21 +173,21 @@ fn dijkstra(graph: &Graph, source: i32) -> [i32; 100] {
 }
 
 fn main() {
-    let vertices = readInt();
-    let mut graph = Graph::new(vertices);
+    let vertices: i32 = getInt();
+    let mut graph: Graph = Graph::new(vertices);
     
-    let edges = readInt();
-    let mut i = 0;
+    let edges: i32 = getInt();
+    let mut i: i32 = 0;
     while (i < edges) {
-        let src = readInt();
-        let dest = readInt();
-        let weight = readInt();
+        let src: i32 = getInt();
+        let dest: i32 = getInt();
+        let weight: i32 = getInt();
         graph.add_edge(src, dest, weight);
         i += 1;
     }
     
-    let source = readInt();
-    let distances = dijkstra(&graph, source);
+    let source: i32 = getInt();
+    let distances: [i32; 100] = dijkstra(&graph, source);
     
     i = 0;
     while (i < vertices) {

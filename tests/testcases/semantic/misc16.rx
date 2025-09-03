@@ -27,7 +27,7 @@ impl BinarySearchTree {
     }
     
     fn create_node(&mut self, value: i32) -> i32 {
-        let index = self.node_count;
+        let index: i32 = self.node_count;
         self.values[index as usize] = value;
         self.left_children[index as usize] = -1;
         self.right_children[index as usize] = -1;
@@ -98,12 +98,12 @@ impl BinarySearchTree {
 }
 
 fn main() {
-    let mut bst = BinarySearchTree::new();
-    let n = readInt();
+    let mut bst: BinarySearchTree = BinarySearchTree::new();
+    let n: i32 = getInt();
     
-    let mut i = 0;
+    let mut i: i32 = 0;
     while (i < n) {
-        let value = readInt();
+        let value: i32 = getInt();
         bst.insert(value);
         i += 1;
     }

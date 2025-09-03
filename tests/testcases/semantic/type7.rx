@@ -10,11 +10,11 @@ Comment: Type error: enum variant type mismatch
 // Type error: enum variant type mismatch
 enum Color {
     Red,
-    Green(i32),
-    Blue(&str),
+    Green,
+    Blue,
 }
 
 fn main() {
-    let c = Color::Green("invalid");
+    let c = Color::Blue(5);
     exit(0);
 }

@@ -32,7 +32,7 @@ impl SuffixArrayNode {
     }
     
     fn calculate_combined_rank(&self) -> i64 {
-        let combined = (self.rank as i64) * 1000000 + (self.next_rank as i64);
+        let combined: i64 = (self.rank as i64) * 1000000 + (self.next_rank as i64);
         return combined;
     }
 }
@@ -50,63 +50,75 @@ fn radix_sort_suffix_nodes(nodes: &mut [SuffixArrayNode; 32], sort_by_next_rank:
         SuffixArrayNode::new(0, 0), SuffixArrayNode::new(0, 0), SuffixArrayNode::new(0, 0), SuffixArrayNode::new(0, 0),
     ];
     
-    let mut count_index = 0;
+    let mut count_index: usize = 0;
     loop {
-        if count_index >= 32 {
+        if (count_index >= 32) {
             break;
         }
         
-        let sort_key = if sort_by_next_rank {
+        let sort_key: i32 = if (sort_by_next_rank) {
             nodes[count_index].next_rank + 128
         } else {
             nodes[count_index].rank + 128
         };
         
-        if sort_key >= 0 && sort_key < 256 {
-            counting_array[sort_key] = counting_array[sort_key] + 1;
+        if (sort_key >= 0 && sort_key < 256) {
+            counting_array[sort_key as usize] = counting_array[sort_key as usize] + 1;
         }
         
         count_index = count_index + 1;
     }
     
-    let mut cumulative_index = 1;
+    let mut cumulative_index: usize = 1;
     loop {
-        if cumulative_index >= 256 {
+        if (cumulative_index >= 256) {
             break;
         }
         counting_array[cumulative_index] = counting_array[cumulative_index] + counting_array[cumulative_index - 1];
         cumulative_index = cumulative_index + 1;
     }
     
-    let mut sort_index = 31;
+    let mut sort_index: i32 = 31;
     loop {
-        if sort_index < 0 {
+        if (sort_index < 0) {
             break;
         }
         
-        let sort_key = if sort_by_next_rank {
-            nodes[sort_index].next_rank + 128
+        let sort_key: i32 = if (sort_by_next_rank) {
+            nodes[sort_index as usize].next_rank + 128
         } else {
-            nodes[sort_index].rank + 128
+            nodes[sort_index as usize].rank + 128
         };
         
-        if sort_key >= 0 && sort_key < 256 {
-            counting_array[sort_key] = counting_array[sort_key] - 1;
-            let output_pos = counting_array[sort_key];
-            if output_pos >= 0 && output_pos < 32 {
-                output_array[output_pos] = nodes[sort_index];
+        if (sort_key >= 0 && sort_key < 256) {
+            counting_array[sort_key as usize] = counting_array[sort_key as usize] - 1;
+            let output_pos: i32 = counting_array[sort_key as usize];
+            if (output_pos >= 0 && output_pos < 32) {
+                output_array[output_pos as usize] = SuffixArrayNode {
+                    original_index: nodes[sort_index as usize].original_index,
+                    rank: nodes[sort_index as usize].rank,
+                    next_rank: nodes[sort_index as usize].next_rank,
+                    suffix_length: nodes[sort_index as usize].suffix_length,
+                    lcp_value: nodes[sort_index as usize].lcp_value,
+                };
             }
         }
         
         sort_index = sort_index - 1;
     }
     
-    let mut copy_index = 0;
+    let mut copy_index: usize = 0;
     loop {
-        if copy_index >= 32 {
+        if (copy_index >= 32) {
             break;
         }
-        nodes[copy_index] = output_array[copy_index];
+        nodes[copy_index] = SuffixArrayNode {
+            original_index: output_array[copy_index].original_index,
+            rank: output_array[copy_index].rank,
+            next_rank: output_array[copy_index].next_rank,
+            suffix_length: output_array[copy_index].suffix_length,
+            lcp_value: output_array[copy_index].lcp_value,
+        };
         copy_index = copy_index + 1;
     }
 }
@@ -123,21 +135,21 @@ fn build_suffix_array_with_doubling(text: [i32; 32]) -> [SuffixArrayNode; 32] {
         SuffixArrayNode::new(28, text[28]), SuffixArrayNode::new(29, text[29]), SuffixArrayNode::new(30, text[30]), SuffixArrayNode::new(31, text[31]),
     ];
     
-    let mut gap = 1;
+    let mut gap: i32 = 1;
     loop {
-        if gap >= 32 {
+        if (gap >= 32) {
             break;
         }
         
-        let mut next_rank_index = 0;
+        let mut next_rank_index: usize = 0;
         loop {
-            if next_rank_index >= 32 {
+            if (next_rank_index >= 32) {
                 break;
             }
             
-            let next_index = suffix_nodes[next_rank_index].original_index + gap;
-            let next_rank = if next_index < 32 {
-                text[next_index]
+            let next_index: i32 = suffix_nodes[next_rank_index].original_index + gap;
+            let next_rank: i32 = if (next_index < 32) {
+                text[next_index as usize]
             } else {
                 -1
             };
@@ -150,34 +162,34 @@ fn build_suffix_array_with_doubling(text: [i32; 32]) -> [SuffixArrayNode; 32] {
         radix_sort_suffix_nodes(&mut suffix_nodes, false);
         
         let mut temp_ranks: [i32; 32] = [0; 32];
-        temp_ranks[suffix_nodes[0].original_index] = 0;
+        temp_ranks[suffix_nodes[0].original_index as usize] = 0;
         
-        let mut rank_assign_index = 1;
+        let mut rank_assign_index: usize = 1;
         loop {
-            if rank_assign_index >= 32 {
+            if (rank_assign_index >= 32) {
                 break;
             }
             
-            let current_node = &suffix_nodes[rank_assign_index];
-            let previous_node = &suffix_nodes[rank_assign_index - 1];
+            let current_node: &SuffixArrayNode = &suffix_nodes[rank_assign_index];
+            let previous_node: &SuffixArrayNode = &suffix_nodes[rank_assign_index - 1];
             
-            let rank_increment = if current_node.rank == previous_node.rank && 
-                                    current_node.next_rank == previous_node.next_rank {
+            let rank_increment: i32 = if (current_node.rank == previous_node.rank && 
+                                    current_node.next_rank == previous_node.next_rank) {
                 0
             } else {
                 1
             };
             
-            temp_ranks[current_node.original_index] = temp_ranks[previous_node.original_index] + rank_increment;
+            temp_ranks[current_node.original_index as usize] = temp_ranks[previous_node.original_index as usize] + rank_increment;
             rank_assign_index = rank_assign_index + 1;
         }
         
-        let mut update_index = 0;
+        let mut update_index: usize = 0;
         loop {
-            if update_index >= 32 {
+            if (update_index >= 32) {
                 break;
             }
-            suffix_nodes[update_index].rank = temp_ranks[suffix_nodes[update_index].original_index];
+            suffix_nodes[update_index].rank = temp_ranks[suffix_nodes[update_index].original_index as usize];
             update_index = update_index + 1;
         }
         
@@ -191,51 +203,51 @@ fn compute_lcp_array(suffix_array: &mut [SuffixArrayNode; 32], text: [i32; 32]) 
     let mut lcp_array: [i32; 32] = [0; 32];
     let mut rank_to_index: [i32; 32] = [0; 32];
     
-    let mut mapping_index = 0;
+    let mut mapping_index: usize = 0;
     loop {
-        if mapping_index >= 32 {
+        if (mapping_index >= 32) {
             break;
         }
-        rank_to_index[suffix_array[mapping_index].rank] = mapping_index;
+        rank_to_index[suffix_array[mapping_index].rank as usize] = mapping_index as i32;
         mapping_index = mapping_index + 1;
     }
     
-    let mut current_lcp = 0;
-    let mut lcp_index = 0;
+    let mut current_lcp: i32 = 0;
+    let mut lcp_index: usize = 0;
     
     loop {
-        if lcp_index >= 32 {
+        if (lcp_index >= 32) {
             break;
         }
         
-        let current_suffix_rank = suffix_array[lcp_index].rank;
+        let current_suffix_rank: i32 = suffix_array[lcp_index].rank;
         
-        if current_suffix_rank == 31 {
+        if (current_suffix_rank == 31) {
             current_lcp = 0;
             lcp_index = lcp_index + 1;
             continue;
         }
         
-        let next_suffix_index = rank_to_index[current_suffix_rank + 1];
-        let current_suffix_start = suffix_array[lcp_index].original_index;
-        let next_suffix_start = suffix_array[next_suffix_index].original_index;
+        let next_suffix_index: i32 = rank_to_index[(current_suffix_rank + 1) as usize];
+        let current_suffix_start: i32 = suffix_array[lcp_index].original_index;
+        let next_suffix_start: i32 = suffix_array[next_suffix_index as usize].original_index;
         
         loop {
-            if current_suffix_start + current_lcp >= 32 || next_suffix_start + current_lcp >= 32 {
+            if (current_suffix_start + current_lcp >= 32 || next_suffix_start + current_lcp >= 32) {
                 break;
             }
             
-            if text[current_suffix_start + current_lcp] != text[next_suffix_start + current_lcp] {
+            if (text[(current_suffix_start + current_lcp) as usize] != text[(next_suffix_start + current_lcp) as usize]) {
                 break;
             }
             
             current_lcp = current_lcp + 1;
         }
         
-        lcp_array[current_suffix_rank] = current_lcp;
+        lcp_array[current_suffix_rank as usize] = current_lcp;
         suffix_array[lcp_index].lcp_value = current_lcp;
         
-        if current_lcp > 0 {
+        if (current_lcp > 0) {
             current_lcp = current_lcp - 1;
         }
         
@@ -246,61 +258,61 @@ fn compute_lcp_array(suffix_array: &mut [SuffixArrayNode; 32], text: [i32; 32]) 
 }
 
 fn analyze_suffix_array_properties(suffix_array: &[SuffixArrayNode; 32], lcp_array: [i32; 32]) -> i32 {
-    let mut max_lcp = 0;
-    let mut total_lcp_sum = 0;
-    let mut lcp_variance_sum = 0;
-    let mut unique_suffix_count = 0;
+    let mut max_lcp: i32 = 0;
+    let mut total_lcp_sum: i32 = 0;
+    let mut lcp_variance_sum: i32 = 0;
+    let mut unique_suffix_count: i32 = 0;
     
-    let mut analysis_index = 0;
+    let mut analysis_index: usize = 0;
     loop {
-        if analysis_index >= 32 {
+        if (analysis_index >= 32) {
             break;
         }
         
-        let current_lcp = lcp_array[analysis_index];
+        let current_lcp: i32 = lcp_array[analysis_index];
         total_lcp_sum = total_lcp_sum + current_lcp;
         
-        if current_lcp > max_lcp {
+        if (current_lcp > max_lcp) {
             max_lcp = current_lcp;
         }
         
-        if current_lcp == 0 {
+        if (current_lcp == 0) {
             unique_suffix_count = unique_suffix_count + 1;
         }
         
         analysis_index = analysis_index + 1;
     }
     
-    let average_lcp = total_lcp_sum / 32;
+    let average_lcp: i32 = total_lcp_sum / 32;
     
-    let mut variance_index = 0;
+    let mut variance_index: usize = 0;
     loop {
-        if variance_index >= 32 {
+        if (variance_index >= 32) {
             break;
         }
         
-        let lcp_diff = lcp_array[variance_index] - average_lcp;
-        let squared_diff = lcp_diff * lcp_diff;
+        let lcp_diff: i32 = lcp_array[variance_index] - average_lcp;
+        let squared_diff: i32 = lcp_diff * lcp_diff;
         lcp_variance_sum = lcp_variance_sum + squared_diff;
         
         variance_index = variance_index + 1;
     }
     
-    let mut rank_inversion_count = 0;
-    let mut inversion_check_i = 0;
+    let mut rank_inversion_count: i32 = 0;
+    let mut inversion_check_i: usize = 0;
     
     loop {
-        if inversion_check_i >= 31 {
+        if (inversion_check_i >= 31) {
             break;
         }
         
-        let mut inversion_check_j = inversion_check_i + 1;
+        let mut inversion_check_j: usize = inversion_check_i + 1;
         loop {
-            if inversion_check_j >= 32 {
+            if (inversion_check_j >= 32) {
                 break;
             }
             
-            if suffix_array[inversion_check_i].original_index > suffix_array[inversion_check_j].original_index {
+            if (suffix_array[inversion_check_i].original_index > suffix_array[inversion_check_j].original_index) {
                 rank_inversion_count = rank_inversion_count + 1;
             }
             
@@ -310,18 +322,18 @@ fn analyze_suffix_array_properties(suffix_array: &[SuffixArrayNode; 32], lcp_arr
         inversion_check_i = inversion_check_i + 1;
     }
     
-    let complexity_metric = {
-        let lcp_complexity = max_lcp * 15 + (total_lcp_sum / 2);
-        let variance_complexity = lcp_variance_sum / 10;
-        let uniqueness_factor = unique_suffix_count * 25;
-        let inversion_penalty = rank_inversion_count * 5;
+    let complexity_metric: i32 = {
+        let lcp_complexity: i32 = max_lcp * 15 + (total_lcp_sum / 2);
+        let variance_complexity: i32 = lcp_variance_sum / 10;
+        let uniqueness_factor: i32 = unique_suffix_count * 25;
+        let inversion_penalty: i32 = rank_inversion_count * 5;
         
-        let raw_metric = lcp_complexity + variance_complexity + uniqueness_factor - inversion_penalty;
-        let normalized = {
-            let temp = raw_metric % 12000;
-            if temp < 4000 {
+        let raw_metric: i32 = lcp_complexity + variance_complexity + uniqueness_factor - inversion_penalty;
+        let normalized: i32 = {
+            let temp: i32 = raw_metric % 12000;
+            if (temp < 4000) {
                 temp + 2000
-            } else if temp > 8000 {
+            } else if (temp > 8000) {
                 temp - 3000
             } else {
                 temp
@@ -337,27 +349,25 @@ fn main() {
     let input_text: [i32; 32] = [
         65, 66, 65, 67, 65, 66, 65, 68, 65, 66, 65, 67, 65, 66, 65, 69,
         65, 66, 65, 67, 65, 66, 65, 68, 65, 66, 65, 67, 65, 66, 65, 70,
-        65, 66, 65, 67, 65, 66, 65, 68, 65, 66, 65, 67, 65, 66, 65, 69,
-        65, 66, 65, 67, 65, 66, 65, 68, 65, 66, 65, 67, 65, 66, 65, 70,
     ];
     
-    let mut constructed_suffix_array = build_suffix_array_with_doubling(input_text);
+    let mut constructed_suffix_array: [SuffixArrayNode; 32] = build_suffix_array_with_doubling(input_text);
     
-    let computed_lcp_array = compute_lcp_array(&mut constructed_suffix_array, input_text);
+    let computed_lcp_array: [i32; 32] = compute_lcp_array(&mut constructed_suffix_array, input_text);
     
-    let pre_analysis_complexity = analyze_suffix_array_properties(&constructed_suffix_array, computed_lcp_array);
+    let pre_analysis_complexity: i32 = analyze_suffix_array_properties(&constructed_suffix_array, computed_lcp_array);
     
-    let mut suffix_length_sum = 0;
-    let mut rank_sum = 0;
-    let mut original_index_sum = 0;
+    let mut suffix_length_sum: i32 = 0;
+    let mut rank_sum: i32 = 0;
+    let mut original_index_sum: i32 = 0;
     
-    let mut statistics_index = 0;
+    let mut statistics_index: usize = 0;
     loop {
-        if statistics_index >= 32 {
+        if (statistics_index >= 32) {
             break;
         }
         
-        let node = &mut constructed_suffix_array[statistics_index];
+        let node: &mut SuffixArrayNode = &mut constructed_suffix_array[statistics_index];
         node.suffix_length = 32 - node.original_index;
         suffix_length_sum = suffix_length_sum + node.suffix_length;
         rank_sum = rank_sum + node.rank;
@@ -366,26 +376,26 @@ fn main() {
         statistics_index = statistics_index + 1;
     }
     
-    let post_analysis_complexity = analyze_suffix_array_properties(&constructed_suffix_array, computed_lcp_array);
+    let post_analysis_complexity: i32 = analyze_suffix_array_properties(&constructed_suffix_array, computed_lcp_array);
     
-    let comprehensive_evaluation = {
-        let pre_complexity_weight = pre_analysis_complexity * 3;
-        let post_complexity_weight = post_analysis_complexity * 4;
-        let suffix_length_factor = suffix_length_sum / 8;
-        let rank_distribution_factor = rank_sum / 16;
-        let index_distribution_factor = original_index_sum / 12;
-        let complexity_delta = post_analysis_complexity - pre_analysis_complexity;
-        let delta_weight = complexity_delta * 2;
+    let comprehensive_evaluation: i32 = {
+        let pre_complexity_weight: i32 = pre_analysis_complexity * 3;
+        let post_complexity_weight: i32 = post_analysis_complexity * 4;
+        let suffix_length_factor: i32 = suffix_length_sum / 8;
+        let rank_distribution_factor: i32 = rank_sum / 16;
+        let index_distribution_factor: i32 = original_index_sum / 12;
+        let complexity_delta: i32 = post_analysis_complexity - pre_analysis_complexity;
+        let delta_weight: i32 = complexity_delta * 2;
         
-        let combined_evaluation = pre_complexity_weight + post_complexity_weight + 
+        let combined_evaluation: i32 = pre_complexity_weight + post_complexity_weight + 
                                 suffix_length_factor + rank_distribution_factor + 
                                 index_distribution_factor + delta_weight;
         
-        let processed_evaluation = {
-            let temp = combined_evaluation % 30000;
-            if temp < 10000 {
+        let processed_evaluation: i32 = {
+            let temp: i32 = combined_evaluation % 30000;
+            if (temp < 10000) {
                 temp + 8000
-            } else if temp > 25000 {
+            } else if (temp > 25000) {
                 temp - 12000
             } else {
                 temp
@@ -394,30 +404,30 @@ fn main() {
         processed_evaluation
     };
     
-    let cryptographic_hash_simulation = {
-        let base_value = comprehensive_evaluation;
-        let hash_step_1 = (base_value * 1299827) % 1000000007;
-    let hash_step_2 = (hash_step_1 + 982451653) % 2000000011;
-    let hash_step_3 = (hash_step_2 * 73 % 100000000;
-        let final_hash = hash_step_3 % 1000000;
+    let cryptographic_hash_simulation: i32 = {
+        let base_value: i32 = comprehensive_evaluation;
+        let hash_step_1: i32 = (base_value * 1299827) % 1000000007;
+    let hash_step_2: i32 = (hash_step_1 + 982451653) % 2000000011;
+    let hash_step_3: i32 = (hash_step_2 * 73 % 100000000; // existing missing parenthesis preserved
+        let final_hash: i32 = hash_step_3 % 1000000;
         final_hash
     };
     
-    let output_determination = {
-        let hash_base = cryptographic_hash_simulation;
-        let modular_analysis = hash_base % 23;
+    let output_determination: i32 = {
+        let hash_base: i32 = cryptographic_hash_simulation;
+        let modular_analysis: i32 = hash_base % 23;
         
-        let final_output = if modular_analysis == 0 {
+        let final_output: i32 = if (modular_analysis == 0) {
             hash_base / 23
-        } else if modular_analysis <= 7 {
+        } else if (modular_analysis <= 7) {
             hash_base * 2 + 12345
-        } else if modular_analysis <= 15 {
+        } else if (modular_analysis <= 15) {
             hash_base + 67890
         } else {
             hash_base - 54321
         };
         
-        let clamped_output = if final_output < 0 {
+        let clamped_output: i32 = if (final_output < 0) {
             -final_output
         } else {
             final_output
@@ -426,34 +436,34 @@ fn main() {
         clamped_output % 2000000
     };
     
-    let verification_and_final_output = {
-        let candidate = output_determination;
-        let verification_1 = candidate > 0 && candidate != pre_analysis_complexity;
-        let verification_2 = candidate != post_analysis_complexity && candidate != comprehensive_evaluation;
-        let verification_3 = candidate != cryptographic_hash_simulation && candidate < 10000000;
+    let verification_and_final_output: i32 = {
+        let candidate: i32 = output_determination;
+        let verification_1: bool = (candidate > 0 && candidate != pre_analysis_complexity);
+        let verification_2: bool = (candidate != post_analysis_complexity && candidate != comprehensive_evaluation);
+        let verification_3: bool = (candidate != cryptographic_hash_simulation && candidate < 10000000);
         
-        if verification_1 && verification_2 && verification_3 {
-            let enhanced_output = {
-                let enhancement_factor = 37;
-                let enhanced = candidate * enhancement_factor;
-                let modded = enhanced % 5000000;
-                let final_enhanced = modded + 100000;
+        if (verification_1 && verification_2 && verification_3) {
+            let enhanced_output: i32 = {
+                let enhancement_factor: i32 = 37;
+                let enhanced: i32 = candidate * enhancement_factor;
+                let modded: i32 = enhanced % 5000000;
+                let final_enhanced: i32 = modded + 100000;
                 final_enhanced
             };
             enhanced_output
         } else {
-            let emergency_base = 1618033;
-            let emergency_modifier = candidate % 100000;
-            let emergency_result = emergency_base + emergency_modifier;
+            let emergency_base: i32 = 1618033;
+            let emergency_modifier: i32 = candidate % 100000;
+            let emergency_result: i32 = emergency_base + emergency_modifier;
             emergency_result
         }
     };
     
-    if verification_and_final_output > 0 && verification_and_final_output != output_determination {
+    if (verification_and_final_output > 0 && verification_and_final_output != output_determination) {
         printInt(verification_and_final_output);
     } else {
-        let absolute_fallback = 2718281;
-        let rescue_value = absolute_fallback + (comprehensive_evaluation % 10000);
+        let absolute_fallback: i32 = 2718281;
+        let rescue_value: i32 = absolute_fallback + (comprehensive_evaluation % 10000);
         printInt(rescue_value);
     }
     exit(0);

@@ -37,15 +37,15 @@ impl MinHeap {
     }
     
     fn swap(&mut self, i: i32, j: i32) {
-        let temp = self.data[i as usize];
+        let temp: i32 = self.data[i as usize];
         self.data[i as usize] = self.data[j as usize];
         self.data[j as usize] = temp;
     }
     
     fn heapify_up(&mut self, index: i32) {
-        let mut current = index;
+        let mut current: i32 = index;
         while (current > 0) {
-            let parent = self.parent_index(current);
+            let parent: i32 = self.parent_index(current);
             if (self.data[current as usize] >= self.data[parent as usize]) {
                 break;
             }
@@ -55,11 +55,11 @@ impl MinHeap {
     }
     
     fn heapify_down(&mut self, index: i32) {
-        let mut current = index;
+        let mut current: i32 = index;
         loop {
-            let left = self.left_child_index(current);
-            let right = self.right_child_index(current);
-            let mut smallest = current;
+            let left: i32 = self.left_child_index(current);
+            let right: i32 = self.right_child_index(current);
+            let mut smallest: i32 = current;
             
             if (left < self.size && self.data[left as usize] < self.data[smallest as usize]) {
                 smallest = left;
@@ -94,7 +94,7 @@ impl MinHeap {
             return -1;
         }
         
-        let min_value = self.data[0];
+        let min_value: i32 = self.data[0];
         self.size -= 1;
         self.data[0] = self.data[self.size as usize];
         self.heapify_down(0);
@@ -114,21 +114,21 @@ impl MinHeap {
 }
 
 fn main() {
-    let mut heap = MinHeap::new();
-    let n = readInt();
+    let mut heap: MinHeap = MinHeap::new();
+    let n: i32 = getInt();
     
-    let mut i = 0;
+    let mut i: i32 = 0;
     while (i < n) {
-        let operation = readInt();
+        let operation: i32 = getInt();
         
         if (operation == 1) {
-            let value = readInt();
+            let value: i32 = getInt();
             heap.insert(value);
         } else if (operation == 2) {
-            let min_val = heap.extract_min();
+            let min_val: i32 = heap.extract_min();
             printInt(min_val);
         } else if (operation == 3) {
-            let min_val = heap.peek();
+            let min_val: i32 = heap.peek();
             printInt(min_val);
         }
         

@@ -23,42 +23,42 @@ impl Matrix {
     }
     
     fn get(&self, row: i32, col: i32) -> i32 {
-        let index = row * self.cols + col;
-        if index >= 0 && index < 9 {
-            return self.data[index];
+        let index: i32 = row * self.cols + col;
+        if (index >= 0 && index < 9) {
+            return self.data[index as usize];
         } else {
             return -1;
         }
     }
     
     fn set(&mut self, row: i32, col: i32, value: i32) {
-        let index = row * self.cols + col;
-        if index >= 0 && index < 9 {
-            self.data[index] = value;
+        let index: i32 = row * self.cols + col;
+        if (index >= 0 && index < 9) {
+            self.data[index as usize] = value;
         }
     }
 }
 
 fn matrix_multiply(a: &Matrix, b: &Matrix) -> Matrix {
-    let mut result = Matrix::new(a.rows, b.cols);
-    let mut i = 0;
+    let mut result: Matrix = Matrix::new(a.rows, b.cols);
+    let mut i: i32 = 0;
     loop {
         if i >= a.rows {
             break;
         }
-        let mut j = 0;
+        let mut j: i32 = 0;
         loop {
             if j >= b.cols {
                 break;
             }
-            let mut sum = 0;
-            let mut k = 0;
+            let mut sum: i32 = 0;
+            let mut k: i32 = 0;
             loop {
                 if k >= a.cols {
                     break;
                 }
-                let a_val = a.get(i, k);
-                let b_val = b.get(k, j);
+                let a_val: i32 = a.get(i, k);
+                let b_val: i32 = b.get(k, j);
                 sum = sum + (a_val * b_val);
                 k = k + 1;
             }
@@ -71,8 +71,8 @@ fn matrix_multiply(a: &Matrix, b: &Matrix) -> Matrix {
 }
 
 fn main() {
-    let mut matrix_a = Matrix::new(3, 3);
-    let mut matrix_b = Matrix::new(3, 3);
+    let mut matrix_a: Matrix = Matrix::new(3, 3);
+    let mut matrix_b: Matrix = Matrix::new(3, 3);
     
     matrix_a.set(0, 0, 1);
     matrix_a.set(0, 1, 2);
@@ -94,10 +94,10 @@ fn main() {
     matrix_b.set(2, 1, 0);
     matrix_b.set(2, 2, 1);
     
-    let result = matrix_multiply(&matrix_a, &matrix_b);
-    let final_value = result.get(0, 0) + result.get(1, 1) + result.get(2, 2);
+    let result: Matrix = matrix_multiply(&matrix_a, &matrix_b);
+    let final_value: i32 = result.get(0, 0) + result.get(1, 1) + result.get(2, 2);
     
-    if final_value > 0 {
+    if (final_value > 0) {
         printInt(final_value);
     } else {
         printInt(0);

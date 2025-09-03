@@ -21,7 +21,7 @@ fn ackermann(m: i32, n: i32) -> i32 {
 
 // Iterative wrapper for safety with small inputs
 fn safe_ackermann(m: i32, n: i32) -> i32 {
-    let mut counter = 0;
+    let mut counter: i32 = 0;
     while (counter < 5) { // Safety limit for demonstration
         if (counter == 0 && m <= 3 && n <= 3) {
             return ackermann(m, n);
@@ -32,9 +32,9 @@ fn safe_ackermann(m: i32, n: i32) -> i32 {
 }
 
 fn main() {
-    let m = 2;
-    let n = 3;
-    let result = safe_ackermann(m, n);
+    let m: i32 = 2;
+    let n: i32 = 3;
+    let result: i32 = safe_ackermann(m, n);
     printInt(result);
     exit(0);
 }

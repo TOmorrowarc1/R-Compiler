@@ -17,7 +17,7 @@ fn bfs(g: &[[u32; N]; N], root: usize, visited: &mut [bool; N], order: &mut [usi
     visited[root] = true;
     let mut pos: usize = 0usize;
     while (head < tail) {
-        let v = queue[head];
+        let v: usize = queue[head];
         order[pos] = v;
         pos += 1;
         head += 1;

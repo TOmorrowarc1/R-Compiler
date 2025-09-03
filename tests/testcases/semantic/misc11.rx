@@ -18,22 +18,22 @@ enum Operation {
 }
 
 fn perform_operation(a: i32, b: i32, op: Operation) -> i32 {
-    match op {
-        Operation::Add => return a + b,
-        Operation::Subtract => return a - b,
-        Operation::Multiply => return a * b,
-        Operation::Divide => {
-            if (b != 0) {
-                return a / b;
-            }
-            return 0; // Division by zero
-        },
-        Operation::Modulo => {
-            if (b != 0) {
-                return a % b;
-            }
-            return 0; // Modulo by zero
-        },
+    if (op == Operation::Add) {
+        return a + b;
+    } else if (op == Operation::Subtract) {
+        return a - b;
+    } else if (op == Operation::Multiply) {
+        return a * b;
+    } else if (op == Operation::Divide) {
+        if (b != 0) {
+            return a / b;
+        }
+        return 0; // Division by zero
+    } else {
+        if (b != 0) {
+            return a % b;
+        }
+        return 0; // Modulo by zero
     }
 }
 
@@ -52,12 +52,12 @@ fn get_operation(op_code: i32) -> Operation {
 }
 
 fn main() {
-    let a = readInt();
-    let b = readInt();
-    let op_code = readInt();
+    let a: i32 = getInt();
+    let b: i32 = getInt();
+    let op_code: i32 = getInt();
     
-    let operation = get_operation(op_code);
-    let result = perform_operation(a, b, operation);
+    let operation: Operation = get_operation(op_code);
+    let result: i32 = perform_operation(a, b, operation);
     
     printInt(result);
     exit(0);

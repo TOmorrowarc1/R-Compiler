@@ -10,7 +10,7 @@ Comment: Miller-Rabin primality test with recursive witness checking
 // Miller-Rabin primality test with recursive witness checking
 // Probabilistic algorithm to test if a number is prime
 fn power_mod(mut base: i32, mut exp: i32, modulus: i32) -> i32 {
-    let mut result = 1;
+    let mut result: i32 = 1;
     base = base % modulus;
     
     while (exp > 0) {
@@ -29,7 +29,7 @@ fn witness_check_recursive(a: i32, d: i32, n: i32, r: i32, round: i32) -> bool {
         return false;
     }
     
-    let x = power_mod(a, d * power_mod(2, round, n), n);
+    let x: i32 = power_mod(a, d * power_mod(2, round, n), n);
     
     if (x == 1 || x == n - 1) {
         return true;
@@ -46,15 +46,15 @@ fn miller_rabin_test(n: i32, witness: i32) -> bool {
         return true;
     }
     
-    let mut d = n - 1;
-    let mut r = 0;
+    let mut d: i32 = n - 1;
+    let mut r: i32 = 0;
     
     while (d % 2 == 0) {
         d = d / 2;
         r = r + 1;
     }
     
-    let x = power_mod(witness, d, n);
+    let x: i32 = power_mod(witness, d, n);
     if (x == 1 || x == n - 1) {
         return true;
     }
@@ -63,8 +63,8 @@ fn miller_rabin_test(n: i32, witness: i32) -> bool {
 }
 
 fn main() {
-    let n = readInt();
-    let witness = readInt();
+    let n: i32 = getInt();
+    let witness: i32 = getInt();
     
     if (miller_rabin_test(n, witness)) {
         printInt(1);

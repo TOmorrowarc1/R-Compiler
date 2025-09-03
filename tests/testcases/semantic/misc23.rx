@@ -37,7 +37,7 @@ impl Queue {
     }
     
     fn enqueue(&mut self, value: i32) -> bool {
-    if (self.is_full()) {
+        if (self.is_full()) {
             return false;
         }
         
@@ -48,25 +48,25 @@ impl Queue {
     }
     
     fn dequeue(&mut self) -> i32 {
-    if (self.is_empty()) {
+        if (self.is_empty()) {
             return -1;
         }
         
-        let value = self.data[self.front as usize];
+        let value: i32 = self.data[self.front as usize];
         self.front = (self.front + 1) % self.capacity;
         self.size -= 1;
         return value;
     }
     
     fn front_element(&self) -> i32 {
-    if (self.is_empty()) {
+        if (self.is_empty()) {
             return -1;
         }
         return self.data[self.front as usize];
     }
     
     fn rear_element(&self) -> i32 {
-    if (self.is_empty()) {
+        if (self.is_empty()) {
             return -1;
         }
         return self.data[self.rear as usize];
@@ -83,14 +83,14 @@ impl Queue {
     }
     
     fn print_queue(&self) {
-    if (self.is_empty()) {
+        if (self.is_empty()) {
             return;
         }
         
-        let mut current = self.front;
-        let mut count = 0;
+        let mut current: i32 = self.front;
+        let mut count: i32 = 0;
         
-    while (count < self.size) {
+        while (count < self.size) {
             printInt(self.data[current as usize]);
             current = (current + 1) % self.capacity;
             count += 1;
@@ -99,11 +99,11 @@ impl Queue {
     
     // Priority queue simulation using simple insertion sort
     fn priority_enqueue(&mut self, value: i32, priority: i32) -> bool {
-    if (self.is_full()) {
+        if (self.is_full()) {
             return false;
         }
         
-    if (self.is_empty()) {
+        if (self.is_empty()) {
             self.enqueue(value);
             return true;
         }
@@ -111,18 +111,18 @@ impl Queue {
         // Create temporary storage for reordering
         let mut temp_data: [i32; 1000] = [0; 1000];
         let mut temp_priorities: [i32; 1000] = [0; 1000];
-        let mut temp_size = 0;
+        let mut temp_size: i32 = 0;
         
         // Extract all elements
-    while (!self.is_empty()) {
+        while (!self.is_empty()) {
             temp_data[temp_size as usize] = self.dequeue();
             temp_priorities[temp_size as usize] = temp_size; // Simulate priorities
             temp_size += 1;
         }
         
         // Insert new element in correct position
-        let mut inserted = false;
-        let mut i = 0;
+        let mut inserted: bool = false;
+        let mut i: i32 = 0;
         while (i < temp_size) {
             if (!inserted && priority > temp_priorities[i as usize]) {
                 self.enqueue(value);
@@ -169,11 +169,11 @@ impl Deque {
     }
     
     fn insert_front(&mut self, value: i32) -> bool {
-    if (self.is_full()) {
+        if (self.is_full()) {
             return false;
         }
         
-    if (self.is_empty()) {
+        if (self.is_empty()) {
             self.front = 0;
             self.rear = 0;
         } else {
@@ -186,11 +186,11 @@ impl Deque {
     }
     
     fn insert_rear(&mut self, value: i32) -> bool {
-    if (self.is_full()) {
+        if (self.is_full()) {
             return false;
         }
         
-    if (self.is_empty()) {
+        if (self.is_empty()) {
             self.front = 0;
             self.rear = 0;
         } else {
@@ -203,12 +203,12 @@ impl Deque {
     }
     
     fn delete_front(&mut self) -> i32 {
-    if (self.is_empty()) {
+        if (self.is_empty()) {
             return -1;
         }
         
-        let value = self.data[self.front as usize];
-    if (self.size == 1) {
+        let value: i32 = self.data[self.front as usize];
+        if (self.size == 1) {
             self.front = 0;
             self.rear = -1;
         } else {
@@ -219,12 +219,12 @@ impl Deque {
     }
     
     fn delete_rear(&mut self) -> i32 {
-    if (self.is_empty()) {
+        if (self.is_empty()) {
             return -1;
         }
         
-        let value = self.data[self.rear as usize];
-    if (self.size == 1) {
+        let value: i32 = self.data[self.rear as usize];
+        if (self.size == 1) {
             self.front = 0;
             self.rear = -1;
         } else {
@@ -236,24 +236,24 @@ impl Deque {
 }
 
 fn main() {
-    let mut queue = Queue::new();
-    let n = readInt();
+    let mut queue: Queue = Queue::new();
+    let n: i32 = getInt();
     
-    let mut i = 0;
+    let mut i: i32 = 0;
     while (i < n) {
-        let operation = readInt();
+        let operation: i32 = getInt();
         
         if (operation == 1) { // Enqueue
-            let value = readInt();
+            let value: i32 = getInt();
             queue.enqueue(value);
         } else if (operation == 2) { // Dequeue
-            let value = queue.dequeue();
+            let value: i32 = queue.dequeue();
             printInt(value);
         } else if (operation == 3) { // Front
-            let value = queue.front_element();
+            let value: i32 = queue.front_element();
             printInt(value);
         } else if (operation == 4) { // Size
-            let size = queue.get_size();
+            let size: i32 = queue.get_size();
             printInt(size);
         } else if (operation == 5) { // Print queue
             queue.print_queue();

@@ -10,8 +10,8 @@ Comment: Schönhage-Strassen multiplication algorithm with recursive FFT approac
 // Schönhage-Strassen multiplication algorithm
 // Fast multiplication using recursive FFT-like approach
 fn bit_reverse(mut n: i32, bits: i32) -> i32 {
-    let mut result = 0;
-    let mut i = 0;
+    let mut result: i32 = 0;
+    let mut i: i32 = 0;
     
     while (i < bits) {
         result = result * 2;
@@ -26,17 +26,17 @@ fn bit_reverse(mut n: i32, bits: i32) -> i32 {
 }
 
 fn recursive_multiply(a: &[i32; 64], b: &[i32; 64], result: &mut [i32; 64], 
-                     len: i32, depth: i32) {
+                     len: usize, depth: i32) {
     if (len <= 1) {
         result[0] = a[0] * b[0];
         return;
     }
     
     if (depth > 6) {
-        let mut i = 0;
+        let mut i: usize = 0;
         while (i < len) {
             result[i] = 0;
-            let mut j = 0;
+            let mut j: usize = 0;
             while (j < len) {
                 if (i + j < 64) {
                     result[i + j] = result[i + j] + a[i] * b[j];
@@ -48,7 +48,7 @@ fn recursive_multiply(a: &[i32; 64], b: &[i32; 64], result: &mut [i32; 64],
         return;
     }
     
-    let half = len / 2;
+    let half: usize = len / 2;
     let mut temp_a: [i32; 64] = [0; 64];
     let mut temp_b: [i32; 64] = [0; 64];
     let mut temp_result: [i32; 64] = [0; 64];
@@ -94,15 +94,15 @@ fn schonhage_multiply(x: i32, y: i32) -> i32 {
     let mut result: [i32; 64] = [0; 64];
     
     // Convert to array representation
-    let mut temp_x = x;
-    let mut i = 0;
+    let mut temp_x: i32 = x;
+    let mut i: usize = 0;
     while (temp_x > 0 && i < 32) {
         a[i] = temp_x % 10;
         temp_x = temp_x / 10;
         i = i + 1;
     }
     
-    let mut temp_y = y;
+    let mut temp_y: i32 = y;
     i = 0;
     while (temp_y > 0 && i < 32) {
         b[i] = temp_y % 10;
@@ -113,8 +113,8 @@ fn schonhage_multiply(x: i32, y: i32) -> i32 {
     recursive_multiply(&a, &b, &mut result, 32, 0);
     
     // Convert back to integer
-    let mut final_result = 0;
-    let mut multiplier = 1;
+    let mut final_result: i32 = 0;
+    let mut multiplier: i32 = 1;
     i = 0;
     
     while (i < 32) {
@@ -127,9 +127,9 @@ fn schonhage_multiply(x: i32, y: i32) -> i32 {
 }
 
 fn main() {
-    let x = readInt();
-    let y = readInt();
-    let product = schonhage_multiply(x, y);
+    let x: i32 = getInt();
+    let y: i32 = getInt();
+    let product: i32 = schonhage_multiply(x, y);
     printInt(product);
     exit(0);
 }

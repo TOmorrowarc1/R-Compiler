@@ -26,7 +26,7 @@ impl SegmentTree {
         if (start == end) {
             self.tree[node as usize] = arr[start as usize];
         } else {
-            let mid = (start + end) / 2;
+            let mid: i32 = (start + end) / 2;
             self.build(arr, 2 * node, start, mid);
             self.build(arr, 2 * node + 1, mid + 1, end);
             self.tree[node as usize] = self.tree[(2 * node) as usize] + self.tree[(2 * node + 1) as usize];
@@ -37,7 +37,7 @@ impl SegmentTree {
         if (start == end) {
             self.tree[node as usize] = val;
         } else {
-            let mid = (start + end) / 2;
+            let mid: i32 = (start + end) / 2;
             if (idx <= mid) {
                 self.update_recursive(2 * node, start, mid, idx, val);
             } else {
@@ -48,18 +48,18 @@ impl SegmentTree {
     }
     
     fn query_recursive(&self, node: i32, start: i32, end: i32, l: i32, r: i32) -> i32 {
-        if ((r < start || end < l)) {
+        if (r < start || end < l) {
             return 0; // Outside range
         }
         
-        if ((l <= start && end <= r)) {
+        if (l <= start && end <= r) {
             return self.tree[node as usize]; // Complete overlap
         }
         
         // Partial overlap
-        let mid = (start + end) / 2;
-        let left_sum = self.query_recursive(2 * node, start, mid, l, r);
-        let right_sum = self.query_recursive(2 * node + 1, mid + 1, end, l, r);
+        let mid: i32 = (start + end) / 2;
+        let left_sum: i32 = self.query_recursive(2 * node, start, mid, l, r);
+        let right_sum: i32 = self.query_recursive(2 * node + 1, mid + 1, end, l, r);
         return left_sum + right_sum;
     }
     
@@ -108,17 +108,17 @@ impl LazySegmentTree {
     fn range_update(&mut self, node: i32, start: i32, end: i32, l: i32, r: i32, val: i32) {
         self.push(node, start, end);
         
-        if ((start > r || end < l)) {
+        if (start > r || end < l) {
             return; // Outside range
         }
         
-        if ((start >= l && end <= r)) {
+        if (start >= l && end <= r) {
             self.lazy[node as usize] += val;
             self.push(node, start, end);
             return;
         }
         
-        let mid = (start + end) / 2;
+        let mid: i32 = (start + end) / 2;
         self.range_update(2 * node, start, mid, l, r, val);
         self.range_update(2 * node + 1, mid + 1, end, l, r, val);
         
@@ -128,19 +128,19 @@ impl LazySegmentTree {
     }
     
     fn range_query(&mut self, node: i32, start: i32, end: i32, l: i32, r: i32) -> i32 {
-        if ((start > r || end < l)) {
+        if (start > r || end < l) {
             return 0; // Outside range
         }
         
         self.push(node, start, end);
         
-        if ((start >= l && end <= r)) {
+        if (start >= l && end <= r) {
             return self.tree[node as usize]; // Complete overlap
         }
         
-        let mid = (start + end) / 2;
-        let left_sum = self.range_query(2 * node, start, mid, l, r);
-        let right_sum = self.range_query(2 * node + 1, mid + 1, end, l, r);
+        let mid: i32 = (start + end) / 2;
+        let left_sum: i32 = self.range_query(2 * node, start, mid, l, r);
+        let right_sum: i32 = self.range_query(2 * node + 1, mid + 1, end, l, r);
         return left_sum + right_sum;
     }
     
@@ -171,27 +171,27 @@ impl MaxSegmentTree {
         if (start == end) {
             self.tree[node as usize] = arr[start as usize];
         } else {
-            let mid = (start + end) / 2;
+            let mid: i32 = (start + end) / 2;
             self.build(arr, 2 * node, start, mid);
             self.build(arr, 2 * node + 1, mid + 1, end);
-            let left_max = self.tree[(2 * node) as usize];
-            let right_max = self.tree[(2 * node + 1) as usize];
+            let left_max: i32 = self.tree[(2 * node) as usize];
+            let right_max: i32 = self.tree[(2 * node + 1) as usize];
             self.tree[node as usize] = if (left_max > right_max) { left_max } else { right_max };
         }
     }
     
     fn query_max(&self, node: i32, start: i32, end: i32, l: i32, r: i32) -> i32 {
-        if ((r < start || end < l)) {
+        if (r < start || end < l) {
             return -2147483648; // Return minimum value for out of range
         }
         
-        if ((l <= start && end <= r)) {
+        if (l <= start && end <= r) {
             return self.tree[node as usize];
         }
         
-        let mid = (start + end) / 2;
-        let left_max = self.query_max(2 * node, start, mid, l, r);
-        let right_max = self.query_max(2 * node + 1, mid + 1, end, l, r);
+        let mid: i32 = (start + end) / 2;
+        let left_max: i32 = self.query_max(2 * node, start, mid, l, r);
+        let right_max: i32 = self.query_max(2 * node + 1, mid + 1, end, l, r);
         return if (left_max > right_max) { left_max } else { right_max };
     }
     
@@ -205,32 +205,32 @@ impl MaxSegmentTree {
 }
 
 fn main() {
-    let n = readInt();
+    let n: i32 = getInt();
     let mut arr: [i32; 1000] = [0; 1000];
     
-    let mut i = 0;
+    let mut i: i32 = 0;
     while (i < n) {
-        arr[i as usize] = readInt();
+        arr[i as usize] = getInt();
         i += 1;
     }
     
-    let mut seg_tree = SegmentTree::new(n);
+    let mut seg_tree: SegmentTree = SegmentTree::new(n);
     seg_tree.init(&arr);
     
-    let queries = readInt();
+    let queries: i32 = getInt();
     i = 0;
     
     while (i < queries) {
-        let operation = readInt();
+        let operation: i32 = getInt();
         
         if (operation == 1) { // Range sum query
-            let l = readInt();
-            let r = readInt();
-            let sum = seg_tree.range_sum(l, r);
+            let l: i32 = getInt();
+            let r: i32 = getInt();
+            let sum: i32 = seg_tree.range_sum(l, r);
             printInt(sum);
         } else if (operation == 2) { // Point update
-            let idx = readInt();
-            let val = readInt();
+            let idx: i32 = getInt();
+            let val: i32 = getInt();
             seg_tree.update(idx, val);
         }
         

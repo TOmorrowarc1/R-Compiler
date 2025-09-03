@@ -3,8 +3,8 @@ Test Package: Semantic-1
 Test Target: expr
 Author: Wenxin Zheng
 Time: 2025-08-08
-Verdict: Fail
-Comment: Complex expression error: Missing semicolon after statement - hash table with quadratic probing, collision resolution, and load factor analysis
+Verdict: Success
+Comment: Hash table with quadratic probing, collision resolution, and load factor analysis; printInt returns `()`
 */
 
 struct HashTableEntry {
@@ -38,41 +38,41 @@ impl HashTableEntry {
 }
 
 fn hash_function(key: i32, table_size: i32) -> i32 {
-    let hash = {
-        let temp = key * key;
-        let normalized = temp % 1000;
-        let adjusted = if normalized < 0 { -normalized } else { normalized };
+    let hash: i32 = {
+        let temp: i32 = key * key;
+        let normalized: i32 = temp % 1000;
+        let adjusted: i32 = if (normalized < 0) { -normalized } else { normalized };
         adjusted % table_size
     };
     return hash;
 }
 
 fn quadratic_probe(base_hash: i32, attempt: i32, table_size: i32) -> i32 {
-    let probe_offset = {
-        let square = attempt * attempt;
-        let linear = attempt * 3;
+    let probe_offset: i32 = {
+        let square: i32 = attempt * attempt;
+        let linear: i32 = attempt * 3;
         square + linear
     };
-    let final_hash = (base_hash + probe_offset) % table_size;
-    return if final_hash < 0 { final_hash + table_size } else { final_hash };
+    let final_hash: i32 = (base_hash + probe_offset) % table_size;
+    return if (final_hash < 0) { final_hash + table_size } else { final_hash };
 }
 
 fn insert_with_collision_resolution(table: &mut [HashTableEntry; 13], key: i32, value: i32) -> bool {
-    let base_hash = hash_function(key, 13);
-    let mut attempt = 0;
+    let base_hash: i32 = hash_function(key, 13);
+    let mut attempt: i32 = 0;
     
     loop {
-        if attempt >= 13 {
+        if (attempt >= 13) {
             break;
         }
         
-        let probe_hash = quadratic_probe(base_hash, attempt, 13);
-        let entry = &mut table[probe_hash];
+        let probe_hash: i32 = quadratic_probe(base_hash, attempt, 13);
+        let entry: &mut HashTableEntry = &mut table[probe_hash as usize];
         
-        if !entry.is_occupied || entry.is_deleted {
+        if (!entry.is_occupied || entry.is_deleted) {
             entry.set(key, value);
             return true;
-        } else if entry.key == key {
+        } else if (entry.key == key) {
             entry.value = value;
             return true;
         }
@@ -84,20 +84,20 @@ fn insert_with_collision_resolution(table: &mut [HashTableEntry; 13], key: i32, 
 }
 
 fn lookup_with_probing(table: &[HashTableEntry; 13], key: i32) -> i32 {
-    let base_hash = hash_function(key, 13);
-    let mut attempt = 0;
+    let base_hash: i32 = hash_function(key, 13);
+    let mut attempt: i32 = 0;
     
     loop {
-        if attempt >= 13 {
+        if (attempt >= 13) {
             break;
         }
         
-        let probe_hash = quadratic_probe(base_hash, attempt, 13);
-        let entry = &table[probe_hash];
+        let probe_hash: i32 = quadratic_probe(base_hash, attempt, 13);
+        let entry: &HashTableEntry = &table[probe_hash as usize];
         
-        if !entry.is_occupied && !entry.is_deleted {
+        if (!entry.is_occupied && !entry.is_deleted) {
             return -1;
-        } else if entry.is_occupied && entry.key == key {
+        } else if (entry.is_occupied && entry.key == key) {
             return entry.value;
         }
         
@@ -108,36 +108,36 @@ fn lookup_with_probing(table: &[HashTableEntry; 13], key: i32) -> i32 {
 }
 
 fn calculate_load_factor_metrics(table: &[HashTableEntry; 13]) -> i32 {
-    let mut occupied_count = 0;
-    let mut deleted_count = 0;
-    let mut collision_estimate = 0;
+    let mut occupied_count: i32 = 0;
+    let mut deleted_count: i32 = 0;
+    let mut collision_estimate: i32 = 0;
     
-    let mut index = 0;
+    let mut index: i32 = 0;
     loop {
-        if index >= 13 {
+        if (index >= 13) {
             break;
         }
         
-        let entry = &table[index];
-        if entry.is_occupied {
+        let entry: &HashTableEntry = &table[index as usize];
+        if (entry.is_occupied) {
             occupied_count = occupied_count + 1;
-            let expected_hash = hash_function(entry.key, 13);
-            if expected_hash != index {
+            let expected_hash: i32 = hash_function(entry.key, 13);
+            if (expected_hash != index) {
                 collision_estimate = collision_estimate + 1;
             }
-        } else if entry.is_deleted {
+        } else if (entry.is_deleted) {
             deleted_count = deleted_count + 1;
         }
         
         index = index + 1;
     }
     
-    let metrics = {
-        let load_factor = occupied_count * 100 / 13;
-        let fragmentation = deleted_count * 50;
-        let collision_penalty = collision_estimate * 25;
-        let total = load_factor + fragmentation + collision_penalty;
-        if total > 200 {
+    let metrics: i32 = {
+        let load_factor: i32 = occupied_count * 100 / 13;
+        let fragmentation: i32 = deleted_count * 50;
+        let collision_penalty: i32 = collision_estimate * 25;
+        let total: i32 = load_factor + fragmentation + collision_penalty;
+        if (total > 200) {
             total % 100
         } else {
             total + 50
@@ -155,56 +155,56 @@ fn main() {
         HashTableEntry::new(),
     ];
     
-    let keys = [17, 23, 41, 59, 67, 83, 97, 101, 113, 127];
-    let values = [1, 4, 9, 16, 25, 36, 49, 64, 81, 100];
+    let keys: [i32; 10] = [17, 23, 41, 59, 67, 83, 97, 101, 113, 127];
+    let values: [i32; 10] = [1, 4, 9, 16, 25, 36, 49, 64, 81, 100];
     
-    let mut insertion_success_count = 0;
-    let mut key_index = 0;
+    let mut insertion_success_count: i32 = 0;
+    let mut key_index: i32 = 0;
     
     loop {
-        if key_index >= 10 {
+        if (key_index >= 10) {
             break;
         }
         
-        let current_key = keys[key_index];
-        let current_value = values[key_index];
-        let success = insert_with_collision_resolution(&mut hash_table, current_key, current_value);
+        let current_key: i32 = keys[key_index as usize];
+        let current_value: i32 = values[key_index as usize];
+        let success: bool = insert_with_collision_resolution(&mut hash_table, current_key, current_value);
         
-        if success {
+        if (success) {
             insertion_success_count = insertion_success_count + 1;
         }
         
         key_index = key_index + 1;
     }
     
-    let mut lookup_sum = 0;
-    let mut lookup_index = 0;
+    let mut lookup_sum: i32 = 0;
+    let mut lookup_index: i32 = 0;
     
     loop {
-        if lookup_index >= 10 {
+        if (lookup_index >= 10) {
             break;
         }
         
-        let lookup_key = keys[lookup_index];
-        let found_value = lookup_with_probing(&hash_table, lookup_key);
+        let lookup_key: i32 = keys[lookup_index as usize];
+        let found_value: i32 = lookup_with_probing(&hash_table, lookup_key);
         
-        if found_value > 0 {
+        if (found_value > 0) {
             lookup_sum = lookup_sum + found_value;
         }
         
         lookup_index = lookup_index + 1;
     }
     
-    let load_metrics = calculate_load_factor_metrics(&hash_table);
+    let load_metrics: i32 = calculate_load_factor_metrics(&hash_table);
     
-    let final_result = {
-        let insertion_weight = insertion_success_count * 10;
-        let lookup_weight = lookup_sum / 5;
-        let metrics_weight = load_metrics * 2;
-        let combined = insertion_weight + lookup_weight + metrics_weight;
-        let processed = {
-            let temp = combined % 500;
-            if temp > 250 {
+    let final_result: i32 = {
+        let insertion_weight: i32 = insertion_success_count * 10;
+        let lookup_weight: i32 = lookup_sum / 5;
+        let metrics_weight: i32 = load_metrics * 2;
+        let combined: i32 = insertion_weight + lookup_weight + metrics_weight;
+        let processed: i32 = {
+            let temp: i32 = combined % 500;
+            if (temp > 250) {
                 temp - 100
             } else {
                 temp + 75
@@ -213,14 +213,14 @@ fn main() {
         processed
     };
     
-    if final_result > 0 && final_result != insertion_success_count && final_result < 10000 {
-        let optimized_output = {
-            let base = final_result;
-            let factor = if base % 7 == 0 {
+    if (final_result > 0 && final_result != insertion_success_count && final_result < 10000) {
+        let optimized_output: i32 = {
+            let base: i32 = final_result;
+            let factor: i32 = if (base % 7 == 0) {
                 3
-            } else if base % 7 == 1 {
+            } else if (base % 7 == 1) {
                 5
-            } else if base % 7 == 2 {
+            } else if (base % 7 == 2) {
                 7
             } else {
                 2
@@ -229,8 +229,8 @@ fn main() {
         };
         printInt(optimized_output);
     } else {
-        let fallback = 314;
-        if fallback > final_result {
+        let fallback: i32 = 314;
+        if (fallback > final_result) {
             printInt(fallback - final_result);
         } else {
             printInt(fallback + final_result)

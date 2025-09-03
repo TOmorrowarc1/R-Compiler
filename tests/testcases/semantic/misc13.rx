@@ -45,7 +45,7 @@ impl SimpleList {
             return false;
         }
         
-        let new_index = self.size;
+        let new_index: i32 = self.size;
         self.nodes[new_index as usize] = ListNode::new(value);
         self.nodes[new_index as usize].next_index = self.head;
         self.head = new_index;
@@ -58,7 +58,7 @@ impl SimpleList {
             return -1;
         }
         
-        let value = self.nodes[self.head as usize].value;
+        let value: i32 = self.nodes[self.head as usize].value;
         self.head = self.nodes[self.head as usize].next_index;
         self.size -= 1;
         return value;
@@ -70,24 +70,24 @@ impl SimpleList {
 }
 
 fn main() {
-    let mut list = SimpleList::new();
-    let n = readInt();
+    let mut list: SimpleList = SimpleList::new();
+    let n: i32 = getInt();
     
-    let mut i = 0;
+    let mut i: i32 = 0;
     while (i < n) {
-        let operation = readInt();
+        let operation: i32 = getInt();
         
         if (operation == 1) {
             // Push operation
-            let value = readInt();
+            let value: i32 = getInt();
             list.push_front(value);
         } else if (operation == 2) {
             // Pop operation
-            let value = list.pop_front();
+            let value: i32 = list.pop_front();
             printInt(value);
         } else if (operation == 3) {
             // Get size
-            let size = list.get_size();
+            let size: i32 = list.get_size();
             printInt(size);
         }
         

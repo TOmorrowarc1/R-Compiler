@@ -1,18 +1,16 @@
 /*
 Test Package: Semantic-1
 Test Target: expr
-Author: Wenxin Zheng
+Author: Ruitian Wang
 Time: 2025-08-08
 Verdict: Fail
-Comment: Expression error: Invalid if expression - missing opening brace after condition
+Comment: Expression error: while condition missing parentheses
 */
 
-// Error: Invalid if expression - missing opening brace after condition
 fn main() {
-    let x = 10;
-    if x > 5  // Missing opening brace {
+    let x: i32 = 10;
+    if x > 5 { // Error: if condition missing parentheses
         printInt(x);
-    
+    }
     exit(0);
-}
 }

@@ -59,11 +59,13 @@ impl Board {
     }
 
     fn line_equal(&self, a: Cell, b: Cell, c: Cell) -> bool {
-        match (a, b, c) {
-            (Cell::X, Cell::X, Cell::X) => true,
-            (Cell::O, Cell::O, Cell::O) => true,
-            _ => false,
+        if (a == Cell::X && b == Cell::X && c == Cell::X) {
+            return true;
+        } 
+        if (a == Cell::O && b == Cell::O && c == Cell::O) {
+            return true;
         }
+        false
     }
 }
 

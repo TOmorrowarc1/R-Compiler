@@ -16,7 +16,7 @@ struct HashEntry {
 }
 
 fn power_mod(mut base: i32, mut exp: i32, modulus: i32) -> i32 {
-    let mut result = 1;
+    let mut result: i32 = 1;
     base = base % modulus;
     
     while (exp > 0) {
@@ -31,26 +31,26 @@ fn power_mod(mut base: i32, mut exp: i32, modulus: i32) -> i32 {
 }
 
 fn hash_insert(table: &mut [HashEntry; 100], key: i32, value: i32, size: i32) {
-    let mut index = key % size;
+    let mut index: i32 = key % size;
     
-    while (table[index].used) {
-        if (table[index].key == key) {
+    while (table[index as usize].used) {
+        if (table[index as usize].key == key) {
             return; // Already exists
         }
         index = (index + 1) % size;
     }
     
-    table[index].key = key;
-    table[index].value = value;
-    table[index].used = true;
+    table[index as usize].key = key;
+    table[index as usize].value = value;
+    table[index as usize].used = true;
 }
 
 fn hash_lookup(table: &[HashEntry; 100], key: i32, size: i32) -> i32 {
-    let mut index = key % size;
+    let mut index: i32 = key % size;
     
-    while (table[index].used) {
-        if (table[index].key == key) {
-            return table[index].value;
+    while (table[index as usize].used) {
+        if (table[index as usize].key == key) {
+            return table[index as usize].value;
         }
         index = (index + 1) % size;
     }
@@ -63,8 +63,8 @@ fn isqrt(n: i32) -> i32 {
         return n;
     }
     
-    let mut x = n;
-    let mut y = (x + 1) / 2;
+    let mut x: i32 = n;
+    let mut y: i32 = (x + 1) / 2;
     
     while (y < x) {
         x = y;
@@ -75,12 +75,12 @@ fn isqrt(n: i32) -> i32 {
 }
 
 fn baby_step_giant_step(g: i32, h: i32, p: i32) -> i32 {
-    let m = isqrt(p) + 1;
+    let m: i32 = isqrt(p) + 1;
     let mut baby_steps: [HashEntry; 100] = [HashEntry { key: 0, value: 0, used: false }; 100];
     
     // Baby steps: compute g^j mod p for j = 0, 1, ..., m-1
-    let mut gamma = 1;
-    let mut j = 0;
+    let mut gamma: i32 = 1;
+    let mut j: i32 = 0;
     
     while (j < m && j < 100) {
         hash_insert(&mut baby_steps, gamma, j, 100);
@@ -89,12 +89,12 @@ fn baby_step_giant_step(g: i32, h: i32, p: i32) -> i32 {
     }
     
     // Giant steps: compute h * (g^(-m))^i mod p for i = 0, 1, ..., m-1
-    let g_inv_m = power_mod(g, p - 1 - m, p); // g^(-m) mod p using Fermat's little theorem
-    let mut y = h;
-    let mut i = 0;
+    let g_inv_m: i32 = power_mod(g, p - 1 - m, p); // g^(-m) mod p using Fermat's little theorem
+    let mut y: i32 = h;
+    let mut i: i32 = 0;
     
     while (i < m && i < 100) {
-        let lookup_result = hash_lookup(&baby_steps, y, 100);
+        let lookup_result: i32 = hash_lookup(&baby_steps, y, 100);
         if (lookup_result != -1) {
             return i * m + lookup_result;
         }
@@ -111,8 +111,8 @@ fn discrete_log_recursive(g: i32, h: i32, p: i32, depth: i32) -> i32 {
     }
     
     // Try small values first
-    let mut x = 1;
-    let mut g_power = g;
+    let mut x: i32 = 1;
+    let mut g_power: i32 = g;
     
     while (x < 10) {
         if (g_power == h) {
@@ -126,11 +126,11 @@ fn discrete_log_recursive(g: i32, h: i32, p: i32, depth: i32) -> i32 {
 }
 
 fn main() {
-    let g = readInt();
-    let h = readInt();
-    let p = readInt();
+    let g: i32 = getInt();
+    let h: i32 = getInt();
+    let p: i32 = getInt();
     
-    let result = discrete_log_recursive(g, h, p, 0);
+    let result: i32 = discrete_log_recursive(g, h, p, 0);
     printInt(result);
     exit(0);
 }

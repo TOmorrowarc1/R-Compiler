@@ -13,6 +13,6 @@ fn get_number() -> i32 {
 }
 
 fn main() {
-    let x:str = get_number();
+    let x: i32 = get_number();
     exit(0);
 }

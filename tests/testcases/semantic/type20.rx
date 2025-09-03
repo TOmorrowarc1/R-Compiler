@@ -21,16 +21,16 @@ struct Task {
 }
 
 fn initialize_tasks() -> [Task; 3] {
-    let task1 = Task { id: 1, priority: Priority::High, completed: false };
-    let task2 = Task { id: 2, priority: Priority::Medium, completed: true };
-    let task3 = Task { id: 3, priority: Priority::Low, completed: false };
+    let task1: Task = Task { id: 1, priority: Priority::High, completed: false };
+    let task2: Task = Task { id: 2, priority: Priority::Medium, completed: true };
+    let task3: Task = Task { id: 3, priority: Priority::Low, completed: false };
     
     return [task1, task2, task3];
 }
 
-fn process_task_queue(tasks: [Task; 3]) {
-    let mut i = 0;
-    while i < 3 {
+fn process_task_queue(tasks: &mut [Task; 3]) {
+    let mut i: usize = 0;
+    while (i < 3) {
         if !tasks[i].completed {
             // Process incomplete task
         }
@@ -39,11 +39,11 @@ fn process_task_queue(tasks: [Task; 3]) {
 }
 
 fn main() {
-    let task_queue = initialize_tasks();
-    process_task_queue(task_queue);
+    let mut task_queue: [Task; 3] = initialize_tasks();
+    process_task_queue(&mut task_queue);
     
     // Type error: trying to assign array of different size
-    let small_queue: [Task; 2] = task_queue;
+    let small_queue: [Task; 3] = task_queue;
     
     printInt(1);
     exit(0);

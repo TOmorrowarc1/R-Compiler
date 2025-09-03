@@ -12,13 +12,13 @@ fn process_array(arr: [i32; 3]) -> i32 {
 }
 
 fn main() {
-    let numbers = [5, 10, 15];
-    let sum = process_array(numbers);
-    let doubled = sum * 2;
-    let result = if doubled > 50 { doubled } else { 0 }
+    let numbers: [i32; 3] = [5, 10, 15];
+    let sum: i32 = process_array(numbers);
+    let doubled: i32 = sum * 2;
+    let result: i32 = if (doubled > 50) { doubled } else { 0 }
     printInt(result);
-    let final_check = result != 0;
-    if final_check {
+    let final_check: bool = result != 0;
+    if (final_check) {
         printInt(1);
     }
     exit(0);

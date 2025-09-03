@@ -12,13 +12,13 @@ fn calculate(x: i32) -> i32 {
 }
 
 fn main() {
-    let input = readInt();
-    let processed = calculate(input);
-    let grouped = (processed + 5;
-    if grouped > 0 {
+    let input: i32 = getInt();
+    let processed: i32 = calculate(input);
+    let grouped: i32 = (processed + 5;
+    if (grouped > 0) {
         printInt(grouped);
     }
-    let final_result = grouped % 10;
+    let final_result: i32 = grouped % 10;
     printInt(final_result);
     exit(0);
 }

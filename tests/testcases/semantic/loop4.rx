@@ -8,12 +8,12 @@ Comment: loop test, nested infinite loops with break condition using flag variab
 */
 
 fn main() {
-    let mut count:i32 = 0;
-    let mut i:u32 = 0u32;
-    let mut should_break:bool = false;
+    let mut count: i32 = 0;
+    let mut i: u32 = 0u32;
+    let mut should_break: bool = false;
     loop {
         if (i >= 5) { break; }
-        let mut j:u32 = 0u32;
+        let mut j: u32 = 0u32;
         loop {
             if (j >= 5) { break; }
             if (i == j) { 
@@ -30,6 +30,6 @@ fn main() {
         if (should_break) { break; }
         i += 1;
     }
-    let _ = count;
+    let _: i32 = count;
     exit(0);
 }

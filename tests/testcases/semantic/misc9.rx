@@ -28,14 +28,14 @@ fn absolute(x: i32) -> i32 {
 }
 
 fn main() {
-    let a = readInt();
-    let b = readInt();
+    let a: i32 = getInt();
+    let b: i32 = getInt();
     
-    let abs_a = absolute(a);
-    let abs_b = absolute(b);
+    let abs_a: i32 = absolute(a);
+    let abs_b: i32 = absolute(b);
     
-    let gcd_result = gcd(abs_a, abs_b);
-    let lcm_result = lcm(abs_a, abs_b);
+    let gcd_result: i32 = gcd(abs_a, abs_b);
+    let lcm_result: i32 = lcm(abs_a, abs_b);
     
     printInt(gcd_result);
     printInt(lcm_result);
