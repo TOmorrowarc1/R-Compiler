@@ -1,6 +1,7 @@
 #include "ConstTypeEvaluator.hpp"
 #include "ASTNodeTotal.hpp"
 #include "ConstEvaluator.hpp"
+#include "ConstTypeCollector.hpp"
 #include "Symbol.hpp"
 #include "TypeKind.hpp"
 #include "cast.hpp"
@@ -23,7 +24,18 @@ void ConstTypeEvaluator::visit(ASTRootNode *node) {
 void ConstTypeEvaluator::visit(ItemConstNode *node) {
   node->type_->accept(*this);
   node->value_->accept(*this);
-  const_evaluator_->evaluateConstSymbol(node->ID_);
+  if (ctx_name_.empty()) {
+    const_evaluator_->evaluateConstSymbol(node->ID_);
+    return;
+  } else if (context_.top() == ContextType::IN_TYPE_DEF) {
+    const_evaluator_->evaluateTypeConst(ctx_name_.top(), node->ID_);
+    return;
+  } else {
+    if (node->value_ != nullptr) {
+      const_evaluator_->evaluateTraitConst(ctx_name_.top(), node->ID_);
+    }
+    return;
+  }
 }
 
 void ConstTypeEvaluator::visit(ItemFnNode *node) {
@@ -55,18 +67,33 @@ void ConstTypeEvaluator::visit(ItemImplNode *node) {
   }
   const auto type_path = dynamic_cast<const TypePathNode *>(node->type_.get());
   std::string type_name = type_path->path_->getPathIndexName(0);
-  auto type_def = current_scope_->getType(type_name)->getType();
+  ctx_name_.push(type_name);
+  context_.push(ContextType::IN_TYPE_DEF);
   for (const auto &item : node->items_) {
     if (item.function) {
       item.function->accept(*this);
     } else {
       item.constant->accept(*this);
-      const_evaluator_->evaluateStructConst(type_name, item.constant->ID_);
     }
   }
+  context_.pop();
+  ctx_name_.pop();
 }
 
-void ConstTypeEvaluator::visit(ItemTraitNode *node) {}
+void ConstTypeEvaluator::visit(ItemTraitNode *node) {
+  auto trait_name = node->trait_name_;
+  ctx_name_.push(trait_name);
+  context_.push(ContextType::IN_TRAIT_DEF);
+  for (const auto &item : node->items_) {
+    if (item.function) {
+      item.function->accept(*this);
+    } else {
+      item.constant->accept(*this);
+    }
+  }
+  context_.pop();
+  ctx_name_.pop();
+}
 
 void ConstTypeEvaluator::visit(ExprArrayNode *node) {
   for (const auto &item : node->elements_) {

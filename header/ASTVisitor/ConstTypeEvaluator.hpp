@@ -1,6 +1,7 @@
 #pragma once
 #include "Scope.hpp"
 #include "Visitor.hpp"
+#include <stack>
 
 /*
 The second pass calculate all constants and types in a question-drived way
@@ -11,11 +12,14 @@ blocks.
 class TypeKind;
 class TypeNode;
 class ConstEvaluator;
+enum class ContextType;
 
 class ConstTypeEvaluator : public Visitor {
 private:
   Scope *current_scope_;
   ConstEvaluator *const_evaluator_;
+  std::stack<std::string> ctx_name_;
+  std::stack<ContextType> context_;
 
 public:
   ConstTypeEvaluator(Scope *initial_scope, ConstEvaluator *const_evaluator);

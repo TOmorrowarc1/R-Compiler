@@ -13,10 +13,9 @@ class TypeKind;
 class TypeNode;
 class ConstEvaluator;
 
-class ConstTypeCollector : public Visitor {
-public:
-  enum class ContextType : bool { IN_TYPE_DEF, IN_TRAIT_DEF };
+enum class ContextType : bool { IN_TYPE_DEF, IN_TRAIT_DEF };
 
+class ConstTypeCollector : public Visitor {
 private:
   Scope *current_scope_;
   ConstEvaluator *const_evaluator_;
