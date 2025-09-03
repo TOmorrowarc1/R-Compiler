@@ -26,10 +26,10 @@ auto TraitDef::getConst(const std::string &name) const
 }
 
 auto TraitDef::getAllConst() const
-    -> std::vector<std::shared_ptr<SymbolConstInfo>> {
-  std::vector<std::shared_ptr<SymbolConstInfo>> consts;
+    -> std::unordered_map<std::string, std::shared_ptr<SymbolConstInfo>> {
+  std::unordered_map<std::string, std::shared_ptr<SymbolConstInfo>> consts;
   for (auto &pair : trait_consts_) {
-    consts.push_back(pair.second);
+    consts[pair.first] = pair.second;
   }
   return consts;
 }
@@ -54,10 +54,11 @@ auto TraitDef::getFunction(const std::string &name) const
 }
 
 auto TraitDef::getAllFunction() const
-    -> std::vector<std::shared_ptr<SymbolFunctionInfo>> {
-  std::vector<std::shared_ptr<SymbolFunctionInfo>> functions;
+    -> std::unordered_map<std::string, std::shared_ptr<SymbolFunctionInfo>> {
+  std::unordered_map<std::string, std::shared_ptr<SymbolFunctionInfo>>
+      functions;
   for (auto &pair : trait_functions_) {
-    functions.push_back(pair.second);
+    functions[pair.first] = pair.second;
   }
   return functions;
 }
@@ -81,10 +82,10 @@ auto TraitDef::getMethod(const std::string &name) const
 }
 
 auto TraitDef::getAllMethod() const
-    -> std::vector<std::shared_ptr<SymbolFunctionInfo>> {
-  std::vector<std::shared_ptr<SymbolFunctionInfo>> methods;
+    -> std::unordered_map<std::string, std::shared_ptr<SymbolFunctionInfo>> {
+  std::unordered_map<std::string, std::shared_ptr<SymbolFunctionInfo>> methods;
   for (auto &pair : trait_methods_) {
-    methods.push_back(pair.second);
+    methods[pair.first] = pair.second;
   }
   return methods;
 }

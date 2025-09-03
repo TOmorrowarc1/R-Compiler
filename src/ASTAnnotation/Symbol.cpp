@@ -35,6 +35,22 @@ auto SymbolFunctionInfo::getParametersType() const
     -> const std::vector<std::shared_ptr<TypeKind>> & {
   return parameters_;
 }
+auto SymbolFunctionInfo::isEqual(const SymbolFunctionInfo *other) const
+    -> bool {
+  if (other == nullptr) {
+    return false;
+  }
+  if (parameters_.size() != other->parameters_.size()) {
+    return false;
+  }
+  for (size_t i = 0; i < parameters_.size(); ++i) {
+    if (!parameters_[i]->isEqual(other->parameters_[i].get())) {
+      return false;
+    }
+  }
+  return return_type_->isEqual(other->return_type_.get()) &&
+         fn_type_ == other->fn_type_;
+}
 void SymbolFunctionInfo::setFnType(FnType type) { fn_type_ = type; }
 
 SymbolTypeInfo::SymbolTypeInfo(const std::string &name,

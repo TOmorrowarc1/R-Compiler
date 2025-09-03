@@ -53,6 +53,8 @@ public:
   auto getReturnType() const -> std::shared_ptr<TypeKind>;
   auto getParametersType() const
       -> const std::vector<std::shared_ptr<TypeKind>> &;
+  // Check whether two function signatures are the same.
+  auto isEqual(const SymbolFunctionInfo *other) const -> bool;
   void setFnType(FnType type);
 };
 
