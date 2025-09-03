@@ -1,10 +1,12 @@
 #pragma once
 #include "Scope.hpp"
 #include "Visitor.hpp"
+#include <stack>
 
 /*
 The first pass builds up the Scope tree, gathers names for all self-define
-types and const items into scopes, even including ones in impl blocks.
+types and const items into scopes, even including ones in impl blocks and
+traits.
 */
 
 class TypeKind;
@@ -15,7 +17,7 @@ class ConstTypeCollector : public Visitor {
 private:
   Scope *current_scope_;
   ConstEvaluator *const_evaluator_;
-  std::string impl_type_name_;
+  std::stack<std::string> type_name_;
 
   auto addStructType(const std::string &type_name) -> bool;
   auto addEnumType(const std::string &type_name) -> bool;

@@ -30,10 +30,10 @@ auto ConstTypeCollector::addEnumType(const std::string &type_name) -> bool {
 
 auto ConstTypeCollector::addConstSymbol(const std::string &name) -> bool {
   auto const_info = std::make_shared<SymbolConstInfo>(name);
-  if (impl_type_name_.empty()) {
+  if (type_name_.empty()) {
     return current_scope_->addConst(name, const_info);
   }
-  auto type_def = current_scope_->getType(impl_type_name_)->getType();
+  auto type_def = current_scope_->getType(type_name_.top())->getType();
   return type_def->addConst(name, const_info);
 }
 
@@ -50,10 +50,10 @@ void ConstTypeCollector::visit(ItemConstNode *node) {
     throw CompilerException("Duplicate constant name: " + node->ID_,
                             node->position_);
   }
-  if (impl_type_name_.empty()) {
+  if (type_name_.empty()) {
     const_evaluator_->attachNodeToConst(node, node->ID_);
   } else {
-    const_evaluator_->attachNodeToStructConst(node, impl_type_name_, node->ID_);
+    const_evaluator_->attachNodeToTypeConst(node, type_name_.top(), node->ID_);
   }
 }
 
@@ -94,7 +94,7 @@ void ConstTypeCollector::visit(ItemImplNode *node) {
     throw CompilerException("Impl type must be a path type", node->position_);
   }
   auto type_name = type_path->path_->getPathIndexName(0);
-  impl_type_name_ = type_name;
+  type_name_.push(type_name);
   for (auto &item : node->items_) {
     if (item.constant) {
       item.constant->accept(*this);
@@ -102,10 +102,21 @@ void ConstTypeCollector::visit(ItemImplNode *node) {
       item.function->accept(*this);
     }
   }
-  impl_type_name_.clear();
+  type_name_.pop();
 }
 
-void ConstTypeCollector::visit(ItemTraitNode *node) {}
+void ConstTypeCollector::visit(ItemTraitNode *node) {
+  auto trait_name = node->trait_name_;
+  type_name_.push(trait_name);
+  for (auto &item : node->items_) {
+    if (item.constant) {
+      item.constant->accept(*this);
+    } else {
+      item.function->accept(*this);
+    }
+  }
+  type_name_.pop();
+}
 
 void ConstTypeCollector::visit(StmtEmptyNode *node) {}
 
