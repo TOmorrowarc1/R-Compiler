@@ -104,8 +104,8 @@ TypeKindRefer::~TypeKindRefer() = default;
 auto TypeKindRefer::isEqual(const TypeKind *other) const -> bool {
   const auto *other_refer = dynamic_cast<const TypeKindRefer *>(other);
   if (other_refer != nullptr) {
-    return type_kind_->isEqual(other_refer->getType().get()) &&
-           is_mut_ref_ == other_refer->is_mut_ref_;
+    return type_kind_->isEqual(other_refer->type_kind_.get()) &&
+           (is_mut_ref_ || !other_refer->is_mut_ref_);
   }
   if (const auto *other_never = dynamic_cast<const TypeKindNever *>(other)) {
     return true;
@@ -117,7 +117,7 @@ auto TypeKindRefer::isTypePath(const TypeDef *typeDef) const -> bool {
 }
 auto TypeKindRefer::canCast(const TypeKind *other) const -> bool {
   if (const auto *other_refer = dynamic_cast<const TypeKindRefer *>(other)) {
-    return is_mut_ref_ == other_refer->is_mut_ref_ &&
+    return (is_mut_ref_ || !other_refer->is_mut_ref_) &&
            type_kind_->isEqual(other_refer);
   }
   if (const auto *other_path = dynamic_cast<const TypeKindPath *>(other)) {
