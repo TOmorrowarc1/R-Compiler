@@ -470,14 +470,16 @@ void SemanticChecker::visit(ExprIfNode *node) {
     if (!then_type->isEqual(else_type.get())) {
       throw std::runtime_error("Then and else blocks must have the same type");
     }
+    node->value_info_ =
+        std::make_unique<ValueInfo>(std::move(then_type), false, false);
   } else {
-    if (!then_type->isTypePath(
-            current_scope_->getType("unit")->getType().get())) {
+    auto unit_type = current_scope_->getType("unit")->getType();
+    if (!then_type->isTypePath(unit_type.get())) {
       throw std::runtime_error("Then and else blocks must have the same type");
     }
+    auto unit_kind = std::make_shared<TypeKindPath>(unit_type);
+    node->value_info_ = std::make_unique<ValueInfo>(unit_kind, false, false);
   }
-  node->value_info_ =
-      std::make_unique<ValueInfo>(std::move(then_type), false, false);
 }
 
 void SemanticChecker::visit(ExprLiteralIntNode *node) {
