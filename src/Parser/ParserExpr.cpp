@@ -105,6 +105,8 @@ const std::vector<bindPower> led_powers = {
     {TokenType::STRUCT, 0, 0},
     {TokenType::ENUM, 0, 0},
     {TokenType::IMPL, 0, 0},
+    {TokenType::SELF, 0, 0},
+    {TokenType::SELF_TYPE, 0, 0},
 };
 
 class OpPowerRecoder {
