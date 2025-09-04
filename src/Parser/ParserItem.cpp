@@ -240,15 +240,14 @@ auto parseItemEnumNode(TokenStream &stream) -> std::unique_ptr<ItemEnumNode> {
       variants.push_back(stream.next().content);
       while (stream.peek().type == TokenType::COMMA) {
         stream.next();
-        if (stream.peek().type == TokenType::RIGHT_PAREN) {
+        if (stream.peek().type == TokenType::RIGHT_BRACE) {
           break;
         }
         variants.push_back(stream.next().content);
       }
     }
-    if (stream.peek().type != TokenType::RIGHT_PAREN) {
-      throw CompilerException("Unexpected token in function parameters",
-                              position);
+    if (stream.peek().type != TokenType::RIGHT_BRACE) {
+      throw CompilerException("Enum declaration should end with a }", position);
     }
     stream.next();
   } else {
