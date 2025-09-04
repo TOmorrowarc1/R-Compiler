@@ -3,7 +3,7 @@ Test Package: Semantic-1
 Test Target: return
 Author: Ruitian Wang
 Time: 2025-08-27
-Verdict: Fail
+Verdict: Fail?
 Comment: Return statement in expression context without semicolon
 */
 
