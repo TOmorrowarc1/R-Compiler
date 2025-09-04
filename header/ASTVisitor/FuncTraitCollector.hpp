@@ -1,7 +1,7 @@
 #pragma once
 #include "Scope.hpp"
 #include "Visitor.hpp"
-
+#include <stack>
 /*
 There are 2 objects of the third pass after all symbols of types are
 collected, members are filled and constants are evaluated:
@@ -13,12 +13,14 @@ defination in the fourth path for impl blocks.
 class TypeKind;
 class TypeNode;
 class ConstEvaluator;
+enum class ContextType;
 
 class FuncTraitCollector : public Visitor {
 private:
   Scope *current_scope_;
   ConstEvaluator *const_evaluator_;
-  bool in_type_;
+  std::stack<std::string> ctx_name_;
+  std::stack<ContextType> context_;
 
   auto fnNodeToFunc(const ItemFnNode *node)
       -> std::shared_ptr<SymbolFunctionInfo>;

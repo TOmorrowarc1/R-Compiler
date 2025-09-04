@@ -76,3 +76,6 @@ public:
   auto evaluateType(TypeNode *node) -> std::shared_ptr<TypeKind>;
   auto evaluateExprValue(ExprNode *node) -> std::shared_ptr<ConstInfo>;
 };
+
+// Enum class for context using in visitors.
+enum class ContextType { IN_TYPE_DEF, IN_TRAIT_DEF };

@@ -23,7 +23,7 @@ SymbolFunctionInfo::SymbolFunctionInfo(
     const std::string &name, std::shared_ptr<TypeKind> returnType,
     std::vector<std::shared_ptr<TypeKind>> &&parameters)
     : SymbolInfo(), name_(name), return_type_(std::move(returnType)),
-      parameters_(std::move(parameters)) {}
+      parameters_(std::move(parameters)), fn_type_(FnType::Normal) {}
 SymbolFunctionInfo::~SymbolFunctionInfo() = default;
 auto SymbolFunctionInfo::getName() const -> const std::string & {
   return name_;

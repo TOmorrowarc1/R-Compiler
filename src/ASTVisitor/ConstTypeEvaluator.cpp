@@ -1,7 +1,6 @@
 #include "ConstTypeEvaluator.hpp"
 #include "ASTNodeTotal.hpp"
 #include "ConstEvaluator.hpp"
-#include "ConstTypeCollector.hpp"
 #include "Symbol.hpp"
 #include "TraitDef.hpp"
 #include "TypeKind.hpp"

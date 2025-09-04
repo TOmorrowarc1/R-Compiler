@@ -283,11 +283,11 @@ void SemanticChecker::visit(ExprBlockNode *node) {
     std::shared_ptr<TypeKind> block_type = std::make_shared<TypeKindPath>(
         current_scope_->getType("unit")->getType());
     if (!node->statements_.empty()) {
-      auto stmt = node->statements_.back().get();
-      if (is_instance_of<StmtExprNode, StmtNode>(stmt)) {
-        auto expr = dynamic_cast<StmtExprNode *>(stmt)->expr_.get();
-        if (is_instance_of<ExprReturnNode, ExprNode>(expr)) {
-          block_type = expr->value_info_->getType();
+      auto stmt = dynamic_cast<StmtExprNode *>(node->statements_.back().get());
+      if (stmt != nullptr) {
+        auto expr = dynamic_cast<ExprReturnNode *>(stmt->expr_.get());
+        if (expr != nullptr) {
+          block_type = std::make_shared<TypeKindNever>();
         }
       }
     }
@@ -703,25 +703,25 @@ void SemanticChecker::visit(ExprFieldNode *node) {
 
 void SemanticChecker::visit(ExprMethodNode *node) {
   node->instance_->accept(*this);
-  if (!is_instance_of<ExprPathNode, ExprNode>(node->instance_.get())) {
-    throw std::runtime_error("Method call requires a path as instance");
+  auto instance_type = node->instance_->value_info_->getType();
+  if (is_instance_of<TypeKindRefer, TypeKind>(instance_type.get())) {
+    instance_type =
+        std::dynamic_pointer_cast<TypeKindRefer>(instance_type)->getType();
   }
-  auto path = dynamic_cast<ExprPathNode *>(node->instance_.get())->path_.get();
-  std::shared_ptr<SymbolFunctionInfo> method_info;
-  if (path->segments_.size() != 1) {
-    throw std::runtime_error(
-        "Method call requires a path with only one segment");
+  auto path_type = dynamic_cast<TypeKindPath *>(instance_type.get());
+  if (!path_type) {
+    throw std::runtime_error("Instance requires a path type");
   }
-  auto method_name = path->getPathIndexName(0);
-  auto method = current_scope_->getSymbol(method_name);
-  method_info = std::dynamic_pointer_cast<SymbolFunctionInfo>(method);
-  if (method_info->getParametersType().size() != node->parameters_.size()) {
+  auto type_def = path_type->getTypeDef();
+  auto method_info = type_def->getMethod(node->ID_);
+  auto target_parameters = method_info->getParametersType();
+  if (target_parameters.size() != node->parameters_.size()) {
     throw std::runtime_error("Method call parameters count mismatch");
   }
   for (int i = 0; i < node->parameters_.size(); ++i) {
     node->parameters_[i]->accept(*this);
     auto para_type = node->parameters_[i]->value_info_->getType();
-    if (!para_type->isEqual(method_info->getParametersType()[i].get())) {
+    if (!judgeTypeEqual(para_type.get(), target_parameters[i].get(), true)) {
       throw std::runtime_error("Method call parameters type mismatch");
     }
   }

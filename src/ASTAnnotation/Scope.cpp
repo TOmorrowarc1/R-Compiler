@@ -64,7 +64,6 @@ auto Scope::getSymbol(const std::string &name) const
     }
     cursor = cursor->parent_;
   }
-  throw std::runtime_error("Symbol not found: " + name);
   return nullptr;
 }
 

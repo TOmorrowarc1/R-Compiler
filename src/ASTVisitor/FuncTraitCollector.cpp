@@ -23,8 +23,14 @@ auto FuncTraitCollector::fnNodeToFunc(const ItemFnNode *node)
   for (const auto &param : node->parameters_) {
     parameters.push_back(const_evaluator_->evaluateType(param.type.get()));
   }
-  return std::make_shared<SymbolFunctionInfo>(node->ID_, return_type,
-                                              std::move(parameters));
+  auto result = std::make_shared<SymbolFunctionInfo>(node->ID_, return_type,
+                                                     std::move(parameters));
+  if (node->fn_type_ == FnType::MutMethod) {
+    result->setFnType(SymbolFunctionInfo::FnType::MutMethod);
+  } else {
+    result->setFnType(SymbolFunctionInfo::FnType::Method);
+  }
+  return result;
 }
 
 void FuncTraitCollector::visit(ASTRootNode *node) {
@@ -50,9 +56,38 @@ void FuncTraitCollector::visit(ItemFnNode *node) {
     node->body_->accept(*this);
     current_scope_ = current_scope_->getParent();
   }
-  // Only is out of types/traits can the func be added into the scope.
-  if (!in_type_) {
+  auto func_info = fnNodeToFunc(node);
+  if (ctx_name_.empty()) {
     current_scope_->addFunction(node->ID_, fnNodeToFunc(node));
+  } else {
+    std::string name = ctx_name_.top();
+    if (context_.top() == ContextType::IN_TYPE_DEF) {
+      auto type_def = current_scope_->getType(name)->getType();
+      if (node->fn_type_ == FnType::Fn) {
+        if (!type_def->addAssociatedFunction(node->ID_, func_info)) {
+          throw CompilerException("Duplicate associated function name: ",
+                                  node->position_);
+        }
+      } else {
+        if (!type_def->addMethod(node->ID_, func_info)) {
+          throw CompilerException("Duplicate method name: " + node->ID_,
+                                  node->position_);
+        }
+      }
+    } else {
+      auto trait_def = current_scope_->getTrait(name)->getTrait();
+      if (node->fn_type_ == FnType::Fn) {
+        if (!trait_def->addFunction(node->ID_, func_info)) {
+          throw CompilerException(
+              "Duplicate function name in trait:" + node->ID_, node->position_);
+        }
+      } else {
+        if (!trait_def->addMethod(node->ID_, func_info)) {
+          throw CompilerException(
+              "Duplicate method name in trait: " + node->ID_, node->position_);
+        }
+      }
+    }
   }
 }
 
@@ -69,62 +104,31 @@ void FuncTraitCollector::visit(ItemImplNode *node) {
     throw std::runtime_error("Impl type must be a path type");
   }
   const auto type_path = dynamic_cast<const TypePathNode *>(node->type_.get());
-  std::string type_name = type_path->path_->getPathIndexName(0);
-  auto type_def = current_scope_->getType(type_name)->getType();
-  in_type_ = true;
+  ctx_name_.push(type_path->path_->getPathIndexName(0));
+  context_.push(ContextType::IN_TYPE_DEF);
   for (const auto &item : node->items_) {
     if (item.function) {
       item.function->accept(*this);
-      auto func = fnNodeToFunc(item.function.get());
-      if (item.function->fn_type_ == FnType::Fn) {
-        if (!type_def->addAssociatedFunction(func->getName(), func)) {
-          throw CompilerException("Duplicate associated function name: ",
-                                  node->position_);
-        }
-      } else {
-        if (item.function->fn_type_ == FnType::MutMethod) {
-          func->setFnType(SymbolFunctionInfo::FnType::MutMethod);
-        } else {
-          func->setFnType(SymbolFunctionInfo::FnType::Method);
-        }
-        if (!type_def->addMethod(func->getName(), func)) {
-          throw CompilerException("Duplicate method name: " + func->getName(),
-                                  node->position_);
-        }
-      }
     } else {
       item.constant->accept(*this);
     }
   }
+  context_.pop();
+  ctx_name_.pop();
 }
 
 void FuncTraitCollector::visit(ItemTraitNode *node) {
-  std::string trait_name = node->trait_name_;
-  auto trait_def = current_scope_->getTrait(trait_name)->getTrait();
-  in_type_ = true;
+  ctx_name_.push(node->trait_name_);
+  context_.push(ContextType::IN_TRAIT_DEF);
   for (const auto &item : node->items_) {
     if (item.function) {
       item.function->accept(*this);
-      auto func = fnNodeToFunc(item.function.get());
-      if (item.function->fn_type_ == FnType::Fn) {
-        if (!trait_def->addFunction(func->getName(), func)) {
-          throw CompilerException("Duplicate function name: ", node->position_);
-        }
-      } else {
-        if (item.function->fn_type_ == FnType::MutMethod) {
-          func->setFnType(SymbolFunctionInfo::FnType::MutMethod);
-        } else {
-          func->setFnType(SymbolFunctionInfo::FnType::Method);
-        }
-        if (!trait_def->addMethod(func->getName(), func)) {
-          throw CompilerException("Duplicate method name: " + func->getName(),
-                                  node->position_);
-        }
-      }
     } else {
       item.constant->accept(*this);
     }
   }
+  context_.pop();
+  ctx_name_.pop();
 }
 
 void FuncTraitCollector::visit(ExprArrayNode *node) {
