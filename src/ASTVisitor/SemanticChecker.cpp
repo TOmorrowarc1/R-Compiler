@@ -168,13 +168,15 @@ auto SemanticChecker::exitCheck(const ExprNode *node) -> bool {
 void SemanticChecker::visit(ASTRootNode *node) {
   int32_t main_count = 0;
   for (auto &item : node->items_) {
-    item->accept(*this);
     if (is_instance_of<ItemFnNode, ItemNode>(item.get())) {
       auto fn_node = static_cast<ItemFnNode *>(item.get());
       if (fn_node->ID_ == "main" && fn_node->fn_type_ == FnType::Fn) {
         ++main_count;
+        is_main_ = true;
       }
     }
+    item->accept(*this);
+    is_main_ = false;
   }
   if (main_count != 1) {
     throw std::runtime_error("No or more than one main function found.");
@@ -213,9 +215,7 @@ void SemanticChecker::visit(ItemFnNode *node) {
     auto return_type_kind =
         const_evaluator_->evaluateType(node->return_type_.get());
     fn_type_stack_.push(return_type_kind);
-    is_main_ = node->ID_ == "main";
     node->body_->accept(*this);
-    is_main_ = false;
     auto expr_type = node->body_->value_info_->getType().get();
     if (!judgeTypeEqual(expr_type, return_type_kind.get(), true)) {
       throw std::runtime_error("Function return type mismatch");
@@ -307,14 +307,21 @@ void SemanticChecker::visit(ExprArrayIndexNode *node) {
 
 void SemanticChecker::visit(ExprBlockNode *node) {
   current_scope_ = current_scope_->getNextChildScope();
-  for (auto &stmt : node->statements_) {
-    stmt->accept(*this);
+  int32_t length = node->statements_.size();
+  for (int32_t i = 0; i < length; ++i) {
+    can_exit_ = (is_main_ && node->return_value_ == nullptr && i == length - 1);
+    node->statements_[i]->accept(*this);
   }
   if (node->return_value_) {
-    if (is_main_ && !exitCheck(node->return_value_.get())) {
-      throw std::runtime_error("Main function must end with exit().");
+    if (is_main_) {
+      // Special check for exit().
+      can_exit_ = true;
+      if (!exitCheck(node->return_value_.get())) {
+        throw std::runtime_error("Main function must end with exit().");
+      }
     }
     node->return_value_->accept(*this);
+    can_exit_ = false;
     auto return_type = node->return_value_->value_info_->getType();
     node->value_info_ =
         std::make_unique<ValueInfo>(std::move(return_type), false, false);
@@ -359,6 +366,10 @@ void SemanticChecker::visit(ExprCallNode *node) {
   std::shared_ptr<SymbolFunctionInfo> function_info;
   if (path->segments_.size() == 1) {
     auto function_name = path->getPathIndexName(0);
+    if (function_name == "exit" && !can_exit_) {
+      // Special check for exit function.
+      throw std::runtime_error("Cannot call exit() here.");
+    }
     auto function = current_scope_->getSymbol(function_name);
     if (!function ||
         !is_instance_of<SymbolFunctionInfo, SymbolInfo>(function.get())) {

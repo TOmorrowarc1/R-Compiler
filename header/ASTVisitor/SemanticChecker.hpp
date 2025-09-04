@@ -42,6 +42,7 @@ private:
   std::stack<std::shared_ptr<TypeKind>> fn_type_stack_;
   std::stack<std::shared_ptr<LoopContext>> loop_type_stack_;
   bool is_main_;
+  bool can_exit_;
 
   auto bindVarSymbol(const PatternNode *pattern_node,
                      std::shared_ptr<TypeKind> type) -> bool;
