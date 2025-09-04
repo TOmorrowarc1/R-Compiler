@@ -22,8 +22,12 @@ auto parsePathNode(TokenStream &stream) -> std::unique_ptr<PathNode> {
 auto parsePathSegment(TokenStream &stream) -> PathSegment {
   Position position = stream.peek().line;
   switch (stream.peek().type) {
-  case TokenType::IDENTIFIER:
-    return {PathSegmentType::IDENTIFER, stream.next().content};
+  case TokenType::IDENTIFIER: {
+    std::string type_name = stream.next().content;
+    type_name = (type_name == "String") ? "str" : type_name;
+    return {PathSegmentType::IDENTIFER, type_name};
+  }
+
   case TokenType::SELF:
     stream.next();
     return {PathSegmentType::SELF, "self"};

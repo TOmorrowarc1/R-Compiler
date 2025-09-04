@@ -41,6 +41,7 @@ private:
   std::shared_ptr<TypeDef> current_impl_type_;
   std::stack<std::shared_ptr<TypeKind>> fn_type_stack_;
   std::stack<std::shared_ptr<LoopContext>> loop_type_stack_;
+  bool is_main_;
 
   auto bindVarSymbol(const PatternNode *pattern_node,
                      std::shared_ptr<TypeKind> type) -> bool;
@@ -53,6 +54,8 @@ private:
   auto fnNodeToFunc(const ItemFnNode *node)
       -> std::shared_ptr<SymbolFunctionInfo>;
   auto implCheck(ItemImplNode *node) -> bool;
+
+  auto exitCheck(const ExprNode *node) -> bool;
 
 public:
   SemanticChecker(Scope *initial_scope, ConstEvaluator *const_evaluator);

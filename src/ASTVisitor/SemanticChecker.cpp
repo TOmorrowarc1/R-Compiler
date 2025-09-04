@@ -33,6 +33,7 @@ SemanticChecker::SemanticChecker(Scope *initial_scope,
                                  ConstEvaluator *const_evaluator)
     : current_scope_(initial_scope), const_evaluator_(const_evaluator) {
   const_evaluator_->bindScopePointer(&current_scope_);
+  is_main_ = false;
 }
 SemanticChecker::~SemanticChecker() = default;
 
@@ -150,9 +151,33 @@ auto SemanticChecker::implCheck(ItemImplNode *node) -> bool {
   return all_consts.empty() && all_functions.empty();
 }
 
+auto SemanticChecker::exitCheck(const ExprNode *node) -> bool {
+  auto exit_func = dynamic_cast<const ExprCallNode *>(node);
+  if (exit_func == nullptr ||
+      !is_instance_of<ExprPathNode, ExprNode>(exit_func->caller_.get())) {
+    return false;
+  }
+  auto path =
+      static_cast<ExprPathNode *>(exit_func->caller_.get())->path_.get();
+  if (path->segments_.size() != 1 || path->getPathIndexName(0) != "exit") {
+    return false;
+  }
+  return true;
+}
+
 void SemanticChecker::visit(ASTRootNode *node) {
+  int32_t main_count = 0;
   for (auto &item : node->items_) {
     item->accept(*this);
+    if (is_instance_of<ItemFnNode, ItemNode>(item.get())) {
+      auto fn_node = static_cast<ItemFnNode *>(item.get());
+      if (fn_node->ID_ == "main" && fn_node->fn_type_ == FnType::Fn) {
+        ++main_count;
+      }
+    }
+  }
+  if (main_count != 1) {
+    throw std::runtime_error("No or more than one main function found.");
   }
 }
 
@@ -188,7 +213,9 @@ void SemanticChecker::visit(ItemFnNode *node) {
     auto return_type_kind =
         const_evaluator_->evaluateType(node->return_type_.get());
     fn_type_stack_.push(return_type_kind);
+    is_main_ = node->ID_ == "main";
     node->body_->accept(*this);
+    is_main_ = false;
     auto expr_type = node->body_->value_info_->getType().get();
     if (!judgeTypeEqual(expr_type, return_type_kind.get(), true)) {
       throw std::runtime_error("Function return type mismatch");
@@ -284,6 +311,9 @@ void SemanticChecker::visit(ExprBlockNode *node) {
     stmt->accept(*this);
   }
   if (node->return_value_) {
+    if (is_main_ && !exitCheck(node->return_value_.get())) {
+      throw std::runtime_error("Main function must end with exit().");
+    }
     node->return_value_->accept(*this);
     auto return_type = node->return_value_->value_info_->getType();
     node->value_info_ =
@@ -294,6 +324,12 @@ void SemanticChecker::visit(ExprBlockNode *node) {
     if (!node->statements_.empty()) {
       auto stmt = dynamic_cast<StmtExprNode *>(node->statements_.back().get());
       if (stmt != nullptr) {
+        if (is_main_) {
+          auto expr = dynamic_cast<ExprCallNode *>(stmt->expr_.get());
+          if (expr == nullptr || !exitCheck(expr)) {
+            throw std::runtime_error("Main function must end with exit().");
+          }
+        }
         auto expr = dynamic_cast<ExprReturnNode *>(stmt->expr_.get());
         if (expr != nullptr) {
           block_type = std::make_shared<TypeKindNever>();
@@ -749,7 +785,8 @@ void SemanticChecker::visit(ExprMethodNode *node) {
         std::dynamic_pointer_cast<TypeKindRefer>(instance_type)->getType();
   }
   if (is_instance_of<TypeKindArray, TypeKind>(instance_type.get())) {
-    // Specialization dealing with the len(), the only builtin method of array.
+    // Specialization dealing with the len(), the only builtin method of
+    // array.
     auto array_type = std::dynamic_pointer_cast<TypeKindArray>(instance_type);
     if (node->ID_ == "len" && node->parameters_.size() == 0) {
       auto usize_type = current_scope_->getType("usize")->getType();
@@ -758,6 +795,11 @@ void SemanticChecker::visit(ExprMethodNode *node) {
       return;
     }
     throw std::runtime_error("Array has no such method");
+  }
+  if (is_instance_of<TypeKindPossi, TypeKind>(instance_type.get())) {
+    // dealing with constant num builtin-fixed on usize.
+    auto usize_type = current_scope_->getType("usize")->getType();
+    instance_type = std::make_shared<TypeKindPath>(usize_type);
   }
   auto path_type = dynamic_cast<TypeKindPath *>(instance_type.get());
   if (!path_type) {
