@@ -2,7 +2,7 @@
 #include "ValueInfo.hpp"
 #include "Visitor.hpp"
 
-ExprLiteralIntNode::ExprLiteralIntNode(int32_t value, IntType int_type,
+ExprLiteralIntNode::ExprLiteralIntNode(uint32_t value, IntType int_type,
                                        Position position)
     : ExprLiteralNode(position), int_type_(int_type), value_(value) {}
 ExprLiteralIntNode::~ExprLiteralIntNode() = default;

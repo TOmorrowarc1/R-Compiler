@@ -12,9 +12,9 @@ class ExprLiteralIntNode : public ExprLiteralNode {
 public:
   enum class IntType { I32, U32, ISIZE, USIZE, NUM };
   IntType int_type_;
-  int32_t value_;
+  uint32_t value_;
 
-  ExprLiteralIntNode(int32_t value, IntType int_type, Position position);
+  ExprLiteralIntNode(uint32_t value, IntType int_type, Position position);
   ~ExprLiteralIntNode();
   void accept(Visitor &visitor) override;
 };
