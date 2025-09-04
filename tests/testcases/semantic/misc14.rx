@@ -55,7 +55,7 @@ fn main() {
         return;
     }
     
-    let result: i32;
+    let mut result: i32;
     if (method == 1) {
         result = power_iterative(base, exponent);
     } else {

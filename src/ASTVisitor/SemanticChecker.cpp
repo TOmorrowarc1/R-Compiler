@@ -893,9 +893,9 @@ void SemanticChecker::visit(StmtLetNode *node) {
     bindVarSymbol(node->pattern_.get(), type);
     if (node->init_value_) {
       node->init_value_->accept(*this);
-    }
-    if (!node->init_value_->value_info_->getType()->isEqual(type.get())) {
-      throw std::runtime_error("Type mismatch in let statement initialization");
+      if (!node->init_value_->value_info_->getType()->isEqual(type.get())) {
+        throw std::runtime_error("Type mismatch in let statement initialization");
+      }
     }
   } else {
     throw std::runtime_error("Only ID and _ are supported in let stmt.");
