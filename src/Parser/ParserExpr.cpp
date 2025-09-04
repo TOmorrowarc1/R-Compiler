@@ -225,6 +225,13 @@ auto parseExprNode(TokenStream &stream, int32_t power)
     if (left_power <= power) {
       break;
     }
+    // Special judgement for if-no else expr.
+    if (is_instance_of<ExprIfNode, ExprNode>(result.get())) {
+      auto if_check = static_cast<ExprIfNode *>(result.get());
+      if (if_check->else_block_ == nullptr) {
+        break;
+      }
+    }
     stream.next();
     result = parseLedExprNode(stream, token, std::move(result));
   }
