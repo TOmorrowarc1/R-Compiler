@@ -159,7 +159,7 @@ fn factorization_check_recursive(n: i32, divisor: i32) -> i32 {
 fn main() {
     let n: i32 = getInt();
     
-    if primality_test_with_precheck(n) {
+    if (primality_test_with_precheck(n)) {
         printInt(1); // Probably prime
     } else {
         let factor: i32 = factorization_check_recursive(n, 2);
