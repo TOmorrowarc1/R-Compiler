@@ -26,6 +26,6 @@ fn main() {
     if (condition) {
         printInt(processed);
     }
-    let array_val: i32 = [processed][0];
+    let array_val: i32 = [processed][0;
     exit(0);
 }
