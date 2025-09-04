@@ -11,7 +11,7 @@ fn binary_search(arr: &[i32; 20], target: i32) -> i32 {
     let mut low: usize = 0usize;
     let mut high: usize = 19usize;
     let mut comparisons: i32 = 0;
-    let mut result = -1;
+    let mut result: i32 = -1;
     while (low <= high) {
         comparisons += 1;
         let mid: usize = (low + high) / 2;
@@ -56,7 +56,7 @@ fn difference_sum(arr: &[i32; 20], avg: i32) -> i32 {
     let mut diff_sum: i32 = 0;
     let mut i: usize = 0usize;
     while (i < 20) {
-        let diff = if (arr[i] > avg) { arr[i] - avg } else { avg - arr[i] };
+        let diff: i32 = if (arr[i] > avg) { arr[i] - avg } else { avg - arr[i] };
         diff_sum += diff;
         i += 1;
     }
