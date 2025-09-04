@@ -664,6 +664,10 @@ void SemanticChecker::visit(ExprOperBinaryNode *node) {
       throw std::runtime_error(
           "Calculation binary operation operands must be numeric");
     }
+    if (!judgeTypeEqual(lhs_type.get(), rhs_type.get(), false)) {
+      throw std::runtime_error(
+          "Calculation binary operation operands must have the same type");
+    }
     node->value_info_ =
         std::make_unique<ValueInfo>(std::move(lhs_type), false, false);
   }
