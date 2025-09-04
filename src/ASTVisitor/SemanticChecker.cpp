@@ -698,6 +698,11 @@ void SemanticChecker::visit(ExprFieldNode *node) {
     throw std::runtime_error("Field " + node->ID_ + " not found in type");
   }
   bool is_mut = node->instance_->value_info_->isMutable();
+  auto refer_type = std::dynamic_pointer_cast<TypeKindRefer>(
+      node->instance_->value_info_->getType());
+  if (refer_type != nullptr && refer_type->isMutRef()) {
+    is_mut = true;
+  }
   node->value_info_ = std::make_unique<ValueInfo>(member_type, true, is_mut);
 }
 
