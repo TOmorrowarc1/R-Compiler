@@ -9,7 +9,7 @@ Comment: Red-Black Tree implementation (self-balancing BST)
 
 // Red-Black Tree implementation (self-balancing BST)
 // Maintains balance through color properties and rotations
-#[derive(Copy, Clone)]
+
 struct RBNode {
     value: i32,
     color: bool, // true for RED, false for BLACK
