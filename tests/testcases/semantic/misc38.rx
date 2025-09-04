@@ -78,7 +78,7 @@ fn quadratic_sieve(n: i32) -> i32 {
         if (y_squared > 0) {
             let y: i32 = isqrt(y_squared);
             if (y * y == y_squared) {
-                let factor = if (x > y) { x - y } else { y - x };
+                let factor: i32 = if (x > y) { x - y } else { y - x };
                 if (factor > 1 && factor < n) {
                     return factor;
                 }

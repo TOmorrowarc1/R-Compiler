@@ -54,7 +54,7 @@ fn recursive_multiply(a: &[i32; 64], b: &[i32; 64], result: &mut [i32; 64],
     let mut temp_result: [i32; 64] = [0; 64];
     
     // Copy first half
-    let mut i = 0;
+    let mut i: usize = 0;
     while (i < half) {
         temp_a[i] = a[i];
         temp_b[i] = b[i];
