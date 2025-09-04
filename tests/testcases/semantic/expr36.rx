@@ -313,7 +313,7 @@ fn main() {
         printInt(verified_output);
     } else {
         let emergency_value: i32 = 2718;
-        let backup: i32 = emergency_value + (performance_metrics % 1000);
+        let backup: i32 = emergency_value + (performance_metrics % 1000)
         printInt(backup);
     }
     exit(0);
