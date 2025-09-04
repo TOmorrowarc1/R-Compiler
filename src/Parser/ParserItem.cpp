@@ -167,6 +167,10 @@ auto parseItemConstNode(TokenStream &stream) -> std::unique_ptr<ItemConstNode> {
     stream.next();
     value = parseExprNode(stream);
   }
+  if (stream.peek().type != TokenType::SEMICOLON) {
+    throw CompilerException("Expected ';' after const declaration", position);
+  }
+  stream.next();
   return std::make_unique<ItemConstNode>(name, std::move(type),
                                          std::move(value), position);
 }
