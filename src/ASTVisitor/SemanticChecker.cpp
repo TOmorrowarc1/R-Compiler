@@ -713,6 +713,17 @@ void SemanticChecker::visit(ExprMethodNode *node) {
     instance_type =
         std::dynamic_pointer_cast<TypeKindRefer>(instance_type)->getType();
   }
+  if (is_instance_of<TypeKindArray, TypeKind>(instance_type.get())) {
+    // Specialization dealing with the len(), the only builtin method of array.
+    auto array_type = std::dynamic_pointer_cast<TypeKindArray>(instance_type);
+    if (node->ID_ == "len" && node->parameters_.size() == 0) {
+      auto usize_type = current_scope_->getType("usize")->getType();
+      node->value_info_ = std::make_unique<ValueInfo>(
+          std::make_shared<TypeKindPath>(usize_type), false, false);
+      return;
+    }
+    throw std::runtime_error("Array has no such method");
+  }
   auto path_type = dynamic_cast<TypeKindPath *>(instance_type.get());
   if (!path_type) {
     throw std::runtime_error("Instance requires a path type");

@@ -81,6 +81,14 @@ void scopeBuiltInInit(Scope *global_scope) {
     global_scope->addFunction("getString", func);
   }
   {
+    // fn getInt() -> i32
+    std::vector<std::shared_ptr<TypeKind>> params;
+    auto return_type = getTypeKind(global_scope, "i32");
+    auto func = std::make_shared<SymbolFunctionInfo>("getInt", return_type,
+                                                     std::move(params));
+    global_scope->addFunction("getInt", func);
+  }
+  {
     // fn exit(code: i32) -> unit
     std::vector<std::shared_ptr<TypeKind>> params;
     auto return_type = getTypeKind(global_scope, "unit");
@@ -88,6 +96,16 @@ void scopeBuiltInInit(Scope *global_scope) {
     auto func = std::make_shared<SymbolFunctionInfo>("exit", return_type,
                                                      std::move(params));
     global_scope->addFunction("exit", func);
+  }
+  {
+    // fn from(&str) -> String
+    std::vector<std::shared_ptr<TypeKind>> params;
+    auto return_type = getTypeKind(global_scope, "str");
+    auto str_type = getTypeKind(global_scope, "str");
+    params.push_back(std::make_shared<TypeKindRefer>(str_type, false));
+    auto func = std::make_shared<SymbolFunctionInfo>("from", return_type,
+                                                     std::move(params));
+    global_scope->addFunction("from", func);
   }
 
   // Add built-in methods.
@@ -103,17 +121,58 @@ void scopeBuiltInInit(Scope *global_scope) {
     type_def->addMethod("to_string", func);
   }
   {
-    // impl str
-    auto type_def = global_scope->getType("str")->getType();
-    // fn len(&self) -> i32
+    // impl usize
+    auto type_def = global_scope->getType("usize")->getType();
+    // fn toString(&self) -> str
     std::vector<std::shared_ptr<TypeKind>> params;
-    auto return_type = getTypeKind(global_scope, "u32");
-    auto func = std::make_shared<SymbolFunctionInfo>("len", return_type,
+    auto return_type = getTypeKind(global_scope, "str");
+    auto func = std::make_shared<SymbolFunctionInfo>("to_string", return_type,
                                                      std::move(params));
     func->setFnType(SymbolFunctionInfo::FnType::Method);
-    type_def->addMethod("len", func);
-    // for reference.
-    // fn as_str (&self) -> &str
+    type_def->addMethod("to_string", func);
+  }
+  {
+    // impl str
+    auto type_def = global_scope->getType("str")->getType();
+    {
+      // fn len(&self) -> i32
+      std::vector<std::shared_ptr<TypeKind>> params;
+      auto return_type = getTypeKind(global_scope, "u32");
+      auto func = std::make_shared<SymbolFunctionInfo>("len", return_type,
+                                                       std::move(params));
+      func->setFnType(SymbolFunctionInfo::FnType::Method);
+      type_def->addMethod("len", func);
+    }
+    {
+      // fn as_str (&self) -> &str
+      std::vector<std::shared_ptr<TypeKind>> params;
+      auto str_type = getTypeKind(global_scope, "str");
+      auto refer_type = std::make_shared<TypeKindRefer>(str_type, false);
+      auto func = std::make_shared<SymbolFunctionInfo>("as_str", refer_type,
+                                                       std::move(params));
+      func->setFnType(SymbolFunctionInfo::FnType::Method);
+      type_def->addMethod("as_str", func);
+    }
+    {
+      // fn as_mut_str(&mut self)->&mut str
+      std::vector<std::shared_ptr<TypeKind>> params;
+      auto str_type = getTypeKind(global_scope, "str");
+      auto refer_type = std::make_shared<TypeKindRefer>(str_type, true);
+      auto func = std::make_shared<SymbolFunctionInfo>("as_mut_str", refer_type,
+                                                       std::move(params));
+      func->setFnType(SymbolFunctionInfo::FnType::MutMethod);
+      type_def->addMethod("as_mut_str", func);
+    }
+    {
+      // fn append(&mut self, str) -> ()
+      std::vector<std::shared_ptr<TypeKind>> params;
+      auto return_type = getTypeKind(global_scope, "unit");
+      params.push_back(getTypeKind(global_scope, "str"));
+      auto func = std::make_shared<SymbolFunctionInfo>("append", return_type,
+                                                       std::move(params));
+      func->setFnType(SymbolFunctionInfo::FnType::MutMethod);
+      global_scope->addFunction("append", func);
+    }
   }
 }
 
