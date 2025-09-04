@@ -9,7 +9,7 @@ Comment: Minimum Spanning Tree using Kruskal's Algorithm with Union-Find
 
 // Minimum Spanning Tree using Kruskal's Algorithm
 // With Union-Find (Disjoint Set Union) data structure
-#[derive(Copy, Clone)]
+
 struct Edge {
     src: i32,
     dest: i32,
