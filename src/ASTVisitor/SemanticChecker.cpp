@@ -33,7 +33,6 @@ SemanticChecker::SemanticChecker(Scope *initial_scope,
                                  ConstEvaluator *const_evaluator)
     : current_scope_(initial_scope), const_evaluator_(const_evaluator) {
   const_evaluator_->bindScopePointer(&current_scope_);
-  is_main_ = false;
 }
 SemanticChecker::~SemanticChecker() = default;
 
@@ -172,11 +171,11 @@ void SemanticChecker::visit(ASTRootNode *node) {
       auto fn_node = static_cast<ItemFnNode *>(item.get());
       if (fn_node->ID_ == "main" && fn_node->fn_type_ == FnType::Fn) {
         ++main_count;
-        is_main_ = true;
+        exit_checker_.enterMain();
       }
     }
     item->accept(*this);
-    is_main_ = false;
+    exit_checker_.exitMain();
   }
   if (main_count != 1) {
     throw std::runtime_error("No or more than one main function found.");
@@ -307,33 +306,37 @@ void SemanticChecker::visit(ExprArrayIndexNode *node) {
 
 void SemanticChecker::visit(ExprBlockNode *node) {
   current_scope_ = current_scope_->getNextChildScope();
+  exit_checker_.addScope();
   int32_t length = node->statements_.size();
-  for (int32_t i = 0; i < length; ++i) {
-    can_exit_ = (is_main_ && node->return_value_ == nullptr && i == length - 1);
+  for (int32_t i = 0; i < length - 1; ++i) {
     node->statements_[i]->accept(*this);
   }
   if (node->return_value_) {
-    if (is_main_) {
-      // Special check for exit().
-      can_exit_ = true;
+    if (!node->statements_.empty()) {
+      node->statements_.back()->accept(*this);
+    }
+    exit_checker_.atEnd();
+    if (exit_checker_.canExit()) {
       if (!exitCheck(node->return_value_.get())) {
         throw std::runtime_error("Main function must end with exit().");
       }
     }
     node->return_value_->accept(*this);
-    can_exit_ = false;
+    exit_checker_.notAtEnd();
     auto return_type = node->return_value_->value_info_->getType();
     node->value_info_ =
         std::make_unique<ValueInfo>(std::move(return_type), false, false);
   } else {
     std::shared_ptr<TypeKind> block_type = std::make_shared<TypeKindPath>(
         current_scope_->getType("unit")->getType());
+    exit_checker_.atEnd();
     if (!node->statements_.empty()) {
+      node->statements_.back()->accept(*this);
       auto stmt = dynamic_cast<StmtExprNode *>(node->statements_.back().get());
       if (stmt != nullptr) {
-        if (is_main_) {
-          auto expr = dynamic_cast<ExprCallNode *>(stmt->expr_.get());
-          if (expr == nullptr || !exitCheck(expr)) {
+        if (exit_checker_.canExit()) {
+          auto exit_expr = dynamic_cast<ExprCallNode *>(stmt->expr_.get());
+          if (exit_expr == nullptr || !exitCheck(exit_expr)) {
             throw std::runtime_error("Main function must end with exit().");
           }
         }
@@ -343,10 +346,12 @@ void SemanticChecker::visit(ExprBlockNode *node) {
         }
       }
     }
+    exit_checker_.notAtEnd();
     node->value_info_ =
         std::make_unique<ValueInfo>(std::move(block_type), false, false);
   }
   // Block expr return a anonymous value.
+  exit_checker_.removeScope();
   current_scope_ = current_scope_->getParent();
 }
 
@@ -366,7 +371,7 @@ void SemanticChecker::visit(ExprCallNode *node) {
   std::shared_ptr<SymbolFunctionInfo> function_info;
   if (path->segments_.size() == 1) {
     auto function_name = path->getPathIndexName(0);
-    if (function_name == "exit" && !can_exit_) {
+    if (function_name == "exit" && !exit_checker_.canExit()) {
       // Special check for exit function.
       throw std::runtime_error("Cannot call exit() here.");
     }

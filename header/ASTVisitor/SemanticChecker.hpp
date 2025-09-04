@@ -34,15 +34,36 @@ struct LoopContext {
   auto breakAdd(std::shared_ptr<TypeKind> type) -> bool;
 };
 
+class CanExitChecker {
+private:
+  int32_t in_main_levels_;
+  bool at_end_;
+
+public:
+  CanExitChecker() : in_main_levels_(0) {}
+  ~CanExitChecker() = default;
+  void enterMain() { in_main_levels_ = 1; }
+  void exitMain() { in_main_levels_ = 0; }
+  void addScope() {
+    in_main_levels_ = in_main_levels_ == 0 ? 0 : in_main_levels_ + 1;
+  }
+  void removeScope() {
+    in_main_levels_ = in_main_levels_ == 0 ? 0 : in_main_levels_ - 1;
+  }
+  void atEnd() { at_end_ = inMainScope(); }
+  void notAtEnd() { at_end_ = false; }
+  auto inMainScope() const -> bool { return in_main_levels_ == 2; }
+  auto canExit() const -> bool { return at_end_; }
+};
+
 class SemanticChecker : public Visitor {
 private:
   Scope *current_scope_;
   ConstEvaluator *const_evaluator_;
+  CanExitChecker exit_checker_;
   std::shared_ptr<TypeDef> current_impl_type_;
   std::stack<std::shared_ptr<TypeKind>> fn_type_stack_;
   std::stack<std::shared_ptr<LoopContext>> loop_type_stack_;
-  bool is_main_;
-  bool can_exit_;
 
   auto bindVarSymbol(const PatternNode *pattern_node,
                      std::shared_ptr<TypeKind> type) -> bool;

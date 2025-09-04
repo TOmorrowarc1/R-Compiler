@@ -488,7 +488,7 @@ auto parseExprBlockNode(TokenStream &stream) -> std::unique_ptr<ExprBlockNode> {
     case TokenType::IMPL:
       statements.push_back(parseStmtNode(stream));
       break;
-    default:
+    default: {
       auto expr = parseExprNode(stream);
       if (stream.peek().type == TokenType::SEMICOLON) {
         stream.next();
@@ -504,6 +504,7 @@ auto parseExprBlockNode(TokenStream &stream) -> std::unique_ptr<ExprBlockNode> {
         auto stmt = std::make_unique<StmtExprNode>(std::move(expr), position);
         statements.push_back(std::move(stmt));
       }
+    }
     }
   }
   stream.next();
