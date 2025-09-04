@@ -258,6 +258,7 @@ auto parseNudExprNode(TokenStream &stream, int32_t power)
   case TokenType::MINUS:
   case TokenType::NOT:
   case TokenType::AND:
+  case TokenType::MUL:
     return parseExprOperUnaryNode(stream);
   case TokenType::LEFT_PAREN: {
     stream.next();
