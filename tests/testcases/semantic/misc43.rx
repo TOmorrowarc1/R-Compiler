@@ -9,7 +9,7 @@ Comment: Elliptic curve point addition and scalar multiplication over finite fie
 
 // Elliptic curve point addition and scalar multiplication
 // Implements elliptic curve operations over finite fields
-#[derive(Copy, Clone)]
+
 struct EllipticPoint {
     x: i32,
     y: i32,
