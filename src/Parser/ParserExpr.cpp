@@ -93,6 +93,8 @@ const std::vector<bindPower> led_powers = {
     {TokenType::CSTRINGLITERAL, 0, 0},
     {TokenType::RAWCSTRINGLITERAL, 0, 0},
     {TokenType::CHARLITERAL, 0, 0},
+    {TokenType::TRUE, 0, 0},
+    {TokenType::FALSE, 0, 0},
     {TokenType::IDENTIFIER, 0, 0},
     {TokenType::IF, 0, 0},
     {TokenType::LOOP, 0, 0},
