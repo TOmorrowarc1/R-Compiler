@@ -27,6 +27,7 @@ well-formed and not lead to infinite recursion.
 class TypeKind;
 class TypeDef;
 class ConstEvaluator;
+class ValueInfo;
 
 struct LoopContext {
   std::shared_ptr<TypeKind> loop_type;
@@ -47,6 +48,7 @@ private:
   auto judgeTypeEqual(const ExprNode *node, const std::string &name) -> bool;
   auto judgeTypeEqual(const TypeKind *lhs, const TypeKind *rhs, bool allow_cast)
       -> bool;
+  auto judgeValueMutable(const ValueInfo *value_info) -> bool;
 
   auto fnNodeToFunc(const ItemFnNode *node)
       -> std::shared_ptr<SymbolFunctionInfo>;

@@ -86,6 +86,15 @@ auto SemanticChecker::judgeTypeEqual(const TypeKind *lhs, const TypeKind *rhs,
   return ::judgeTypeEqual(lhs, rhs, allow_cast);
 }
 
+auto SemanticChecker::judgeValueMutable(const ValueInfo *value_info) -> bool {
+  auto type = value_info->getType();
+  auto refer_type = dynamic_shared_ptr_cast<TypeKindRefer>(type);
+  if (refer_type != nullptr) {
+    return refer_type->isMutRef();
+  }
+  return value_info->isMutable();
+}
+
 auto SemanticChecker::fnNodeToFunc(const ItemFnNode *node)
     -> std::shared_ptr<SymbolFunctionInfo> {
   std::vector<std::shared_ptr<TypeKind>> parameters;
@@ -266,7 +275,7 @@ void SemanticChecker::visit(ExprArrayIndexNode *node) {
       std::dynamic_pointer_cast<TypeKindArray>(array_type)->getType();
   node->value_info_ = std::make_unique<ValueInfo>(
       std::move(element_type), node->array_->value_info_->isLeftValue(),
-      node->array_->value_info_->isMutable());
+      judgeValueMutable(node->array_->value_info_.get()));
 }
 
 void SemanticChecker::visit(ExprBlockNode *node) {
@@ -369,8 +378,14 @@ void SemanticChecker::visit(ExprReturnNode *node) {
   if (fn_type_stack_.empty()) {
     throw std::runtime_error("Return statement not in a function");
   }
-  node->value_->accept(*this);
-  auto value_type = node->value_->value_info_->getType();
+  std::shared_ptr<TypeKind> value_type;
+  if (node->value_ != nullptr) {
+    node->value_->accept(*this);
+    value_type = node->value_->value_info_->getType();
+  } else {
+    auto unit_type = current_scope_->getType("unit")->getType();
+    value_type = std::make_shared<TypeKindPath>(unit_type);
+  }
   if (!judgeTypeEqual(value_type.get(), fn_type_stack_.top().get(), true)) {
     throw std::runtime_error("Return type mismatch");
   }
@@ -534,7 +549,7 @@ void SemanticChecker::visit(ExprOperBinaryNode *node) {
     if (!node->lhs_->value_info_->isLeftValue()) {
       throw std::runtime_error("Assignment requires lhs to be a left value");
     }
-    if (!node->lhs_->value_info_->isMutable()) {
+    if (!judgeValueMutable(node->lhs_->value_info_.get())) {
       throw std::runtime_error("Assignment requires lhs to be mutable");
     }
     auto unit_type = current_scope_->getType("unit")->getType();
@@ -578,10 +593,11 @@ void SemanticChecker::visit(ExprOperBinaryNode *node) {
   case BinaryOperator::RIGHT_SHIFT_EQUAL:
   case BinaryOperator::XOR_EQUAL:
   case BinaryOperator::OR_EQUAL: {
-    if (!node->lhs_->value_info_->isLeftValue() ||
-        !node->lhs_->value_info_->isMutable()) {
-      throw std::runtime_error(
-          "Compound assignment requires lhs to be a mutable left value");
+    if (!node->lhs_->value_info_->isLeftValue()) {
+      throw std::runtime_error("Assignment requires lhs to be a left value");
+    }
+    if (!judgeValueMutable(node->lhs_->value_info_.get())) {
+      throw std::runtime_error("Assignment requires lhs to be mutable");
     }
     if (!judgeTypeEqual(node->lhs_.get(), "num") ||
         !judgeTypeEqual(node->rhs_.get(), "num")) {
@@ -721,12 +737,7 @@ void SemanticChecker::visit(ExprFieldNode *node) {
   if (!member_type) {
     throw std::runtime_error("Field " + node->ID_ + " not found in type");
   }
-  bool is_mut = node->instance_->value_info_->isMutable();
-  auto refer_type = std::dynamic_pointer_cast<TypeKindRefer>(
-      node->instance_->value_info_->getType());
-  if (refer_type != nullptr && refer_type->isMutRef()) {
-    is_mut = true;
-  }
+  bool is_mut = judgeValueMutable(node->instance_->value_info_.get());
   node->value_info_ = std::make_unique<ValueInfo>(member_type, true, is_mut);
 }
 
