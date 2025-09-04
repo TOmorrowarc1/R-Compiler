@@ -289,4 +289,6 @@ void FuncTraitCollector::visit(TypeReferNode *node) {
   }
 }
 
+void FuncTraitCollector::visit(TypeUnitNode *node) {}
+
 void FuncTraitCollector::visit(PathNode *node) {}

@@ -52,6 +52,7 @@ class TypeNode;
 class TypeArrayNode;
 class TypePathNode;
 class TypeReferNode;
+class TypeUnitNode;
 
 class PathNode;
 
@@ -107,6 +108,7 @@ public:
   virtual void visit(TypeArrayNode *node) = 0;
   virtual void visit(TypePathNode *node) = 0;
   virtual void visit(TypeReferNode *node) = 0;
+  virtual void visit(TypeUnitNode *node) = 0;
 
   virtual void visit(PathNode *node) = 0;
 };

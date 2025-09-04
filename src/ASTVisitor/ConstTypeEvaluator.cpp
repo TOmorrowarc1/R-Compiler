@@ -248,4 +248,6 @@ void ConstTypeEvaluator::visit(TypeReferNode *node) {
   }
 }
 
+void ConstTypeEvaluator::visit(TypeUnitNode *node) {}
+
 void ConstTypeEvaluator::visit(PathNode *node) {}

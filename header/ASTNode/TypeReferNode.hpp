@@ -1,3 +1,4 @@
+#pragma once
 #include "TypeANode.hpp"
 
 class TypeReferNode : public TypeNode {

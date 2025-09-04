@@ -291,4 +291,6 @@ void ConstTypeCollector::visit(TypeReferNode *node) {
   node->type_->accept(*this);
 }
 
+void ConstTypeCollector::visit(TypeUnitNode *node) {}
+
 void ConstTypeCollector::visit(PathNode *node) {}

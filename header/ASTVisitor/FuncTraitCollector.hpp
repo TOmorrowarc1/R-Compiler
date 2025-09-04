@@ -76,6 +76,7 @@ public:
   void visit(TypeArrayNode *node) override;
   void visit(TypePathNode *node) override;
   void visit(TypeReferNode *node) override;
+  void visit(TypeUnitNode *node) override;
 
   void visit(PathNode *node) override;
 };

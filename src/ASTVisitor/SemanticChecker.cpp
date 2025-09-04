@@ -803,5 +803,6 @@ void SemanticChecker::visit(PatternReferNode *node) {}
 void SemanticChecker::visit(TypeArrayNode *node) {}
 void SemanticChecker::visit(TypePathNode *node) {}
 void SemanticChecker::visit(TypeReferNode *node) {}
+void SemanticChecker::visit(TypeUnitNode *node) {}
 
 void SemanticChecker::visit(PathNode *node) {}

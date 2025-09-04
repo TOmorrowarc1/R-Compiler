@@ -22,7 +22,6 @@
 #include "ItemImplNode.hpp"
 #include "ItemStructNode.hpp"
 #include "ItemTraitNode.hpp"
-#include "ItemTraitNode.hpp"
 #include "PathNode.hpp"
 #include "PatternIDNode.hpp"
 #include "PatternLiteralNode.hpp"
@@ -36,4 +35,5 @@
 #include "TypeArrayNode.hpp"
 #include "TypePathNode.hpp"
 #include "TypeReferNode.hpp"
+#include "TypeUnitNode.hpp"
 #include "ValueInfo.hpp"

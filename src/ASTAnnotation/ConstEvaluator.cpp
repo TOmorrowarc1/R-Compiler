@@ -101,6 +101,10 @@ auto ConstEvaluator::evaluateType(TypeNode *node) -> std::shared_ptr<TypeKind> {
     return std::make_shared<TypeKindRefer>(type_inside,
                                            type_refer->is_mutable_);
   }
+  if (is_instance_of<TypeUnitNode, TypeNode>(node)) {
+    auto unit_type = (*current_scope_)->getType("unit")->getType();
+    return std::make_shared<TypeKindPath>(unit_type);
+  }
   throw std::runtime_error("Unsupported type node for symbol collection");
   return nullptr;
 }
@@ -488,7 +492,7 @@ void ConstEvaluator::evaluateTypeSymbol(const std::string &symbol) {
   if (type_def_symbols.find(symbol) == type_def_symbols.end()) {
     throw std::runtime_error("Type symbol not found: " + symbol);
   }
-  auto& symbol_status = type_def_symbols[symbol];
+  auto &symbol_status = type_def_symbols[symbol];
   if (symbol_status.status.isValid()) {
     return;
   }
@@ -525,7 +529,7 @@ void ConstEvaluator::evaluateConstSymbol(const std::string &symbol) {
   if (const_symbols.find(symbol) == const_symbols.end()) {
     throw std::runtime_error("Const symbol not found: " + symbol);
   }
-  auto& symbol_status = const_symbols[symbol];
+  auto &symbol_status = const_symbols[symbol];
   if (symbol_status.status.isValid()) {
     return;
   }
@@ -562,7 +566,7 @@ void ConstEvaluator::evaluateTypeConst(const std::string &struct_name,
           type_const_symbols[struct_name].end()) {
     throw std::runtime_error("Type const symbol not found: " + name);
   }
-  auto& symbol_status = type_const_symbols[struct_name][symbol];
+  auto &symbol_status = type_const_symbols[struct_name][symbol];
   if (symbol_status.status.isValid()) {
     return;
   }
@@ -599,7 +603,7 @@ void ConstEvaluator::evaluateTraitConst(const std::string &trait_name,
           trait_const_symbols[trait_name].end()) {
     throw std::runtime_error("Trait const symbol not found: " + name);
   }
-  auto& symbol_status = trait_const_symbols[trait_name][symbol];
+  auto &symbol_status = trait_const_symbols[trait_name][symbol];
   if (symbol_status.status.isValid()) {
     return;
   }
