@@ -568,6 +568,30 @@ void SemanticChecker::visit(ExprOperBinaryNode *node) {
         std::make_shared<TypeKindPath>(bool_type), false, false);
     break;
   }
+  case BinaryOperator::AND_EQUAL:
+  case BinaryOperator::DIV_EQUAL:
+  case BinaryOperator::LEFT_SHIFT_EQUAL:
+  case BinaryOperator::MINUS_EQUAL:
+  case BinaryOperator::MOD_EQUAL:
+  case BinaryOperator::MUL_EQUAL:
+  case BinaryOperator::PLUS_EQUAL:
+  case BinaryOperator::RIGHT_SHIFT_EQUAL:
+  case BinaryOperator::XOR_EQUAL:
+  case BinaryOperator::OR_EQUAL: {
+    if (!node->lhs_->value_info_->isLeftValue() ||
+        !node->lhs_->value_info_->isMutable()) {
+      throw std::runtime_error(
+          "Compound assignment requires lhs to be a mutable left value");
+    }
+    if (!judgeTypeEqual(node->lhs_.get(), "num") ||
+        !judgeTypeEqual(node->rhs_.get(), "num")) {
+      throw std::runtime_error(
+          "Calculation binary operation operands must be numeric");
+    }
+    node->value_info_ =
+        std::make_unique<ValueInfo>(std::move(lhs_type), true, true);
+    break;
+  }
   default:
     // These are numeric calculations.
     if (!judgeTypeEqual(node->lhs_.get(), "num") ||
