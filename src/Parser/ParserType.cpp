@@ -5,6 +5,24 @@
 auto parseTypePathNode(TokenStream &stream) -> std::unique_ptr<TypePathNode>;
 auto parseTypeArrayNode(TokenStream &stream) -> std::unique_ptr<TypeArrayNode>;
 auto parseTypeReferNode(TokenStream &stream) -> std::unique_ptr<TypeReferNode>;
+auto parseTypeUnitNode(TokenStream &stream) -> std::unique_ptr<TypeNode>;
+
+auto parseTypeNode(TokenStream &stream) -> std::unique_ptr<TypeNode> {
+  Position position = stream.peek().line;
+  switch (stream.peek().type) {
+  case TokenType::IDENTIFIER:
+  case TokenType::SELF_TYPE:
+    return parseTypePathNode(stream);
+  case TokenType::LEFT_BRACKET:
+    return parseTypeArrayNode(stream);
+  case TokenType::AND:
+    return parseTypeReferNode(stream);
+  case TokenType::LEFT_PAREN:
+    return parseTypeUnitNode(stream);
+  }
+  throw CompilerException("Unexpected token type for type node", position);
+  return nullptr;
+}
 
 auto parseTypePathNode(TokenStream &stream) -> std::unique_ptr<TypePathNode> {
   Position position = stream.peek().line;
@@ -41,17 +59,12 @@ auto parseTypeReferNode(TokenStream &stream) -> std::unique_ptr<TypeReferNode> {
                                          position);
 }
 
-auto parseTypeNode(TokenStream &stream) -> std::unique_ptr<TypeNode> {
+auto parseTypeUnitNode(TokenStream &stream) -> std::unique_ptr<TypeNode> {
   Position position = stream.peek().line;
-  switch (stream.peek().type) {
-  case TokenType::IDENTIFIER:
-  case TokenType::SELF_TYPE:
-    return parseTypePathNode(stream);
-  case TokenType::LEFT_BRACKET:
-    return parseTypeArrayNode(stream);
-  case TokenType::AND:
-    return parseTypeReferNode(stream);
+  stream.next();
+  if (stream.peek().type != TokenType::RIGHT_PAREN) {
+    throw CompilerException("Expect ) in unit type.", position);
   }
-  throw CompilerException("Unexpected token type for type node", position);
-  return nullptr;
+  stream.next();
+  return std::make_unique<TypeUnitNode>(position);
 }

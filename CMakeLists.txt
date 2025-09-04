@@ -62,6 +62,7 @@ set(EXECUTABLE_SOURCES
   src/ASTNode/TypeArrayNode.cpp
   src/ASTNode/TypePathNode.cpp
   src/ASTNode/TypeReferNode.cpp
+  src/ASTNode/TypeUnitNode.cpp
   src/Lexer/Lexer.cpp
   src/Lexer/Token.cpp
   src/Parser/Parser.cpp
