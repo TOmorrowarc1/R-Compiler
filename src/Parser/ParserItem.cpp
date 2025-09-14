@@ -84,7 +84,8 @@ auto parseItemFnNode(TokenStream &stream) -> std::unique_ptr<ItemFnNode> {
 auto parseSelfPara(TokenStream &stream) -> FnType {
   Position position = stream.peek().line;
   FnType fn_type = FnType::Fn;
-  if (stream.peek().type == TokenType::AND) {
+  switch (stream.peek().type) {
+  case TokenType::AND: {
     stream.next();
     fn_type = FnType::Method;
     if (stream.peek().type == TokenType::MUT) {
@@ -92,8 +93,7 @@ auto parseSelfPara(TokenStream &stream) -> FnType {
       fn_type = FnType::MutMethod;
     }
     if (stream.peek().type != TokenType::SELF) {
-      throw CompilerException("Expected the self after '&' or '&mut'",
-                              position);
+      throw CompilerException("Expected self after & or &mut", position);
     }
     stream.next();
     if (stream.peek().type != TokenType::RIGHT_PAREN &&
@@ -101,9 +101,41 @@ auto parseSelfPara(TokenStream &stream) -> FnType {
       throw CompilerException("Expected ')' or ',' after self parameter",
                               position);
     }
-    if (stream.peek().type == TokenType::COMMA) {
+    if(stream.peek().type == TokenType::COMMA){
       stream.next();
     }
+    break;
+  }
+  case TokenType::MUT: {
+    stream.next();
+    if (stream.peek().type != TokenType::SELF) {
+      throw CompilerException("Expected self after mut", position);
+    }
+    stream.next();
+    if (stream.peek().type != TokenType::RIGHT_PAREN &&
+        stream.peek().type != TokenType::COMMA) {
+      throw CompilerException("Expected ')' or ',' after self parameter",
+                              position);
+    }
+    if(stream.peek().type == TokenType::COMMA){
+      stream.next();
+    }
+    fn_type = FnType::MutMethod;
+    break;
+  }
+  case TokenType::SELF: {
+    stream.next();
+    if (stream.peek().type != TokenType::RIGHT_PAREN &&
+        stream.peek().type != TokenType::COMMA) {
+      throw CompilerException("Expected ')' or ',' after self parameter",
+                              position);
+    }
+    if(stream.peek().type == TokenType::COMMA){
+      stream.next();
+    }
+    fn_type = FnType::Method;
+    break;
+  }
   }
   return fn_type;
 }
