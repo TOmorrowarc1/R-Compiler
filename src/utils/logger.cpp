@@ -4,6 +4,11 @@ Logger::Logger(LogLevel level) : function_depth_(0), current_level_(level) {}
 
 Logger::~Logger() = default;
 
+auto Logger::getInstance() -> Logger & {
+  static Logger logger(LogLevel::DEBUG);
+  return logger;
+}
+
 void Logger::setLevel(LogLevel level) { current_level_ = level; }
 
 void Logger::log(LogLevel level, const std::string &message) {
@@ -16,10 +21,10 @@ void Logger::log(LogLevel level, const std::string &message) {
       log_stream_ << "[DEBUG] ";
       break;
     case LogLevel::INFO:
-      log_stream_ << "[INFO ] ";
+      log_stream_ << "[INFO] ";
       break;
     case LogLevel::WARN:
-      log_stream_ << "[WARN ] ";
+      log_stream_ << "[WARN] ";
       break;
     case LogLevel::ERROR:
       log_stream_ << "[ERROR] ";
@@ -35,11 +40,11 @@ void Logger::output() {
 }
 
 void Logger::enterFunction(const std::string &function_name) {
-  log_stream_ << "Entering function: " << function_name << '\n';
   ++function_depth_;
   for (int32_t i = 0; i < function_depth_; ++i) {
     log_stream_ << "  ";
   }
+  log_stream_ << "Entering function: " << function_name << '\n';
 }
 
 void Logger::exitFunction() {
