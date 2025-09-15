@@ -23,8 +23,8 @@ struct bindPower {
 
 /*
 These numbers are generrated by gemini for rules are too many,
- and I haved checked them.
- */
+and I haved checked them.
+*/
 
 const std::vector<bindPower> nud_powers = {
     {TokenType::MINUS, 0, 23},
