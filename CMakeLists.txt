@@ -89,6 +89,7 @@ set(EXECUTABLE_SOURCES
   src/ASTAnnotator/BuiltInInit.cpp
   src/utils/position.cpp
   src/utils/exception.cpp
+  src/utils/logger.cpp
 )
 
 # 将以上文档编译为.a准备用于静态链接。

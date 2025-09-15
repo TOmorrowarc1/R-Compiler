@@ -798,10 +798,11 @@ auto parseExprLiteralBoolNode(TokenStream &stream)
 
   Position position = stream.peek().line;
   bool value = stream.next().type == TokenType::TRUE;
-  return std::make_unique<ExprLiteralBoolNode>(value, position);
-
+  
   logger.log(LogLevel::DEBUG, debug_info.str());
   logger.exitFunction();
+
+  return std::make_unique<ExprLiteralBoolNode>(value, position);
 }
 
 auto parseExprLiteralCharNode(TokenStream &stream)
