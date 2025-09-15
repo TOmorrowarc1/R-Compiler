@@ -107,8 +107,8 @@ auto parseSelfPara(TokenStream &stream) -> FnType {
     break;
   }
   case TokenType::MUT: {
-    stream.next();
-    if (stream.peek().type == TokenType::SELF) {
+    if (stream.peekNum(1).type == TokenType::SELF) {
+      stream.next();
       stream.next();
       if (stream.peek().type != TokenType::RIGHT_PAREN &&
           stream.peek().type != TokenType::COMMA) {
@@ -118,6 +118,7 @@ auto parseSelfPara(TokenStream &stream) -> FnType {
           stream.next();
         }
       }
+      fn_type = FnType::MutMethod;
     }
     break;
   }
