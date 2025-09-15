@@ -101,26 +101,24 @@ auto parseSelfPara(TokenStream &stream) -> FnType {
       throw CompilerException("Expected ')' or ',' after self parameter",
                               position);
     }
-    if(stream.peek().type == TokenType::COMMA){
+    if (stream.peek().type == TokenType::COMMA) {
       stream.next();
     }
     break;
   }
   case TokenType::MUT: {
     stream.next();
-    if (stream.peek().type != TokenType::SELF) {
-      throw CompilerException("Expected self after mut", position);
-    }
-    stream.next();
-    if (stream.peek().type != TokenType::RIGHT_PAREN &&
-        stream.peek().type != TokenType::COMMA) {
-      throw CompilerException("Expected ')' or ',' after self parameter",
-                              position);
-    }
-    if(stream.peek().type == TokenType::COMMA){
+    if (stream.peek().type == TokenType::SELF) {
       stream.next();
+      if (stream.peek().type != TokenType::RIGHT_PAREN &&
+          stream.peek().type != TokenType::COMMA) {
+        throw CompilerException("Expected ')' or ',' after self parameter",
+                                position);
+        if (stream.peek().type == TokenType::COMMA) {
+          stream.next();
+        }
+      }
     }
-    fn_type = FnType::MutMethod;
     break;
   }
   case TokenType::SELF: {
@@ -130,7 +128,7 @@ auto parseSelfPara(TokenStream &stream) -> FnType {
       throw CompilerException("Expected ')' or ',' after self parameter",
                               position);
     }
-    if(stream.peek().type == TokenType::COMMA){
+    if (stream.peek().type == TokenType::COMMA) {
       stream.next();
     }
     fn_type = FnType::Method;

@@ -5,7 +5,7 @@ Logger::Logger(LogLevel level) : function_depth_(0), current_level_(level) {}
 Logger::~Logger() = default;
 
 auto Logger::getInstance() -> Logger & {
-  static Logger logger(LogLevel::DEBUG);
+  static Logger logger(LogLevel::INFO);
   return logger;
 }
 
@@ -35,16 +35,18 @@ void Logger::log(LogLevel level, const std::string &message) {
 }
 
 void Logger::output() {
+  /*
   std::cout << log_stream_.str();
   log_stream_.clear();
+  */
 }
 
 void Logger::enterFunction(const std::string &function_name) {
-  ++function_depth_;
   for (int32_t i = 0; i < function_depth_; ++i) {
     log_stream_ << "  ";
   }
   log_stream_ << "Entering function: " << function_name << '\n';
+  ++function_depth_;
 }
 
 void Logger::exitFunction() {

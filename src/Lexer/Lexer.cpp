@@ -4,6 +4,8 @@
 #include <stdint.h>
 #include <string_view>
 
+const uint32_t MAXLENGTH = 64;
+
 class LineFinder {
 private:
   std::vector<int32_t> line_starts_;
@@ -220,8 +222,10 @@ auto Matcher::lexRegex(const std::string &target) const -> Token {
   int32_t max_length = 0;
   Token result;
   std::smatch match;
+  auto search_begin = target.begin();
+  auto search_end = search_begin + MAXLENGTH;
   for (auto iter = regex_rules.begin(); iter != regex_rules.end(); ++iter) {
-    if (std::regex_search(target, match, iter->rule) &&
+    if (std::regex_search(search_begin, search_end, match, iter->rule) &&
         match[0].str().length() > max_length) {
       max_length = match[0].str().length();
       result.content = match[0].str();
