@@ -259,7 +259,8 @@ void SemanticChecker::visit(ExprArrayNode *node) {
   auto element_type = node->elements_[0]->value_info_->getType();
   for (const auto &element : node->elements_) {
     element->accept(*this);
-    if (!element->value_info_->getType()->isEqual(element_type.get())) {
+    if (!judgeTypeEqual(element->value_info_->getType().get(),
+                        element_type.get(), true)) {
       throw std::runtime_error(
           "All elements in an array must have the same type");
     }
@@ -893,8 +894,10 @@ void SemanticChecker::visit(StmtLetNode *node) {
     bindVarSymbol(node->pattern_.get(), type);
     if (node->init_value_) {
       node->init_value_->accept(*this);
-      if (!node->init_value_->value_info_->getType()->isEqual(type.get())) {
-        throw std::runtime_error("Type mismatch in let statement initialization");
+      if (!judgeTypeEqual(node->init_value_->value_info_->getType().get(),
+                         type.get(), true)) {
+        throw std::runtime_error(
+            "Type mismatch in let statement initialization");
       }
     }
   } else {

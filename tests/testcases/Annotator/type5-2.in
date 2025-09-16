@@ -11,7 +11,7 @@ fn dereference(a:&i32 , b: i32)->i32{
 
 fn main() {
   let mut num: i32 = 0;
-  let refint1: && i32 = && num;
+  let refint1: &&i32 = &&num;
   let refint2: &&i32 = &num;
   let c:i32 = dereference(refint1,0);
 }
