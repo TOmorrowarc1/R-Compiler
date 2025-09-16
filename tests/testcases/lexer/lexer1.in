@@ -1,3 +1,10 @@
+/*
+Test Name: Lexer-1
+Test Target: vaild tokens
+Author: Renshu Ge
+Comment: The lexer should recongnize all possible kinds of tokens.
+*/
+
 as 
 break
 const

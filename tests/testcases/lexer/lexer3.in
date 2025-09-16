@@ -1,0 +1,8 @@
+/*
+Test Name: Lexer-3
+Test Target: Comment
+Author: Renshu Ge
+Comment: The sign of comment /* have to appear in pair.
+*/
+
+let x = 10; /* This comment */*is never closed
