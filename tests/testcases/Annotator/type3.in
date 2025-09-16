@@ -1,0 +1,17 @@
+/*
+Test Name: TypeCheck3
+Test Target: array type match--elements type and length
+Verdict: Success
+Author: Renshu Ge
+*/
+
+struct A{
+  a: i32,
+}
+
+fn main() {
+  let array1: [i32;(6+6*2)*1] = [18;18];
+  const length1: usize = 8usize;
+  let array2: [usize;length1] = [10;4+4];
+  let array3: [A;2]=[A{a:1},A{a:5}];
+}

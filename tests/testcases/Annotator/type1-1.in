@@ -1,0 +1,16 @@
+/*
+Test Name: TypeCheck1
+Test Target: basic inner type match.
+Verdict: Success
+Author: Renshu Ge
+*/
+
+fn main() {
+  let int32_t: i32 = 0b1001_1;
+  let uint32_t :u32 = 1;
+  let intSize_t :isize = 1;
+  let uintSize_t :usize = 1;
+  let y: bool = false;
+  let string_ :String = "Oh my rust.";
+  let char_ :char = 'a';
+}

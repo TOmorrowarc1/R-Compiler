@@ -1,0 +1,15 @@
+/*
+Test Name: TypeCheck4
+Test Target: reference type mismatch: mut or not
+Verdict: Fail
+Author: Renshu Ge
+*/
+
+fn main() {
+  let mut x: i32 = 10;
+  let r1: &i32 = &x;
+  let val1: i32 = *r1;
+  let r2: &&mut i32 = &&mut x;
+  (**r2) = 20;
+  let val2: &&& i32 = &mut r2;
+}

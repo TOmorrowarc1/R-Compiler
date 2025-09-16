@@ -1,0 +1,17 @@
+/*
+Test Name: TypeCheck5
+Test Target: auto dereference in incorrect place 
+Verdict: Fail
+Author: Renshu Ge
+*/ 
+
+fn dereference(a:&i32 , b: i32)->i32{
+  return *a+b;
+}
+
+fn main() {
+  let mut num: i32 = 0;
+  let refint1: && i32 = && num;
+  let refint2: &&i32 = &num;
+  let c:i32 = dereference(refint1,0);
+}

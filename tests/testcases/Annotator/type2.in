@@ -1,0 +1,21 @@
+/*
+Test Name: TypeCheck2
+Test Target: self-define type match
+Verdict: Success
+Author: Renshu Ge
+*/
+
+struct A{
+  a: i32,
+  b: usize,
+  c: [usize;5],
+}
+
+fn plus(a:A)->usize{
+  return a.c[0]
+}
+
+fn main() {
+  let instance :A = A { a:1, b:3, c:[0;5]};
+  let uint32_t: usize = plus(instance);
+}

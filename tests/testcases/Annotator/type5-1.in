@@ -1,0 +1,28 @@
+/*
+Test Name: TypeCheck5
+Test Target: auto dereference in correct place 
+Verdict: Success
+Author: Renshu Ge
+*/ 
+
+struct A{
+  a: i32,
+  b: i32,
+}
+
+fn dereference(a:& i32 , b: i32)->i32{
+  return *a+b;
+}
+
+fn main() {
+  impl A{
+    fn plus(&mut self)->i32{
+      return self.a + self.b;
+    }
+  }
+  let mut num: i32 = 0;
+  let refint1: && i32 = && num;
+  let refint2: &i32 = &&num;
+  let c:i32 = dereference(refint1,0);
+  let d:[&i32;4] = [&&num,&&&num,&num,&&num];
+}
