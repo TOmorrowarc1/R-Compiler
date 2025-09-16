@@ -1,0 +1,25 @@
+/*
+Test Name: Literal-1
+Test Target: vaild literal corner cases
+Verdict: Success
+Author: Renshu Ge
+*/
+
+
+fn main() {
+  let decimal_int: i32 = 98222;
+  let hex_int: i32 = 0x1A2B;
+  let octal_int: i32 = 0o755;
+  let binary_int: i32 = 0b1101_0011;
+
+  let basic_char: char = 'a';
+  let bool_true: bool = true;
+  let bool_false: bool = false;
+
+  let string_literal: String = "Hello, \"World\"!\n";
+  let raw_string: String = r#"
+    This is a raw string.
+    It can contain "quotes" and \backslashes\ without escaping.
+  "#;
+  let int_min: i32 = -2147483648;
+}

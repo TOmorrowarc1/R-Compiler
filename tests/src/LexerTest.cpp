@@ -1,7 +1,7 @@
 #include "utils.hpp"
 
 TEST(LexerTest, VaildToken) {
-  std::string input_path = test_cases_dir + "/lexer/lexer_1.in";
+  std::string input_path = test_cases_dir + "/lexer/lexer1.in";
   std::string text = readFileToString(input_path);
   auto lex_result = lex(text);
 
@@ -128,7 +128,7 @@ TEST(LexerTest, VaildToken) {
 }
 
 TEST(LexerTest, COMMENT) {
-  std::string input_path = test_cases_dir + "/lexer/lexer_2.in";
+  std::string input_path = test_cases_dir + "/lexer/lexer2.in";
   std::string text = readFileToString(input_path);
   auto lex_result = lex(text);
 
@@ -155,8 +155,18 @@ TEST(LexerTest, COMMENT) {
   }
 }
 
+TEST(LexerTest, COMMENT_ERROR) {
+  std::string input_path = test_cases_dir + "/lexer/lexer3.in";
+  std::string text = readFileToString(input_path);
+  try {
+    auto lex_result = lex(text);
+  } catch (std::runtime_error err) {
+    std::cout << err.what() << '\n';
+  }
+}
+
 TEST(LexerTest, STRING) {
-  std::string input_path = test_cases_dir + "/lexer/lexer_3.in";
+  std::string input_path = test_cases_dir + "/lexer/lexer4.in";
   std::string text = readFileToString(input_path);
   auto lex_result = lex(text);
 
@@ -195,15 +205,5 @@ TEST(LexerTest, STRING) {
   for (int32_t i = 0; i < stream.size(); ++i) {
     EXPECT_EQ(lex_result[i].content, stream[i].content);
     EXPECT_EQ(lex_result[i].type, stream[i].type);
-  }
-}
-
-TEST(LexerTest, COMMENT_ERROR) {
-  std::string input_path = test_cases_dir + "/lexer/lexer_4.in";
-  std::string text = readFileToString(input_path);
-  try {
-    auto lex_result = lex(text);
-  } catch (std::runtime_error err) {
-    std::cout << err.what() << '\n';
   }
 }

@@ -1,0 +1,23 @@
+/*
+Test Name: ConstTypeSolve1
+Test Target: self-define struct solution
+Verdict: Success
+Author: Renshu Ge
+*/
+
+struct A{
+  c_array_:[C;7],
+}
+
+struct B{
+  c:C,
+}
+
+struct C{
+  b:i32,
+  string_:String,
+}
+
+fn main() {
+  let d :i32 = 1;
+}

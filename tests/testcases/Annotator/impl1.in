@@ -1,0 +1,31 @@
+/*
+Test Name: Impl-1
+Test Target: rare location of impl blocks
+Verdict: Success
+Author: Renshu Ge
+*/
+
+struct MyStruct {
+    a:i32,
+    b:i32,
+}
+
+fn main() {
+    let x:i32 = 8+ {
+        impl MyStruct {
+            fn plus(&self)->i32{
+                return self.a + self.b
+            }
+            const first_const:i32 = 1;
+        }
+        6
+    };
+    if({
+        impl MyStruct {
+            const second_const:i32 = 1;
+        }
+        true
+    }){
+        let num :i32 = MyStruct::first_const + MyStruct::second_const;
+    }
+}

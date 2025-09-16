@@ -1,0 +1,18 @@
+/*
+Test Name: ConstTypeSolve1
+Test Target: self-define struct solution
+Verdict: Fail
+Author: Renshu Ge
+*/
+
+struct A{
+    b:B,
+}
+
+struct B{
+    a:A,
+}
+
+fn main() {
+    let c:i32=1;
+}
