@@ -1,17 +1,18 @@
 /*
-Test Name: TypeCheck5
-Test Target: auto dereference in incorrect place 
+Test Name: TypeCheck7
+Test Target: the number literal can be recognized as i32,u32,isize,usize.
 Verdict: Fail
 Author: Renshu Ge
 */ 
 
-fn dereference(a:&i32 , b: i32)->i32{
-  return *a+b;
+fn number(a:i32 ,b:i32)->i32{
+  return a+b;
 }
 
 fn main() {
-  let mut num: i32 = 0;
-  let refint1: && i32 = && num;
-  let refint2: &&i32 = &num;
-  let c:i32 = dereference(refint1,0);
+  let i:i32 = number(7,100);
+  let uint32_t:u32 = 100;
+  let uSize:usize = 100;
+  let iSize:isize = 100;
+  let array1_:[u32;100]=[100;100];
 }

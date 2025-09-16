@@ -1,17 +1,19 @@
 /*
-Test Name: TypeCheck5
-Test Target: auto dereference in incorrect place 
-Verdict: Fail
+Test Name: TypeCheck8
+Test Target: type cast explictly by the keyword 'as'
+Verdict: Success
 Author: Renshu Ge
 */ 
 
-fn dereference(a:&i32 , b: i32)->i32{
-  return *a+b;
+struct A {
+  value: u32,
 }
 
 fn main() {
-  let mut num: i32 = 0;
-  let refint1: && i32 = && num;
-  let refint2: &&i32 = &num;
-  let c:i32 = dereference(refint1,0);
+  let int32_t :i32 = 1;
+  let iSize: isize = int32_t as isize;
+  let uint32_t: u32 = int32_t as u32;
+  let uSize: usize = int32_t as usize;
+  let a:A = A{value:int32_t as u32};
+  let array1:[u32;8]=[int32_t as u32;8];
 }
