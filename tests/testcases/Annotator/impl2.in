@@ -1,0 +1,21 @@
+/*
+Test Name: Impl2
+Test Target: Self::
+Verdict: Success
+Author: Renshu Ge
+*/
+
+struct MyStruct {
+    a:i32,
+    b:i32,
+}
+
+fn main() {
+    impl MyStruct{
+        const length_ :i32 = 1;
+        fn getLength()->i32{
+            return Self::length_;
+        }
+    }
+    let k:MyStruct = MyStruct { a:MyStruct::length_, b:MyStruct::getLength()};
+}

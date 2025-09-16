@@ -1,0 +1,28 @@
+/*
+Test Name: Impl3
+Test Target: self and self parameters
+Verdict: Fail
+Author: Renshu Ge
+*/
+
+
+struct MyStruct {
+    a:i32,
+    b:i32,
+}
+
+fn main() {
+    impl MyStruct{
+        const length_ :i32 = 1;
+        fn getLength(&self, other:i32)->i32{
+            return self.a + other;
+        }
+        fn timesLength(&self,times:i32)->i32{
+            self.a = self.a * times;
+            self.a
+        }
+    }
+    let mut k:MyStruct = MyStruct { a:7, b:8 };
+    k.timesLength(3);
+    let c:i32 = k.getLength(6);
+}
