@@ -10,10 +10,11 @@ struct A {
 }
 
 fn main() {
-  let int32_t :i32 = 1;
+  let mut int32_t :i32 = 1;
   let iSize: isize = int32_t as isize;
   let uint32_t: u32 = int32_t as u32;
   let uSize: usize = int32_t as usize;
   let a:A = A{value:int32_t as u32};
+  int32_t = true as i32;
   let array1:[u32;8]=[int32_t as u32;8];
 }

@@ -1,0 +1,21 @@
+/*
+Test Name: TypeCheck8
+Test Target: type cast explictly by the keyword 'as'
+Verdict: Fail
+Author: Renshu Ge
+*/ 
+
+struct A {
+  value: u32,
+}
+
+fn main() {
+  let int32_t :i32 = 1;
+  let iSize: isize = int32_t as isize;
+  let uint32_t: u32 = int32_t as u32;
+  let uSize: usize = int32_t as usize;
+  let a:A = A{value:int32_t as u32};
+  let b:bool = int32_t as bool;
+  let c:char = int32_t as char;
+  let array1:[u32;8]=[int32_t as u32;8];
+}
