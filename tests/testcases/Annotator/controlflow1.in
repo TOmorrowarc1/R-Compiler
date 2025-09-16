@@ -1,3 +1,10 @@
+/*
+Test Name: ControlFlow1
+Test Target: type check of return
+Verdict: Success
+Author: Renshu Ge
+*/
+
 fn returnTest1()->i32{
   return 5
 }
@@ -26,4 +33,5 @@ fn main(){
   returnTest1();
   returnTest2();
   returnTest3();
+  returnTest4();
 }

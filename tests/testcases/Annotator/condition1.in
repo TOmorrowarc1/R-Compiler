@@ -1,0 +1,32 @@
+/*
+Test Name: Condition1
+Test Target: the reconginization of condition expressions
+Verdict: Success, though panic.
+Author: Renshu Ge
+*/
+
+fn main(){
+  let mut i: i32 = 1;
+  let x: u32 = 113;
+  if(x>=1){
+    let mut k:i32 = 17;
+  }else{
+    let mm: i32 = 18;
+  }
+  while(
+  if(x>=1){
+    let k:i32 = 17;
+    true
+  } else {
+    false
+  }
+  ){
+    i=i+1;
+  }
+  loop{
+    i=i-1;
+    if(i<0){
+      break;
+    }
+  }
+}

@@ -1,3 +1,10 @@
+/*
+Test Name: ControlFlow4
+Test Target: check of the break context
+Verdict: Success
+Author: Renshu Ge
+*/
+
 fn main(){
   loop{
     let a:i32=1;
@@ -23,7 +30,7 @@ fn main(){
 
 fn breakTest1()->i32{
   loop{
-    break 21;
+    break;
   }
   4
 }

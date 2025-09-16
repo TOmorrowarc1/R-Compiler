@@ -1,0 +1,48 @@
+/*
+Test Name: ControlFlow2
+Test Target: type check of return
+Verdict: Fail
+Author: Renshu Ge
+*/
+
+fn returnTest1()->i32{
+  return 5
+}
+
+fn returnTest2()->i32{
+  return 5;
+}
+
+fn returnTest3()->i32{
+  if(true){
+    return 5
+  }else{
+    return 6
+  }
+}
+
+fn returnTest4()->i32{
+  fn returnTest5()->str{
+    return "Hello?"
+  }
+  return 5
+}
+
+fn returnTest5()->i32{
+  let mut x :i32=1;
+  if(true){
+    1
+  }else if(x>0){
+    return 7;
+  } else {
+    x = x + 1
+  }
+}
+
+fn main(){
+  returnTest1();
+  returnTest2();
+  returnTest3();
+  returnTest4();
+  returnTest5();
+}

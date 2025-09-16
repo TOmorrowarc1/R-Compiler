@@ -1,0 +1,20 @@
+/*
+Test Name: ControlFlow3
+Test Target: check of the return context
+Verdict: Fail
+Author: Renshu Ge
+*/
+
+struct K{
+  s:i32,
+  k:u32,
+  return;
+}
+
+fn main(){
+  let k:K = K {s:1,k:2u32};
+}
+
+fn breakTest1()->i32{
+  return 1;
+}
