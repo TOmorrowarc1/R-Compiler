@@ -1,0 +1,27 @@
+/*
+Test Name: ConstTypeSolve2
+Test Target: const evaluation
+Verdict: Fail
+Author: Renshu Ge
+*/
+
+struct B{
+  length_ : usize,
+  power_ : i32,
+}
+
+const b : B = B{
+  length_ : 5,
+  power_ : 4,
+};
+
+fn main() {
+  const array1:[usize;8]=[1,2,3,4,5,6,7,8];
+  const array2:[usize;array1[3]]=[2;2+2];
+  const result1:usize = (array1[2-array1[0]]+array1[3*2])-array2[0];
+  const result2:usize = b.length_ + B::theory_;
+  const bomb: usize = array2[result2-result1];
+  impl B{
+      const theory_:usize=1;
+  }
+}

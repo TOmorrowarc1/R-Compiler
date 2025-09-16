@@ -1,0 +1,31 @@
+/*
+Test Name: ConstTypeSolve5
+Test Target: mixture of the const and type solution.
+Verdict: Success
+Author: Renshu Ge
+*/
+
+struct A{
+  array1_:[usize;B::length*314],
+  array2_:[usize;b.length_],
+}
+
+struct B{
+  length_ : usize,
+}
+
+const a : A = A{
+  array1_:[1;3*314],
+  array2_:[3;5],
+};
+const b : B = B{
+  length_ : 5,
+};
+
+fn main() {
+  impl B {
+    const length :usize = 3;
+    const second_last :usize = B::length + b.length_ * a.array2_[B::length] ;
+  }
+  const last : usize = B::length + b.length_ * a.array1_[B::second_last];
+}
