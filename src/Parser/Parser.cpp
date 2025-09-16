@@ -10,16 +10,12 @@ auto parse(const std::vector<Token> &tokens) -> std::unique_ptr<ASTRootNode> {
     throw CompilerException("Expected EOF after parsing AST.",
                             stream.peek().line);
   }
-
-  Logger::getInstance().output();
-  
+  LoggerPlant::getInstance().output();
   return rootNode;
 }
 
 auto parseRootNode(TokenStream &stream) -> std::unique_ptr<ASTRootNode> {
-  Logger &logger = Logger::getInstance();
-  logger.enterFunction("parseRootNode");
-
+  Logger logger = LoggerPlant::getInstance().enterFunc("parseRootNode");
   std::vector<std::unique_ptr<ItemNode>> items;
   while (true) {
     Token token = stream.peek();
@@ -29,8 +25,5 @@ auto parseRootNode(TokenStream &stream) -> std::unique_ptr<ASTRootNode> {
     auto itemNode = parseItemNode(stream);
     items.push_back(std::move(itemNode));
   }
-
-  logger.exitFunction();
-
   return std::make_unique<ASTRootNode>(std::move(items), Position(0));
 }

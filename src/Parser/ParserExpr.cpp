@@ -216,8 +216,7 @@ auto parseExprNode(TokenStream &stream) -> std::unique_ptr<ExprNode> {
 
 auto parseExprNode(TokenStream &stream, int32_t power)
     -> std::unique_ptr<ExprNode> {
-  Logger &logger = Logger::getInstance();
-  logger.enterFunction("parseExprNode");
+  Logger logger = LoggerPlant::getInstance().enterFunc("parseExprNode");
   std::stringstream debug_info;
   debug_info << " left power: " << power
              << " symbol: " << stream.peek().content;
@@ -243,17 +242,13 @@ auto parseExprNode(TokenStream &stream, int32_t power)
     stream.next();
     result = parseLedExprNode(stream, token, std::move(result));
   }
-
-  logger.exitFunction();
-
   return result;
 }
 
 auto parseNudExprNode(TokenStream &stream, int32_t power)
     -> std::unique_ptr<ExprNode> {
   // It strikes me that Nud nodes are able to be LL(1) parsed.
-  Logger &logger = Logger::getInstance();
-  logger.enterFunction("parseNudExprNode");
+  Logger logger = LoggerPlant::getInstance().enterFunc("parseNudExprNode");
   std::stringstream debug_info;
   debug_info << " left power: " << power
              << " on line: " << stream.peek().line.getLine()
@@ -261,33 +256,43 @@ auto parseNudExprNode(TokenStream &stream, int32_t power)
   logger.log(LogLevel::DEBUG, debug_info.str());
 
   Position position = stream.peek().line;
+  std::unique_ptr<ExprNode> result;
   switch (stream.peek().type) {
   case TokenType::IDENTIFIER:
   case TokenType::SELF:
-    return parseExprNudPathNode(stream);
+    result = parseExprNudPathNode(stream);
+    break;
   case TokenType::CHARLITERAL:
-    return parseExprLiteralCharNode(stream);
+    result = parseExprLiteralCharNode(stream);
+    break;
   case TokenType::STRINGLITERAL:
   case TokenType::RAWSTRINGLITERAL:
   case TokenType::CSTRINGLITERAL:
   case TokenType::RAWCSTRINGLITERAL:
-    return parseExprLiteralStringNode(stream);
+    result = parseExprLiteralStringNode(stream);
+    break;
   case TokenType::INTEGERLITERAL:
-    return parseExprLiteralIntNode(stream);
+    result = parseExprLiteralIntNode(stream);
+    break;
   case TokenType::TRUE:
   case TokenType::FALSE:
-    return parseExprLiteralBoolNode(stream);
+    result = parseExprLiteralBoolNode(stream);
+    break;
   case TokenType::BREAK:
-    return parseExprBreakNode(stream);
+    result = parseExprBreakNode(stream);
+    break;
   case TokenType::CONTINUE:
-    return parseExprContinueNode(stream);
+    result = parseExprContinueNode(stream);
+    break;
   case TokenType::RETURN:
-    return parseExprReturnNode(stream);
+    result = parseExprReturnNode(stream);
+    break;
   case TokenType::MINUS:
   case TokenType::NOT:
   case TokenType::AND:
   case TokenType::MUL:
-    return parseExprOperUnaryNode(stream);
+    result = parseExprOperUnaryNode(stream);
+    break;
   case TokenType::LEFT_PAREN: {
     stream.next();
     std::unique_ptr<ExprNode> expr;
@@ -296,35 +301,39 @@ auto parseNudExprNode(TokenStream &stream, int32_t power)
       throw CompilerException("Expected ) after expression.", position);
     }
     stream.next();
-    return std::make_unique<ExprGroupNode>(std::move(expr), position);
+    result = std::make_unique<ExprGroupNode>(std::move(expr), position);
+    break;
   }
   case TokenType::LEFT_BRACE:
-    return parseExprBlockNode(stream);
+    result = parseExprBlockNode(stream);
+    break;
   case TokenType::LEFT_BRACKET:
-    return parseExprArrayNode(stream);
+    result = parseExprArrayNode(stream);
+    break;
   case TokenType::CONST:
-    return parseExprBlockConstNode(stream);
+    result = parseExprBlockConstNode(stream);
+    break;
   case TokenType::LOOP:
-    return parseExprLoopNode(stream);
+    result = parseExprLoopNode(stream);
+    break;
   case TokenType::WHILE:
-    return parseExprWhileNode(stream);
+    result = parseExprWhileNode(stream);
+    break;
   case TokenType::IF:
-    return parseExprIfNode(stream);
+    result = parseExprIfNode(stream);
+    break;
   }
-  throw CompilerException(
-      "Unexpected token in expression: " + stream.peek().content, position);
-
-  logger.exitFunction();
-
-  return nullptr;
+  if (result == nullptr) {
+    throw CompilerException(
+        "Unexpected token in expression: " + stream.peek().content, position);
+  }
+  return result;
 }
 
 auto parseLedExprNode(TokenStream &stream, const Token &token,
                       std::unique_ptr<ExprNode> &&lhs)
     -> std::unique_ptr<ExprNode> {
-
-  Logger &logger = Logger::getInstance();
-  logger.enterFunction("parseLedExprNode");
+  Logger logger = LoggerPlant::getInstance().enterFunc("parseLedExprNode");
   std::stringstream debug_info;
   debug_info << " on line: " << stream.peek().line.getLine()
              << " symbol: " << stream.peek().content;
@@ -369,20 +378,15 @@ auto parseLedExprNode(TokenStream &stream, const Token &token,
   }
   int32_t right_power = OpPowerRecoder::getInstance().getRightLed(token.type);
   auto rhs = parseExprNode(stream, right_power);
-
-  logger.exitFunction();
-
   return std::make_unique<ExprOperBinaryNode>(
       tokenToBinaryOp(token.type), std::move(lhs), std::move(rhs), position);
 }
 
 auto parseExprNudPathNode(TokenStream &stream) -> std::unique_ptr<ExprNode> {
-
-  Logger &logger = Logger::getInstance();
-  logger.enterFunction("parseExprNudPathNode");
+  Logger logger = LoggerPlant::getInstance().enterFunc("parseExprNudPathNode");
   std::stringstream debug_info;
   debug_info << " on line: " << stream.peek().line.getLine()
-             << " symbol: " << stream.peek().content;
+             << " symbol: " << stream.peek().content << '\n';
   logger.log(LogLevel::DEBUG, debug_info.str());
 
   Position position = stream.peek().line;
@@ -404,9 +408,6 @@ auto parseExprNudPathNode(TokenStream &stream) -> std::unique_ptr<ExprNode> {
       throw CompilerException("Missing ) after parameters.", position);
     }
     stream.next();
-
-    logger.exitFunction();
-
     return std::make_unique<ExprCallNode>(std::move(path),
                                           std::move(parameters), position);
   } else if (stream.peek().type == TokenType::LEFT_BRACE) {
@@ -426,15 +427,9 @@ auto parseExprNudPathNode(TokenStream &stream) -> std::unique_ptr<ExprNode> {
       throw CompilerException("Missing } in struct fields.", position);
     }
     stream.next();
-
-    logger.exitFunction();
-
     return std::make_unique<ExprStructNode>(std::move(path), std::move(fields),
                                             position);
   }
-
-  logger.exitFunction();
-
   return path;
 }
 
@@ -507,9 +502,7 @@ auto tokenToBinaryOp(TokenType type) -> BinaryOperator {
 }
 
 auto parseStructField(TokenStream &stream) -> ExprStructField {
-
-  Logger &logger = Logger::getInstance();
-  logger.enterFunction("parseStructField");
+  Logger logger = LoggerPlant::getInstance().enterFunc("parseStructField");
   std::stringstream debug_info;
   debug_info << " on line: " << stream.peek().line.getLine()
              << " symbol: " << stream.peek().content;
@@ -524,21 +517,16 @@ auto parseStructField(TokenStream &stream) -> ExprStructField {
     stream.next();
     field.expr = parseExprNode(stream);
   }
-
-  debug_info << " field id: " << field.ID;
+  debug_info << " field id: " << field.ID << '\n';
   logger.log(LogLevel::DEBUG, debug_info.str());
-  logger.exitFunction();
-
   return field;
 }
 
 auto parseExprBlockNode(TokenStream &stream) -> std::unique_ptr<ExprBlockNode> {
-
-  Logger &logger = Logger::getInstance();
-  logger.enterFunction("parseExprBlockNode");
+  Logger logger = LoggerPlant::getInstance().enterFunc("parseExprBlockNode");
   std::stringstream debug_info;
   debug_info << " on line: " << stream.peek().line.getLine()
-             << " symbol: " << stream.peek().content;
+             << " symbol: " << stream.peek().content << '\n';
 
   Position position = stream.peek().line;
   std::vector<std::unique_ptr<StmtNode>> statements;
@@ -584,64 +572,47 @@ auto parseExprBlockNode(TokenStream &stream) -> std::unique_ptr<ExprBlockNode> {
     }
   }
   stream.next();
-
   logger.log(LogLevel::DEBUG, debug_info.str());
-  logger.exitFunction();
-
   return std::make_unique<ExprBlockNode>(std::move(statements),
                                          std::move(return_value), position);
 }
 
 auto parseExprBlockConstNode(TokenStream &stream)
     -> std::unique_ptr<ExprBlockConstNode> {
-  Logger &logger = Logger::getInstance();
-  logger.enterFunction("parseExprBlockConstNode");
+  Logger logger =
+      LoggerPlant::getInstance().enterFunc("parseExprBlockConstNode");
   std::stringstream debug_info;
   debug_info << " on line: " << stream.peek().line.getLine()
-             << " symbol: " << stream.peek().content;
+             << " symbol: " << stream.peek().content << '\n';
 
   Position position = stream.peek().line;
   if (stream.next().type != TokenType::CONST) {
     throw CompilerException("the const block missed const.", position);
   }
-
   logger.log(LogLevel::DEBUG, debug_info.str());
-  logger.exitFunction();
-
   return std::make_unique<ExprBlockConstNode>(parseExprBlockNode(stream),
                                               position);
 }
 
 auto parseExprLoopNode(TokenStream &stream) -> std::unique_ptr<ExprLoopNode> {
-  Logger &logger = Logger::getInstance();
-  logger.enterFunction("parseExprLoopNode");
-
+  Logger logger = LoggerPlant::getInstance().enterFunc("parseExprLoopNode");
   Position position = stream.peek().line;
   stream.next();
-
-  logger.exitFunction();
-
   return std::make_unique<ExprLoopNode>(parseExprBlockNode(stream), position);
 }
 
 auto parseExprWhileNode(TokenStream &stream) -> std::unique_ptr<ExprWhileNode> {
-  Logger &logger = Logger::getInstance();
-  logger.enterFunction("parseExprWhileNode");
-
+  Logger logger = LoggerPlant::getInstance().enterFunc("parseExprWhileNode");
   Position position = stream.peek().line;
   stream.next();
   auto condition = parseCondition(stream);
   auto loop_body = parseExprBlockNode(stream);
-
-  logger.exitFunction();
-
   return std::make_unique<ExprWhileNode>(std::move(condition),
                                          std::move(loop_body), position);
 }
 
 auto parseExprIfNode(TokenStream &stream) -> std::unique_ptr<ExprIfNode> {
-  Logger &logger = Logger::getInstance();
-  logger.enterFunction("parseExprIfNode");
+  Logger logger = LoggerPlant::getInstance().enterFunc("parseExprIfNode");
   std::stringstream debug_info;
   debug_info << " on line: " << stream.peek().line.getLine()
              << " symbol: " << stream.peek().content;
@@ -659,18 +630,14 @@ auto parseExprIfNode(TokenStream &stream) -> std::unique_ptr<ExprIfNode> {
       else_block = parseExprBlockNode(stream);
     }
   }
-
   logger.log(LogLevel::DEBUG, debug_info.str());
-  logger.exitFunction();
-
   return std::make_unique<ExprIfNode>(std::move(condition),
                                       std::move(then_block),
                                       std::move(else_block), position);
 }
 
 auto parseCondition(TokenStream &stream) -> std::unique_ptr<ExprNode> {
-  Logger &logger = Logger::getInstance();
-  logger.enterFunction("parseCondition");
+  Logger logger = LoggerPlant::getInstance().enterFunc("parseCondition");
   std::stringstream debug_info;
   debug_info << " on line: " << stream.peek().line.getLine()
              << " symbol: " << stream.peek().content;
@@ -685,17 +652,13 @@ auto parseCondition(TokenStream &stream) -> std::unique_ptr<ExprNode> {
     throw CompilerException("The condition expr missed right paren.", position);
   }
   stream.next();
-
   logger.log(LogLevel::DEBUG, debug_info.str());
-  logger.exitFunction();
-
   return condition;
 }
 
 auto parseExprLiteralNode(TokenStream &stream)
     -> std::unique_ptr<ExprLiteralNode> {
-  Logger &logger = Logger::getInstance();
-  logger.enterFunction("parseExprLiteralNode");
+  Logger logger = LoggerPlant::getInstance().enterFunc("parseExprLiteralNode");
   std::stringstream debug_info;
   debug_info << " on line: " << stream.peek().line.getLine()
              << " symbol: " << stream.peek().content;
@@ -716,17 +679,14 @@ auto parseExprLiteralNode(TokenStream &stream)
     return parseExprLiteralBoolNode(stream);
   }
   throw CompilerException("Unexpected token in ExprLiteralNode: ", position);
-
   logger.log(LogLevel::DEBUG, debug_info.str());
-  logger.exitFunction();
-
   return nullptr;
 }
 
 auto parseExprLiteralIntNode(TokenStream &stream)
     -> std::unique_ptr<ExprLiteralIntNode> {
-  Logger &logger = Logger::getInstance();
-  logger.enterFunction("parseLiteralIntNode");
+  Logger logger =
+      LoggerPlant::getInstance().enterFunc("parseExprLiteralIntNode");
   std::stringstream debug_info;
   debug_info << " on line: " << stream.peek().line.getLine()
              << " symbol: " << stream.peek().content;
@@ -781,34 +741,28 @@ auto parseExprLiteralIntNode(TokenStream &stream)
     }
   }
   uint32_t value = std::stoul(cleaned_literal.substr(pos), &pos, base);
-
   logger.log(LogLevel::DEBUG, debug_info.str());
-  logger.exitFunction();
-
   return std::make_unique<ExprLiteralIntNode>(value, int_type, position);
 }
 
 auto parseExprLiteralBoolNode(TokenStream &stream)
     -> std::unique_ptr<ExprLiteralBoolNode> {
-  Logger &logger = Logger::getInstance();
-  logger.enterFunction("parseLiteralIntNode");
+  Logger logger =
+      LoggerPlant::getInstance().enterFunc("parseExprLiteralBoolNode");
   std::stringstream debug_info;
   debug_info << " on line: " << stream.peek().line.getLine()
              << " symbol: " << stream.peek().content;
 
   Position position = stream.peek().line;
   bool value = stream.next().type == TokenType::TRUE;
-  
   logger.log(LogLevel::DEBUG, debug_info.str());
-  logger.exitFunction();
-
   return std::make_unique<ExprLiteralBoolNode>(value, position);
 }
 
 auto parseExprLiteralCharNode(TokenStream &stream)
     -> std::unique_ptr<ExprLiteralCharNode> {
-  Logger &logger = Logger::getInstance();
-  logger.enterFunction("parseLiteralIntNode");
+  Logger logger =
+      LoggerPlant::getInstance().enterFunc("parseExprLiteralCharNode");
   std::stringstream debug_info;
   debug_info << " on line: " << stream.peek().line.getLine()
              << " symbol: " << stream.peek().content;
@@ -850,18 +804,15 @@ auto parseExprLiteralCharNode(TokenStream &stream)
   } else {
     result = content[1];
   }
-
   logger.log(LogLevel::DEBUG, debug_info.str());
-  logger.exitFunction();
-
   return std::make_unique<ExprLiteralCharNode>(static_cast<uint32_t>(result),
                                                position);
 }
 
 auto parseExprLiteralStringNode(TokenStream &stream)
     -> std::unique_ptr<ExprLiteralStringNode> {
-  Logger &logger = Logger::getInstance();
-  logger.enterFunction("parseLiteralIntNode");
+  Logger logger =
+      LoggerPlant::getInstance().enterFunc("parseExprLiteralStringNode");
   std::stringstream debug_info;
   debug_info << " on line: " << stream.peek().line.getLine()
              << " symbol: " << stream.peek().content;
@@ -894,17 +845,14 @@ auto parseExprLiteralStringNode(TokenStream &stream)
   default:
     throw CompilerException("The string literal has wrong format.", position);
   }
-
   logger.log(LogLevel::DEBUG, debug_info.str());
-  logger.exitFunction();
-
   return std::make_unique<ExprLiteralStringNode>(std::move(result), position);
 }
 
 auto parseExprOperUnaryNode(TokenStream &stream)
     -> std::unique_ptr<ExprOperUnaryNode> {
-  Logger &logger = Logger::getInstance();
-  logger.enterFunction("parseLiteralIntNode");
+  Logger logger =
+      LoggerPlant::getInstance().enterFunc("parseExprOperUnaryNode");
   std::stringstream debug_info;
   debug_info << " on line: " << stream.peek().line.getLine()
              << " symbol: " << stream.peek().content;
@@ -934,31 +882,23 @@ auto parseExprOperUnaryNode(TokenStream &stream)
   }
   auto expr = parseExprNode(
       stream, OpPowerRecoder::getInstance().getRightNud(token.type));
-
   logger.log(LogLevel::DEBUG, debug_info.str());
-  logger.exitFunction();
-
   return std::make_unique<ExprOperUnaryNode>(op, std::move(expr), position);
 }
 
 auto parseExprPathNode(TokenStream &stream) -> std::unique_ptr<ExprPathNode> {
-  Logger &logger = Logger::getInstance();
-  logger.enterFunction("parseLiteralIntNode");
+  Logger logger = LoggerPlant::getInstance().enterFunc("parseExprPathNode");
   std::stringstream debug_info;
   debug_info << " on line: " << stream.peek().line.getLine()
              << " symbol: " << stream.peek().content;
 
   Position position = stream.peek().line;
-
   logger.log(LogLevel::DEBUG, debug_info.str());
-  logger.exitFunction();
-
   return std::make_unique<ExprPathNode>(parsePathNode(stream), position);
 }
 
 auto parseExprGroupNode(TokenStream &stream) -> std::unique_ptr<ExprGroupNode> {
-  Logger &logger = Logger::getInstance();
-  logger.enterFunction("parseLiteralIntNode");
+  Logger logger = LoggerPlant::getInstance().enterFunc("parseExprGroupNode");
   std::stringstream debug_info;
   debug_info << " on line: " << stream.peek().line.getLine()
              << " symbol: " << stream.peek().content;
@@ -969,16 +909,12 @@ auto parseExprGroupNode(TokenStream &stream) -> std::unique_ptr<ExprGroupNode> {
   if (stream.next().type != TokenType::RIGHT_PAREN) {
     throw CompilerException("The group expr missed right parent.", position);
   }
-
   logger.log(LogLevel::DEBUG, debug_info.str());
-  logger.exitFunction();
-
   return std::make_unique<ExprGroupNode>(std::move(expr), position);
 }
 
 auto parseExprCallNode(TokenStream &stream) -> std::unique_ptr<ExprCallNode> {
-  Logger &logger = Logger::getInstance();
-  logger.enterFunction("parseLiteralIntNode");
+  Logger logger = LoggerPlant::getInstance().enterFunc("parseExprCallNode");
   std::stringstream debug_info;
   debug_info << " on line: " << stream.peek().line.getLine()
              << " symbol: " << stream.peek().content;
@@ -1004,17 +940,13 @@ auto parseExprCallNode(TokenStream &stream) -> std::unique_ptr<ExprCallNode> {
     }
   }
   stream.next();
-
   logger.log(LogLevel::DEBUG, debug_info.str());
-  logger.exitFunction();
-
   return std::make_unique<ExprCallNode>(std::move(caller), std::move(arguments),
                                         position);
 }
 
 auto parseExprBreakNode(TokenStream &stream) -> std::unique_ptr<ExprBreakNode> {
-  Logger &logger = Logger::getInstance();
-  logger.enterFunction("parseLiteralIntNode");
+  Logger logger = LoggerPlant::getInstance().enterFunc("parseExprBreakNode");
   std::stringstream debug_info;
   debug_info << " on line: " << stream.peek().line.getLine()
              << " symbol: " << stream.peek().content;
@@ -1027,17 +959,13 @@ auto parseExprBreakNode(TokenStream &stream) -> std::unique_ptr<ExprBreakNode> {
   } else {
     stream.next();
   }
-
   logger.log(LogLevel::DEBUG, debug_info.str());
-  logger.exitFunction();
-
   return std::make_unique<ExprBreakNode>(std::move(value), position);
 }
 
 auto parseExprReturnNode(TokenStream &stream)
     -> std::unique_ptr<ExprReturnNode> {
-  Logger &logger = Logger::getInstance();
-  logger.enterFunction("parseLiteralIntNode");
+  Logger logger = LoggerPlant::getInstance().enterFunc("parseExprReturnNode");
   std::stringstream debug_info;
   debug_info << " on line: " << stream.peek().line.getLine()
              << " symbol: " << stream.peek().content;
@@ -1050,17 +978,13 @@ auto parseExprReturnNode(TokenStream &stream)
   } else {
     stream.next();
   }
-
   logger.log(LogLevel::DEBUG, debug_info.str());
-  logger.exitFunction();
-
   return std::make_unique<ExprReturnNode>(std::move(value), position);
 }
 
 auto parseExprContinueNode(TokenStream &stream)
     -> std::unique_ptr<ExprContinueNode> {
-  Logger &logger = Logger::getInstance();
-  logger.enterFunction("parseLiteralIntNode");
+  Logger logger = LoggerPlant::getInstance().enterFunc("parseExprContinueNode");
   std::stringstream debug_info;
   debug_info << " on line: " << stream.peek().line.getLine()
              << " symbol: " << stream.peek().content;
@@ -1070,16 +994,12 @@ auto parseExprContinueNode(TokenStream &stream)
   if (stream.peek().type != TokenType::SEMICOLON) {
     throw CompilerException("Continue expr should not have value.", position);
   }
-
   logger.log(LogLevel::DEBUG, debug_info.str());
-  logger.exitFunction();
-
   return std::make_unique<ExprContinueNode>(position);
 }
 
 auto parseExprArrayNode(TokenStream &stream) -> std::unique_ptr<ExprArrayNode> {
-  Logger &logger = Logger::getInstance();
-  logger.enterFunction("parseLiteralIntNode");
+  Logger logger = LoggerPlant::getInstance().enterFunc("parseExprArrayNode");
   std::stringstream debug_info;
   debug_info << " on line: " << stream.peek().line.getLine()
              << " symbol: " << stream.peek().content;
@@ -1106,10 +1026,7 @@ auto parseExprArrayNode(TokenStream &stream) -> std::unique_ptr<ExprArrayNode> {
     throw CompilerException("Missing ] at the end of an array.", position);
   }
   stream.next();
-
   logger.log(LogLevel::DEBUG, debug_info.str());
-  logger.exitFunction();
-
   return std::make_unique<ExprArrayNode>(std::move(elements), std::move(length),
                                          position);
 }

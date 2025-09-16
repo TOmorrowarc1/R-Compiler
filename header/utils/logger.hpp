@@ -5,20 +5,35 @@
 
 enum class LogLevel { DEBUG, INFO, WARN, ERROR };
 
-class Logger {
+class Logger;
+
+class LoggerPlant {
 private:
-  std::stringstream log_stream_;
-  int32_t function_depth_;
+  std::string log_;
+  int32_t func_depth_;
   LogLevel current_level_;
 
-  Logger(LogLevel level);
-  ~Logger();
+  LoggerPlant(LogLevel level);
+  ~LoggerPlant();
 
 public:
-  static auto getInstance() -> Logger &;
+  static auto getInstance() -> LoggerPlant &;
   void setLevel(LogLevel level);
-  void log(LogLevel level, const std::string &message);
   void output();
-  void enterFunction(const std::string &function_name);
-  void exitFunction();
+  void log(const std::string &message);
+  auto enterFunc(const std::string &function_name) -> Logger;
+  void exitFunc(const std::string &function_name);
+};
+
+class Logger {
+private:
+  std::string func_name_;
+  std::string log_;
+  LoggerPlant *plant_;
+  LogLevel log_level_;
+
+public:
+  Logger(const std::string &func_name, LoggerPlant *plant_, LogLevel level);
+  ~Logger();
+  void log(LogLevel level, const std::string &message);
 };
