@@ -249,6 +249,11 @@ void SemanticChecker::visit(ItemImplNode *node) {
     }
   }
   current_impl_type_ = nullptr;
+  if (!node->trait_name_.empty()) {
+    if (!implCheck(node)) {
+      throw std::runtime_error("Impl does not implement the trait completely.");
+    }
+  }
 }
 
 void SemanticChecker::visit(ItemTraitNode *node) {}
@@ -895,7 +900,7 @@ void SemanticChecker::visit(StmtLetNode *node) {
     if (node->init_value_) {
       node->init_value_->accept(*this);
       if (!judgeTypeEqual(node->init_value_->value_info_->getType().get(),
-                         type.get(), true)) {
+                          type.get(), true)) {
         throw std::runtime_error(
             "Type mismatch in let statement initialization");
       }
