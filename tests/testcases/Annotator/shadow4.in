@@ -1,0 +1,14 @@
+/*
+Test Name: Shadow4
+Test Target: constants cannot be shadowed by functions in the same scope.
+Verdict: Fail
+Author: Renshu Ge
+*/
+
+fn main() {
+  const h :i32 = 1;
+  fn h(y:i32)->i32{
+    return y + 1;
+  }
+  let x: i32= h(8);
+}

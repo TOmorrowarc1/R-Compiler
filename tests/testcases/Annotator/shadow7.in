@@ -1,0 +1,16 @@
+/*
+Test Name: Shadow7
+Test Target: self-define type can have the same name with no matter var/func/const.
+Verdict: Fail
+Author: Renshu Ge
+*/
+
+struct A {
+  a: i32,
+  b: i32,
+}
+
+fn main() {
+  const A: i32 = 1;
+  let a: A = A{a:A,b:A};
+}

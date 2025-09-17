@@ -5,7 +5,6 @@ Verdict: Success
 Author: Renshu Ge
 */
 
-
 struct MyStruct {
     a:i32,
     b:i32,

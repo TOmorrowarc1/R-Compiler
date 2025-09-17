@@ -1,0 +1,16 @@
+/*
+Test Name: Shadow2
+Test Target: functions cannot have the same name in one scope.
+Verdict: Fail
+Author: Renshu Ge
+*/
+
+fn main() {
+  fn plus1(a:&mut i32)->(){
+    *a = *a + 1;
+  }
+  fn plus1(b: i32)->i32{
+    return b + 1;
+  }
+  let wrong:i32 = plus1(7);
+}

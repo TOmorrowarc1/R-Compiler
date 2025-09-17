@@ -1,0 +1,14 @@
+/*
+Test Name: Shadow3
+Test Target: var will cover functions with the same name in one scope.
+Verdict: Success
+Author: Renshu Ge
+*/
+
+fn main() {
+  let x :i32 = 1;
+  fn x(y :i32)->i32{
+    return y + 1;
+  }
+  let k:i32 = x + 8;
+}

@@ -1,0 +1,18 @@
+/*
+Test Name: Shadow1
+Test Target: var declared later shadow the fronter in the same scope.
+Verdict: Success
+Author: Renshu Ge
+*/
+
+fn main() {
+    let x: i32 = 10;
+    let val1: i32 = x; 
+    let x: u32 = 8;
+    let mut array:[u32;8]=[x;8];
+    {
+      let x:[u32;1] = [7];
+      let uint32_t:u32 = x[0];
+    }
+    array[0] = x;
+}

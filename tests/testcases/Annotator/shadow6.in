@@ -1,0 +1,12 @@
+/*
+Test Name: Shadow6
+Test Target: constants in the same scope cannot have the same name.
+Verdict: Fail
+Author: Renshu Ge
+*/
+
+fn main() {
+  const h: usize = 7;
+  const h: usize = 5 + 5;
+  let array_: [usize;7] = [h;7]; 
+}
