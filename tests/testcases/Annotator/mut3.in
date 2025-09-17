@@ -1,0 +1,28 @@
+/*
+Test Name: Mut2
+Test Target: mutability can be propagated to members
+Verdict: Success
+Author: Renshu Ge
+*/
+
+struct Counter {
+  count: i32,
+}
+
+impl Counter {
+  fn get_count(&self) -> i32 {
+    self.count
+  }
+
+  fn try_increment_immutably(&self) {
+    self.count = self.count + 1;
+  }
+
+  fn increment(&mut self) {
+    self.count = self.count + 1;
+  }
+}
+
+fn main() {
+  let mut my_counter = Counter { count: 0 };
+}

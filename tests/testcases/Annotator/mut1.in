@@ -1,0 +1,11 @@
+/*
+Test Name: Mut1
+Test Target: the basic disticguish between mut and unmut vars.
+Verdict: Fail
+Author: Renshu Ge
+*/
+
+fn main(){
+  let x: i32 = 5;
+  x = 10;
+}
