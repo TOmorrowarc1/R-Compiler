@@ -1,0 +1,22 @@
+/*
+Test Name: Pattern2
+Test Target: the reference pattern
+Verdict: Fail
+Author: Renshu Ge
+*/
+
+struct Point {
+  x: i32,
+  y: i32,
+}
+
+fn deref(&x: &Point)->i32{
+  let ref_wrong: &Point = x;
+  return x.y;
+}
+
+fn main() {
+  let p: Point = Point { x: 10, y: 20 };
+  let p_ref: &Point = &p;
+  deref(p_ref);
+}

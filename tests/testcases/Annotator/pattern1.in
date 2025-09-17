@@ -1,0 +1,21 @@
+/*
+Test Name: Pattern1
+Test Target: the _ pattern
+Verdict: Success
+Author: Renshu Ge
+*/
+
+struct Point {
+  x: i32,
+  y: i32,
+}
+
+fn event(level: i32, _: &i32) -> i32 {
+  let level_: i32 = level;
+  return level_;
+}
+
+fn main() {
+  let p = Point { x: 10, y: 20 };
+  event(1, 17);
+}
