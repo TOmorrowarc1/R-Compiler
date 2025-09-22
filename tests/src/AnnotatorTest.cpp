@@ -50,9 +50,9 @@ TEST(AnnotatorTest, ConstTypeSolveTest1) {
   }
   EXPECT_TRUE(!flag);
 
-  std::string input_path = test_cases_dir + "/Annotator/solve1-2.in";
-  std::string text = readFileToString(input_path);
-  bool flag = true;
+  input_path = test_cases_dir + "/Annotator/solve1-2.in";
+  text = readFileToString(input_path);
+  flag = true;
   try {
     auto lex_result = lex(text);
     auto parse_result = parse(lex_result);
@@ -65,9 +65,9 @@ TEST(AnnotatorTest, ConstTypeSolveTest1) {
   }
   EXPECT_TRUE(!flag);
 
-  std::string input_path = test_cases_dir + "/Annotator/solve1-3.in";
-  std::string text = readFileToString(input_path);
-  bool flag = true;
+  input_path = test_cases_dir + "/Annotator/solve1-3.in";
+  text = readFileToString(input_path);
+  flag = true;
   try {
     auto lex_result = lex(text);
     auto parse_result = parse(lex_result);
@@ -131,7 +131,7 @@ TEST(AnnotatorTest, ConstTypeSolveTest4) {
   EXPECT_TRUE(flag);
 }
 
-TEST(AnnotatorTest, ConstTypeSolveTest4) {
+TEST(AnnotatorTest, ConstTypeSolveTest5) {
   std::string input_path = test_cases_dir + "/Annotator/solve5.in";
   std::string text = readFileToString(input_path);
   bool flag = true;
