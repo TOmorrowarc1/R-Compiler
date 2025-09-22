@@ -3,13 +3,13 @@ Test Package: Semantic-1
 Test Target: return
 Author: Ruitian Wang
 Time: 2025-08-27
-Verdict: Fail?
-Comment: Return statement in expression context without semicolon
+Verdict: Pass
+Comment: Valid return statement in expression context
 */
 
-// Error: Return statement used as expression value
+// Valid: Return statement can be used as expression value (never type coercion)
 fn test_return_expr() -> i32 {
-    let x: i32 = return 42;  // Error: return cannot be used as expression value
+    let x: i32 = return 42;
     x
 }
 

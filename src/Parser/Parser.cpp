@@ -10,7 +10,7 @@ auto parse(const std::vector<Token> &tokens) -> std::unique_ptr<ASTRootNode> {
     throw CompilerException("Expected EOF after parsing AST.",
                             stream.peek().line);
   }
-  LoggerPlant::getInstance().output();
+  // LoggerPlant::getInstance().output();
   return rootNode;
 }
 

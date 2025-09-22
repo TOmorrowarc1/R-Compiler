@@ -22,7 +22,7 @@ impl SegmentTree {
         }
     }
     
-    fn build(&mut self, arr: &[i32], node: i32, start: i32, end: i32) {
+    fn build(&mut self, arr: &[i32; 1000], node: i32, start: i32, end: i32) {
         if (start == end) {
             self.tree[node as usize] = arr[start as usize];
         } else {
@@ -63,7 +63,7 @@ impl SegmentTree {
         return left_sum + right_sum;
     }
     
-    fn init(&mut self, arr: &[i32]) {
+    fn init(&mut self, arr: &[i32; 1000]) {
         self.build(arr, 1, 0, self.n - 1);
     }
     
@@ -167,7 +167,7 @@ impl MaxSegmentTree {
         }
     }
     
-    fn build(&mut self, arr: &[i32], node: i32, start: i32, end: i32) {
+    fn build(&mut self, arr: &[i32; 1000], node: i32, start: i32, end: i32) {
         if (start == end) {
             self.tree[node as usize] = arr[start as usize];
         } else {
@@ -195,7 +195,7 @@ impl MaxSegmentTree {
         return if (left_max > right_max) { left_max } else { right_max };
     }
     
-    fn init(&mut self, arr: &[i32]) {
+    fn init(&mut self, arr: &[i32; 1000]) {
         self.build(arr, 1, 0, self.n - 1);
     }
     

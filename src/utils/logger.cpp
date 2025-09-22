@@ -20,7 +20,7 @@ void LoggerPlant::log(const std::string &message) {
 }
 
 void LoggerPlant::output() {
-  std::cout << log_;
+  // std::cout << log_;
   log_.clear();
 }
 

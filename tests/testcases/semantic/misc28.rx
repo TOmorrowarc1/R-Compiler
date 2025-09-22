@@ -9,7 +9,7 @@ Comment: Trie (Prefix Tree) implementation for string operations
 
 // Trie (Prefix Tree) implementation for string operations
 // Efficient data structure for word storage and prefix searches
-#[derive(Copy, Clone)]
+
 struct TrieNode {
     children: [i32; 26], // Indices to child nodes, -1 for null
     is_end_of_word: bool,
@@ -61,7 +61,7 @@ impl Trie {
         return -1;
     }
     
-    fn insert(&mut self, word: &[i32], length: i32) {
+    fn insert(&mut self, word: &[i32; 100], length: i32) {
         let mut current: i32 = self.root;
         
         let mut i: i32 = 0;
@@ -87,7 +87,7 @@ impl Trie {
         self.nodes[current as usize].word_count += 1;
     }
     
-    fn search(&self, word: &[i32], length: i32) -> bool {
+    fn search(&self, word: &[i32; 100], length: i32) -> bool {
         let mut current: i32 = self.root;
         
         let mut i: i32 = 0;
@@ -108,7 +108,7 @@ impl Trie {
         return self.nodes[current as usize].is_end_of_word;
     }
     
-    fn starts_with(&self, prefix: &[i32], length: i32) -> bool {
+    fn starts_with(&self, prefix: &[i32; 100], length: i32) -> bool {
         let mut current: i32 = self.root;
         
         let mut i: i32 = 0;
@@ -129,7 +129,7 @@ impl Trie {
         return true;
     }
     
-    fn delete_helper(&mut self, node: i32, word: &[i32], depth: i32, length: i32) -> bool {
+    fn delete_helper(&mut self, node: i32, word: &[i32; 100], depth: i32, length: i32) -> bool {
         if (depth == length) {
             if (!self.nodes[node as usize].is_end_of_word) {
                 return false; // Word doesn't exist
@@ -181,11 +181,11 @@ impl Trie {
         return false;
     }
     
-    fn delete(&mut self, word: &[i32], length: i32) {
+    fn delete(&mut self, word: &[i32; 100], length: i32) {
         self.delete_helper(self.root, word, 0, length);
     }
     
-    fn count_words_with_prefix(&self, prefix: &[i32], length: i32) -> i32 {
+    fn count_words_with_prefix(&self, prefix: &[i32; 100], length: i32) -> i32 {
         let mut current: i32 = self.root;
         
         let mut i: i32 = 0;

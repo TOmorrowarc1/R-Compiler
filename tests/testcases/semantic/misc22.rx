@@ -76,8 +76,12 @@ impl Stack {
     }
     
     // Check if parentheses are balanced
-    fn is_balanced_parentheses(&mut self, expr: &[i32], length: i32) -> bool {
+    fn is_balanced_parentheses(&mut self, expr: &[i32; MAXN], length: i32) -> bool {
         self.clear();
+
+        if (length > MAXN as i32) {
+            return false;
+        }
         
         let mut i: i32 = 0;
         while (i < length) {
@@ -105,8 +109,12 @@ impl Stack {
     }
     
     // Evaluate postfix expression
-    fn evaluate_postfix(&mut self, expr: &[i32], length: i32) -> i32 {
+    fn evaluate_postfix(&mut self, expr: &[i32; MAXN], length: i32) -> i32 {
         self.clear();
+        
+        if (length > MAXN as i32) {
+            return -1;
+        }
         
         let mut i: i32 = 0;
         while (i < length) {
@@ -150,6 +158,8 @@ impl Stack {
         }
     }
 }
+
+const MAXN: usize = 10;
 
 fn main() {
     let mut stack: Stack = Stack::new();

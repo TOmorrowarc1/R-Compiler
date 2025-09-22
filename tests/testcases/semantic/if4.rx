@@ -10,11 +10,11 @@ Comment: if statement test, if-else if-else chain
 fn main() {
     let temperature: i32 = 25;
     if (temperature > 30) {
-        let status_:str = "hot";
+        let status_: &str = "hot";
     } else if (temperature < 10) {
-        let status_:str = "cold";
+        let status_: &str = "cold";
     } else {
-        let status_:str = "mild";
+        let status_: &str = "mild";
     }
     exit(0);
 }

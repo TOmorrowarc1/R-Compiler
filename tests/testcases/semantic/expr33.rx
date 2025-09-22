@@ -47,7 +47,7 @@ impl GraphNode {
 }
 
 fn depth_first_search(graph: &mut [GraphNode; 10], start_node: i32, target_node: i32) -> i32 {
-    let mut visited_count : i32 = 0;
+    let mut visited_count: i32 = 0;
     let mut stack: [i32; 10] = [0; 10];
     let mut stack_size: i32 = 0;
     
