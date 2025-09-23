@@ -75,7 +75,7 @@ expr32 -1
 expr33 0
 expr34 0
 expr35 -1
-expr36 -1
+expr36 0
 expr37 -1
 expr38 0
 expr39 -1
@@ -125,14 +125,14 @@ misc19 0
 misc2 0
 misc20 0
 misc21 0
-misc22 -1
+misc22 0
 misc23 0
 misc24 0
 misc25 0
 misc26 0
-misc27 -1
-misc28 -1
-misc29 -1
+misc27 0
+misc28 0
+misc29 0
 misc3 0
 misc30 0
 misc31 0
@@ -172,7 +172,7 @@ misc61 -1
 misc62 -1
 misc63 -1
 misc64 -1
-misc65 -1
+misc65 0
 misc7 0
 misc8 0
 misc9 0
@@ -180,7 +180,7 @@ return1 -1
 return10 -1
 return11 -1
 return12 0
-return13 -1
+return13 0
 return14 0
 return15 0
 return2 0

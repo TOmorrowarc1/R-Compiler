@@ -27,7 +27,6 @@ auto parsePathSegment(TokenStream &stream) -> PathSegment {
     type_name = (type_name == "String") ? "str" : type_name;
     return {PathSegmentType::IDENTIFER, type_name};
   }
-
   case TokenType::SELF:
     stream.next();
     return {PathSegmentType::SELF, "self"};

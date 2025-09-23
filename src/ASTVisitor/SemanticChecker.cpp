@@ -389,8 +389,14 @@ void SemanticChecker::visit(ExprCallNode *node) {
     function_info = std::dynamic_pointer_cast<SymbolFunctionInfo>(function);
   } else {
     auto type_name = path->getPathIndexName(0);
-    auto type = current_scope_->getType(type_name)->getType();
-    auto function = type->getAssociatedFunction(path->segments_[1].name);
+    std::shared_ptr<TypeDef> type_def;
+    if (type_name == "Self") {
+      type_def = current_impl_type_;
+    } else {
+      type_def = current_scope_->getType(type_name)->getType();
+    }
+
+    auto function = type_def->getAssociatedFunction(path->segments_[1].name);
     function_info = function;
   }
   // Check the number and types of parameters.

@@ -260,6 +260,7 @@ auto parseNudExprNode(TokenStream &stream, int32_t power)
   switch (stream.peek().type) {
   case TokenType::IDENTIFIER:
   case TokenType::SELF:
+  case TokenType::SELF_TYPE:
     result = parseExprNudPathNode(stream);
     break;
   case TokenType::CHARLITERAL:
