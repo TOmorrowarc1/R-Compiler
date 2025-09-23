@@ -2,8 +2,9 @@
 #include "Token.hpp"
 
 /*
-In the Lexer, I convert the input string into a token stream and do nothing
-else except make raw literals into common ones.
+The Lexer converts the string, a plain copy of the whole program into a stream
+of tokens, whose type is defined and exposed in Token.hpp, and changes raw
+strings into plain strings.
 */
 
 auto lex(const std::string &target) -> std::vector<Token>;
