@@ -63,9 +63,11 @@ private:
   auto judgeTypeEqual(const TypeKind *node, const std::string &name) -> bool;
   auto judgeTypeEqual(const TypeKind *lhs, const TypeKind *rhs, bool allow_cast)
       -> bool;
-  auto judgeValueMutable(const ValueInfo *value_info) -> bool;
-  auto canAssign(const ExprNode *lhs, const ExprNode *rhs, bool allow_cast)
+  auto canAssign(const TypeKind *lhs, const ExprNode *rhs, bool allow_cast)
       -> bool;
+  auto canAssign(const std::string &type_name, const ExprNode *rhs,
+                 bool allow_cast) -> bool;
+  auto judgeValueMutable(const ValueInfo *value_info) -> bool;
 
   auto bindVarSymbol(const PatternNode *pattern_node,
                      std::shared_ptr<TypeKind> type) -> bool;

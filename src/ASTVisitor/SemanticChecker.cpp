@@ -41,6 +41,62 @@ auto SemanticChecker::judgeTypeEqual(const TypeKind *lhs, const TypeKind *rhs,
   return lhs->isEqual(rhs);
 }
 
+auto SemanticChecker::canAssign(const TypeKind *lhs, const ExprNode *rhs,
+                                bool allow_cast) -> bool {
+  if (rhs == nullptr) {
+    return judgeTypeEqual(lhs, "unit");
+  }
+  auto rhs_type = rhs->value_info_->getType();
+  if (judgeTypeEqual(lhs, "i32") || judgeTypeEqual(lhs, "isize")) {
+    if (is_instance_of<ExprLiteralIntNode, ExprNode>(rhs)) {
+      const auto *int_node = dynamic_cast<const ExprLiteralIntNode *>(rhs);
+      if (int_node->value_ > INT32_MAX) {
+        return false;
+      }
+    }
+  }
+  if (judgeTypeEqual(lhs, "u32") || judgeTypeEqual(lhs, "usize")) {
+    if (is_instance_of<ExprLiteralIntNode, ExprNode>(rhs)) {
+      const auto *int_node = dynamic_cast<const ExprLiteralIntNode *>(rhs);
+      if (int_node->value_ > UINT32_MAX) {
+        return false;
+      }
+    }
+  }
+  return judgeTypeEqual(rhs_type.get(), lhs, allow_cast);
+}
+
+auto SemanticChecker::canAssign(const std::string &type_name,
+                                const ExprNode *rhs, bool allow_cast) -> bool {
+  auto rhs_type = rhs->value_info_->getType();
+  if (type_name == "-i32") {
+    if (is_instance_of<ExprLiteralIntNode, ExprNode>(rhs)) {
+      const auto *int_node = dynamic_cast<const ExprLiteralIntNode *>(rhs);
+      if (int_node->value_ > uint32_t(INT32_MAX) + 1) {
+        return false;
+      }
+    }
+    return judgeTypeEqual(rhs_type.get(), "i32");
+  }
+  if (type_name == "i32" || type_name == "isize") {
+    if (is_instance_of<ExprLiteralIntNode, ExprNode>(rhs)) {
+      const auto *int_node = dynamic_cast<const ExprLiteralIntNode *>(rhs);
+      if (int_node->value_ > INT32_MAX) {
+        return false;
+      }
+    }
+  }
+  if (type_name == "u32" || type_name == "usize") {
+    if (is_instance_of<ExprLiteralIntNode, ExprNode>(rhs)) {
+      const auto *int_node = dynamic_cast<const ExprLiteralIntNode *>(rhs);
+      if (int_node->value_ > UINT32_MAX) {
+        return false;
+      }
+    }
+  }
+  return judgeTypeEqual(rhs_type.get(), type_name);
+}
+
 auto SemanticChecker::judgeValueMutable(const ValueInfo *value_info) -> bool {
   auto type = value_info->getType();
   auto refer_type = dynamic_shared_ptr_cast<TypeKindRefer>(type);
@@ -142,7 +198,7 @@ auto SemanticChecker::breakCheck(const ExprNode *node) -> bool {
     loop_type_stack_.top() = value_type;
     return true;
   }
-  return judgeTypeEqual(loop_type.get(), value_type.get(), true);
+  return canAssign(loop_type.get(), node, true);
 }
 
 auto SemanticChecker::exitCheck(const ExprNode *node) -> bool {
@@ -210,8 +266,7 @@ void SemanticChecker::visit(ItemFnNode *node) {
         const_evaluator_->evaluateType(node->return_type_.get());
     fn_type_stack_.push(return_type_kind);
     node->body_->accept(*this);
-    auto expr_type = node->body_->value_info_->getType().get();
-    if (!judgeTypeEqual(expr_type, return_type_kind.get(), true)) {
+    if (!canAssign(return_type_kind.get(), node->body_.get(), true)) {
       throw std::runtime_error("Function return type mismatch");
     }
     fn_type_stack_.pop();
@@ -259,16 +314,14 @@ void SemanticChecker::visit(ExprArrayNode *node) {
   auto element_type = node->elements_[0]->value_info_->getType();
   for (const auto &element : node->elements_) {
     element->accept(*this);
-    if (!judgeTypeEqual(element->value_info_->getType().get(),
-                        element_type.get(), true)) {
-      throw std::runtime_error(
-          "All elements in an array must have the same type");
+    if (!canAssign(element_type.get(), element.get(), true)) {
+      throw std::runtime_error("Types of all elementsmust be same in array.");
     }
   }
   if (node->length_) {
     node->length_->accept(*this);
     auto length_type = node->length_->value_info_->getType();
-    if (!judgeTypeEqual(length_type.get(), "usize")) {
+    if (!canAssign("usize", node->length_.get(), false)) {
       throw std::runtime_error("Array length must be usize.");
     }
     auto length_info = const_evaluator_->evaluateExprValue(node->length_.get())
@@ -294,8 +347,8 @@ void SemanticChecker::visit(ExprArrayIndexNode *node) {
     throw std::runtime_error("Array index operation requires an array type");
   }
   auto index_type = node->index_->value_info_->getType();
-  if (!judgeTypeEqual(index_type.get(), "usize")) {
-    throw std::runtime_error("Array index must be Usize.");
+  if (!canAssign("usize", node->index_.get(), false)) {
+    throw std::runtime_error("Array index must be usize.");
   }
   // ValueInfo in arrayIndexExpr is decided by the array.
   auto element_type =
@@ -400,9 +453,8 @@ void SemanticChecker::visit(ExprCallNode *node) {
   }
   for (int i = 0; i < node->arguments_.size(); ++i) {
     node->arguments_[i]->accept(*this);
-    auto arg_type = node->arguments_[i]->value_info_->getType();
     auto param_type = function_info->getParametersType()[i];
-    if (!judgeTypeEqual(arg_type.get(), param_type.get(), true)) {
+    if (!canAssign(param_type.get(), node->arguments_[i].get(), true)) {
       throw std::runtime_error("Function call parameters type mismatch");
     }
   }
@@ -433,15 +485,10 @@ void SemanticChecker::visit(ExprReturnNode *node) {
   if (fn_type_stack_.empty()) {
     throw std::runtime_error("Return statement not in a function");
   }
-  std::shared_ptr<TypeKind> value_type;
   if (node->value_ != nullptr) {
     node->value_->accept(*this);
-    value_type = node->value_->value_info_->getType();
-  } else {
-    auto unit_type = current_scope_->getType("unit")->getType();
-    value_type = std::make_shared<TypeKindPath>(unit_type);
   }
-  if (!judgeTypeEqual(value_type.get(), fn_type_stack_.top().get(), true)) {
+  if (!canAssign(fn_type_stack_.top().get(), node->value_.get(), true)) {
     throw std::runtime_error("Return type mismatch");
   }
   auto never_type = std::make_shared<TypeKindNever>();
@@ -534,10 +581,12 @@ void SemanticChecker::visit(ExprLiteralCharNode *node) {
 }
 
 void SemanticChecker::visit(ExprLiteralStringNode *node) {
-  auto string_type =
+  auto static_string_type =
       std::make_shared<TypeKindPath>(current_scope_->getType("str")->getType());
+  auto ref_str_type =
+      std::make_shared<TypeKindRefer>(static_string_type, false);
   node->value_info_ =
-      std::make_unique<ValueInfo>(std::move(string_type), false, false);
+      std::make_unique<ValueInfo>(std::move(ref_str_type), false, false);
 }
 
 void SemanticChecker::visit(ExprLoopNode *node) {
@@ -600,7 +649,7 @@ void SemanticChecker::visit(ExprOperBinaryNode *node) {
   auto rhs_type = node->rhs_->value_info_->getType();
   switch (node->op_) {
   case BinaryOperator::ASSIGN: {
-    if (!lhs_type->isEqual(rhs_type.get())) {
+    if (!canAssign(lhs_type.get(), node->rhs_.get(), true)) {
       throw std::runtime_error("Assignment requires types to match");
     }
     if (!node->lhs_->value_info_->isLeftValue()) {
@@ -620,6 +669,7 @@ void SemanticChecker::visit(ExprOperBinaryNode *node) {
   case BinaryOperator::LESS_EQUAL:
   case BinaryOperator::GREATER_THAN:
   case BinaryOperator::GREATER_EQUAL: {
+    // TODO: type deduction + range check for numeric types.
     if (!lhs_type->isEqual(rhs_type.get())) {
       throw std::runtime_error("Operands compared have the same type.");
     }
@@ -630,12 +680,12 @@ void SemanticChecker::visit(ExprOperBinaryNode *node) {
   }
   case BinaryOperator::LOGIC_AND:
   case BinaryOperator::LOGIC_OR: {
-    auto bool_type = current_scope_->getType("bool")->getType();
-    if (!node->lhs_->value_info_->getType()->isTypePath(bool_type.get()) ||
-        !node->rhs_->value_info_->getType()->isTypePath(bool_type.get())) {
+    if (!judgeTypeEqual(lhs_type.get(), "bool") ||
+        !judgeTypeEqual(rhs_type.get(), "bool")) {
       throw std::runtime_error("Logical and comparison operators require "
                                "boolean operands");
     }
+    auto bool_type = current_scope_->getType("bool")->getType();
     node->value_info_ = std::make_unique<ValueInfo>(
         std::make_shared<TypeKindPath>(bool_type), false, false);
     break;
@@ -686,13 +736,12 @@ void SemanticChecker::visit(ExprOperUnaryNode *node) {
   auto operand_type = node->operand_->value_info_->getType();
   switch (node->op_) {
   case UnaryOperator::NEGATE: {
-    if (!judgeTypeEqual(operand_type.get(), "i32")) {
+    if (!canAssign("-i32", node->operand_.get(), false)) {
       throw std::runtime_error("Negation operator requires a i32 operand");
     }
-    auto i32_type = std::make_shared<TypeKindPath>(
-        current_scope_->getType("i32")->getType());
-    node->value_info_ =
-        std::make_unique<ValueInfo>(std::move(i32_type), false, false);
+    auto i32_type = current_scope_->getType("i32")->getType();
+    node->value_info_ = std::make_unique<ValueInfo>(
+        std::make_shared<TypeKindPath>(i32_type), false, false);
     break;
   }
   case UnaryOperator::NOT: {
@@ -837,8 +886,8 @@ void SemanticChecker::visit(ExprMethodNode *node) {
   }
   for (int i = 0; i < node->parameters_.size(); ++i) {
     node->parameters_[i]->accept(*this);
-    auto para_type = node->parameters_[i]->value_info_->getType();
-    if (!judgeTypeEqual(para_type.get(), target_parameters[i].get(), true)) {
+    if (!canAssign(target_parameters[i].get(), node->parameters_[i].get(),
+                   true)) {
       throw std::runtime_error("Method call parameters type mismatch");
     }
   }
@@ -895,8 +944,7 @@ void SemanticChecker::visit(StmtLetNode *node) {
     bindVarSymbol(node->pattern_.get(), type);
     if (node->init_value_) {
       node->init_value_->accept(*this);
-      if (!judgeTypeEqual(node->init_value_->value_info_->getType().get(),
-                          type.get(), true)) {
+      if (!canAssign(type.get(), node->init_value_.get(), true)) {
         throw std::runtime_error(
             "Type mismatch in let statement initialization");
       }
