@@ -60,7 +60,8 @@ private:
   std::stack<std::shared_ptr<TypeKind>> fn_type_stack_;
   std::stack<std::shared_ptr<TypeKind>> loop_type_stack_;
 
-  auto judgeTypeEqual(const TypeKind *node, const std::string &name) -> bool;
+  auto judgeTypeEqual(const std::string &type_name, const TypeKind *node)
+      -> bool;
   auto judgeTypeEqual(const TypeKind *lhs, const TypeKind *rhs, bool allow_cast)
       -> bool;
   auto canAssign(const TypeKind *lhs, const ExprNode *rhs, bool allow_cast)

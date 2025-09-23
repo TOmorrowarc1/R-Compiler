@@ -7,7 +7,7 @@
 #include <unordered_map>
 
 /*
-The main logic of patt parser: split expr to nud + leds to eliminate left
+The main logic of patt parser: split expr to "nud + leds" to eliminate left
 recursion, and parse expr with precedence by attaching the "bind power" to
 each operator.
 Our Parse() function will parse the nud first and then parse the leds in a
@@ -24,7 +24,7 @@ struct bindPower {
 
 /*
 These numbers are generrated by gemini for rules are too many,
-and I haved checked them.
+only checked by myself.
 */
 
 const std::vector<bindPower> nud_powers = {
@@ -147,15 +147,6 @@ public:
     return 0;
   }
 
-  auto getLeftNud(TokenType type) const -> int32_t {
-    auto iter = nud_power_map.find(type);
-    if (iter != nud_power_map.end()) {
-      return iter->second.left_power;
-    }
-    throw std::runtime_error("Token is not a nud operator.");
-    return 0;
-  }
-
   auto getRightNud(TokenType type) const -> int32_t {
     auto iter = nud_power_map.find(type);
     if (iter != nud_power_map.end()) {
@@ -234,8 +225,8 @@ auto parseExprNode(TokenStream &stream, int32_t power)
     }
     // Special judgement for if-no else expr.
     if (is_instance_of<ExprIfNode, ExprNode>(result.get())) {
-      auto if_check = static_cast<ExprIfNode *>(result.get());
-      if (if_check->else_block_ == nullptr) {
+      auto if_expr_node = static_cast<ExprIfNode *>(result.get());
+      if (if_expr_node->else_block_ == nullptr) {
         break;
       }
     }

@@ -16,9 +16,9 @@ SemanticChecker::SemanticChecker(Scope *initial_scope,
 }
 SemanticChecker::~SemanticChecker() = default;
 
-auto SemanticChecker::judgeTypeEqual(const TypeKind *lhs,
-                                     const std::string &name) -> bool {
-  if (name == "num") {
+auto SemanticChecker::judgeTypeEqual(const std::string &type_name,
+                                     const TypeKind *node) -> bool {
+  if (type_name == "num") {
     auto i32_type = current_scope_->getType("i32")->getType();
     auto u32_type = current_scope_->getType("u32")->getType();
     auto isize_type = current_scope_->getType("isize")->getType();
@@ -26,10 +26,10 @@ auto SemanticChecker::judgeTypeEqual(const TypeKind *lhs,
     auto type_vector = std::vector<std::shared_ptr<TypeDef>>{
         i32_type, u32_type, isize_type, usize_type};
     auto possi_type = std::make_shared<TypeKindPossi>(std::move(type_vector));
-    return lhs->isEqual(possi_type.get());
+    return node->isEqual(possi_type.get());
   }
-  auto target_type = current_scope_->getType(name)->getType();
-  return lhs->isTypePath(target_type.get());
+  auto target_type = current_scope_->getType(type_name)->getType();
+  return node->isTypePath(target_type.get());
 }
 
 auto SemanticChecker::judgeTypeEqual(const TypeKind *lhs, const TypeKind *rhs,
@@ -44,10 +44,10 @@ auto SemanticChecker::judgeTypeEqual(const TypeKind *lhs, const TypeKind *rhs,
 auto SemanticChecker::canAssign(const TypeKind *lhs, const ExprNode *rhs,
                                 bool allow_cast) -> bool {
   if (rhs == nullptr) {
-    return judgeTypeEqual(lhs, "unit");
+    return judgeTypeEqual("unit", lhs);
   }
   auto rhs_type = rhs->value_info_->getType();
-  if (judgeTypeEqual(lhs, "i32") || judgeTypeEqual(lhs, "isize")) {
+  if (judgeTypeEqual("i32", lhs) || judgeTypeEqual("isize", lhs)) {
     if (is_instance_of<ExprLiteralIntNode, ExprNode>(rhs)) {
       const auto *int_node = dynamic_cast<const ExprLiteralIntNode *>(rhs);
       if (int_node->value_ > INT32_MAX) {
@@ -55,7 +55,7 @@ auto SemanticChecker::canAssign(const TypeKind *lhs, const ExprNode *rhs,
       }
     }
   }
-  if (judgeTypeEqual(lhs, "u32") || judgeTypeEqual(lhs, "usize")) {
+  if (judgeTypeEqual("u32", lhs) || judgeTypeEqual("usize", lhs)) {
     if (is_instance_of<ExprLiteralIntNode, ExprNode>(rhs)) {
       const auto *int_node = dynamic_cast<const ExprLiteralIntNode *>(rhs);
       if (int_node->value_ > UINT32_MAX) {
@@ -76,7 +76,7 @@ auto SemanticChecker::canAssign(const std::string &type_name,
         return false;
       }
     }
-    return judgeTypeEqual(rhs_type.get(), "i32");
+    return judgeTypeEqual("i32", rhs_type.get());
   }
   if (type_name == "i32" || type_name == "isize") {
     if (is_instance_of<ExprLiteralIntNode, ExprNode>(rhs)) {
@@ -94,7 +94,7 @@ auto SemanticChecker::canAssign(const std::string &type_name,
       }
     }
   }
-  return judgeTypeEqual(rhs_type.get(), type_name);
+  return judgeTypeEqual(type_name, rhs_type.get());
 }
 
 auto SemanticChecker::judgeValueMutable(const ValueInfo *value_info) -> bool {
@@ -622,21 +622,19 @@ void SemanticChecker::visit(ExprWhileNode *node) {
 void SemanticChecker::visit(ExprOperBinaryNode *node) {
   if (node->op_ == BinaryOperator::AS_CAST) {
     node->lhs_->accept(*this);
-    auto lhs_type = node->lhs_->value_info_->getType();
+    if (!canAssign("num", node->lhs_.get(), false)) {
+      throw std::runtime_error("As-cast only supports numeric types");
+    }
     auto rhs_type_node = dynamic_cast<ExprPathNode *>(node->rhs_.get());
     if (rhs_type_node == nullptr) {
       throw std::runtime_error("As-cast rhs must be a type path");
     }
     auto type_name = rhs_type_node->path_->getPathIndexName(0);
+    if (type_name != "i32" && type_name != "u32" && type_name != "isize" &&
+        type_name != "usize") {
+      throw std::runtime_error("As-cast only supports numeric types");
+    }
     auto type_def = current_scope_->getType(type_name)->getType();
-    auto type_def_name = type_def->getName();
-    if (!judgeTypeEqual(lhs_type.get(), "num")) {
-      throw std::runtime_error("As-cast only supports numeric types");
-    }
-    if (type_def_name != "i32" && type_def_name != "u32" &&
-        type_def_name != "isize" && type_def_name != "usize") {
-      throw std::runtime_error("As-cast only supports numeric types");
-    }
     node->value_info_ =
         std::make_unique<ValueInfo>(std::make_shared<TypeKindPath>(type_def),
                                     node->lhs_->value_info_->isLeftValue(),
@@ -680,10 +678,9 @@ void SemanticChecker::visit(ExprOperBinaryNode *node) {
   }
   case BinaryOperator::LOGIC_AND:
   case BinaryOperator::LOGIC_OR: {
-    if (!judgeTypeEqual(lhs_type.get(), "bool") ||
-        !judgeTypeEqual(rhs_type.get(), "bool")) {
-      throw std::runtime_error("Logical and comparison operators require "
-                               "boolean operands");
+    if (!canAssign("bool", node->lhs_.get(), false) ||
+        !canAssign("bool", node->rhs_.get(), false)) {
+      throw std::runtime_error("Logical operators require boolean operands");
     }
     auto bool_type = current_scope_->getType("bool")->getType();
     node->value_info_ = std::make_unique<ValueInfo>(
@@ -706,8 +703,8 @@ void SemanticChecker::visit(ExprOperBinaryNode *node) {
     if (!judgeValueMutable(node->lhs_->value_info_.get())) {
       throw std::runtime_error("Assignment requires lhs to be mutable");
     }
-    if (!judgeTypeEqual(lhs_type.get(), "num") ||
-        !judgeTypeEqual(rhs_type.get(), "num")) {
+    if (!canAssign("num", node->lhs_.get(), false) ||
+        !canAssign("num", node->rhs_.get(), false)) {
       throw std::runtime_error(
           "Calculation binary operation operands must be numeric");
     }
@@ -717,12 +714,12 @@ void SemanticChecker::visit(ExprOperBinaryNode *node) {
   }
   default:
     // These are numeric calculations.
-    if (!judgeTypeEqual(lhs_type.get(), "num") ||
-        !judgeTypeEqual(rhs_type.get(), "num")) {
+    if (!canAssign("num", node->lhs_.get(), false) ||
+        !canAssign("num", node->rhs_.get(), false)) {
       throw std::runtime_error(
           "Calculation binary operation operands must be numeric");
     }
-    if (!judgeTypeEqual(lhs_type.get(), rhs_type.get(), false)) {
+    if (!canAssign(lhs_type.get(), node->rhs_.get(), true)) {
       throw std::runtime_error(
           "Calculation binary operation operands must have the same type");
     }
@@ -745,8 +742,8 @@ void SemanticChecker::visit(ExprOperUnaryNode *node) {
     break;
   }
   case UnaryOperator::NOT: {
-    if (!judgeTypeEqual(operand_type.get(), "bool") &&
-        !judgeTypeEqual(operand_type.get(), "num")) {
+    if (!canAssign("bool", node->operand_.get(), false) &&
+        !canAssign("num", node->operand_.get(), false)) {
       throw std::runtime_error(
           "Not operator requires a boolean or numeric operand");
     }

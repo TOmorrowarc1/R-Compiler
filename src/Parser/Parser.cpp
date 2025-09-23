@@ -22,8 +22,7 @@ auto parseRootNode(TokenStream &stream) -> std::unique_ptr<ASTRootNode> {
     if (token.type == TokenType::END_OF_FILE) {
       break;
     }
-    auto itemNode = parseItemNode(stream);
-    items.push_back(std::move(itemNode));
+    items.push_back(parseItemNode(stream));
   }
   return std::make_unique<ASTRootNode>(std::move(items), Position(0));
 }
