@@ -551,7 +551,7 @@ void ConstEvaluator::evaluateConstSymbol(const std::string &symbol) {
     if (!const_symbol_info) {
       throw std::runtime_error("Const symbol does not exist: " + symbol);
     }
-    const_symbol_info->setValue(std::move(const_value));
+    const_symbol_info->setValue(std::move(const_info));
   } else {
     throw std::runtime_error("Unsupported const node for symbol: " + symbol);
   }
