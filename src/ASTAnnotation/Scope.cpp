@@ -11,21 +11,21 @@ Scope::~Scope() = default;
 
 auto Scope::getParent() const -> Scope * { return parent_; }
 
-auto Scope::getConstSymbol(const std::string &name) const
+auto Scope::getConstSymbol(const std::string &name, bool is_recursive) const
     -> std::shared_ptr<SymbolConstInfo> {
   auto it = consts_.find(name);
   if (it != consts_.end()) {
     return it->second;
   }
-  if (parent_) {
-    return parent_->getConstSymbol(name);
+  if (is_recursive && parent_) {
+    return parent_->getConstSymbol(name, is_recursive);
   }
   return nullptr;
 }
 
 auto Scope::addConst(const std::string &name,
                      std::shared_ptr<SymbolConstInfo> const_var) -> bool {
-  if (getConstSymbol(name) != nullptr) {
+  if (getConstSymbol(name, false) != nullptr) {
     return false;
   }
   consts_[name] = std::move(const_var);
@@ -34,7 +34,10 @@ auto Scope::addConst(const std::string &name,
 
 auto Scope::addFunction(const std::string &name,
                         std::shared_ptr<SymbolFunctionInfo> function) -> bool {
-  if (getConstSymbol(name) != nullptr) {
+  if (getConstSymbol(name, false) != nullptr) {
+    return false;
+  }
+  if (symbols_.find(name) != symbols_.end()) {
     return false;
   }
   symbols_[name] = std::move(function);
@@ -43,7 +46,7 @@ auto Scope::addFunction(const std::string &name,
 
 auto Scope::addVarible(const std::string &name,
                        std::shared_ptr<SymbolVariableInfo> symbol) -> bool {
-  if (getConstSymbol(name) != nullptr) {
+  if (getConstSymbol(name, true) != nullptr) {
     return false;
   }
   symbols_[name] = std::move(symbol);
@@ -52,19 +55,14 @@ auto Scope::addVarible(const std::string &name,
 
 auto Scope::getSymbol(const std::string &name) const
     -> std::shared_ptr<SymbolInfo> {
-  auto const_symbol = getConstSymbol(name);
+  auto const_symbol = getConstSymbol(name, false);
   if (const_symbol != nullptr) {
     return const_symbol;
   }
-  const Scope *cursor = this;
-  while (cursor) {
-    auto it = cursor->symbols_.find(name);
-    if (it != cursor->symbols_.end()) {
-      return it->second;
-    }
-    cursor = cursor->parent_;
+  if (symbols_.find(name) != symbols_.end()) {
+    return symbols_.at(name);
   }
-  return nullptr;
+  return parent_ == nullptr ? nullptr : parent_->getSymbol(name);
 }
 
 auto Scope::addType(const std::string &name,

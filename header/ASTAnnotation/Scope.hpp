@@ -21,7 +21,7 @@ private:
   std::unordered_map<std::string, std::shared_ptr<SymbolInfo>> symbols_;
   std::unordered_map<std::string, std::shared_ptr<SymbolTypeInfo>> types_;
   std::unordered_map<std::string, std::shared_ptr<SymbolTraitInfo>> traits_;
-  auto getConstSymbol(const std::string &name) const
+  auto getConstSymbol(const std::string &name, bool is_recursive) const
       -> std::shared_ptr<SymbolConstInfo>;
 
 public:

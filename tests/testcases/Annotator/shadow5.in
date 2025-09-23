@@ -5,8 +5,9 @@ Verdict: Fail
 Author: Renshu Ge
 */
 
+const h: i32 = 5 + 5;
+
 fn main() {
-  const h: i32 = 5 + 5;
   let h: usize = 7;
   let array_: [usize;7] = [h;7]; 
 }

@@ -51,14 +51,18 @@ void FuncTraitCollector::visit(ItemFnNode *node) {
   if (node->return_type_) {
     node->return_type_->accept(*this);
   }
-  if (node->body_) {
-    current_scope_ = current_scope_->getNextChildScope();
-    node->body_->accept(*this);
-    current_scope_ = current_scope_->getParent();
+  if (!node->body_) {
+    throw CompilerException("Free function without a body.", node->position_);
   }
+  current_scope_ = current_scope_->getNextChildScope();
+  node->body_->accept(*this);
+  current_scope_ = current_scope_->getParent();
   auto func_info = fnNodeToFunc(node);
   if (ctx_name_.empty()) {
-    current_scope_->addFunction(node->ID_, fnNodeToFunc(node));
+    if (!current_scope_->addFunction(node->ID_, fnNodeToFunc(node))) {
+      throw CompilerException("Duplicate func symbol: " + node->ID_,
+                              node->position_);
+    }
   } else {
     std::string name = ctx_name_.top();
     if (context_.top() == ContextType::IN_TYPE_DEF) {
