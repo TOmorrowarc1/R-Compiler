@@ -541,7 +541,7 @@ void SemanticChecker::visit(ExprLiteralStringNode *node) {
 }
 
 void SemanticChecker::visit(ExprLoopNode *node) {
-  loop_type_stack_.push(std::make_shared<TypeKind>());
+  loop_type_stack_.push(nullptr);
   node->loop_body_->accept(*this);
   auto body_type = loop_type_stack_.top();
   if (!body_type) {
@@ -558,7 +558,7 @@ void SemanticChecker::visit(ExprWhileNode *node) {
   if (!node->condition_->value_info_->getType()->isTypePath(bool_type)) {
     throw std::runtime_error("While condition must be a boolean");
   }
-  loop_type_stack_.push(std::make_shared<TypeKind>());
+  loop_type_stack_.push(nullptr);
   node->loop_body_->accept(*this);
   auto body_type = loop_type_stack_.top();
   if (!body_type) {
