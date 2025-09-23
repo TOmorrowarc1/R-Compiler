@@ -9,11 +9,31 @@
 #include "cast.hpp"
 #include "exception.hpp"
 
-auto judgeTypeEqual(const TypeKind *lhs, const TypeKind *rhs, bool allow_cast)
-    -> bool;
+SemanticChecker::SemanticChecker(Scope *initial_scope,
+                                 ConstEvaluator *const_evaluator)
+    : current_scope_(initial_scope), const_evaluator_(const_evaluator) {
+  const_evaluator_->bindScopePointer(&current_scope_);
+}
+SemanticChecker::~SemanticChecker() = default;
 
-auto judgeTypeEqual(const TypeKind *lhs, const TypeKind *rhs, bool allow_cast)
-    -> bool {
+auto SemanticChecker::judgeTypeEqual(const TypeKind *lhs,
+                                     const std::string &name) -> bool {
+  if (name == "num") {
+    auto i32_type = current_scope_->getType("i32")->getType();
+    auto u32_type = current_scope_->getType("u32")->getType();
+    auto isize_type = current_scope_->getType("isize")->getType();
+    auto usize_type = current_scope_->getType("usize")->getType();
+    auto type_vector = std::vector<std::shared_ptr<TypeDef>>{
+        i32_type, u32_type, isize_type, usize_type};
+    auto possi_type = std::make_shared<TypeKindPossi>(std::move(type_vector));
+    return lhs->isEqual(possi_type.get());
+  }
+  auto target_type = current_scope_->getType(name)->getType();
+  return lhs->isTypePath(target_type.get());
+}
+
+auto SemanticChecker::judgeTypeEqual(const TypeKind *lhs, const TypeKind *rhs,
+                                     bool allow_cast) -> bool {
   if (allow_cast && is_instance_of<TypeKindRefer, TypeKind>(lhs)) {
     auto lhs_refer = dynamic_cast<const TypeKindRefer *>(lhs);
     return lhs_refer->isEqual(rhs) || lhs_refer->canCast(rhs);
@@ -21,20 +41,14 @@ auto judgeTypeEqual(const TypeKind *lhs, const TypeKind *rhs, bool allow_cast)
   return lhs->isEqual(rhs);
 }
 
-auto LoopContext::breakAdd(std::shared_ptr<TypeKind> type) -> bool {
-  if (!loop_type) {
-    loop_type = type;
-    return true;
+auto SemanticChecker::judgeValueMutable(const ValueInfo *value_info) -> bool {
+  auto type = value_info->getType();
+  auto refer_type = dynamic_shared_ptr_cast<TypeKindRefer>(type);
+  if (refer_type != nullptr) {
+    return refer_type->isMutRef();
   }
-  return judgeTypeEqual(loop_type.get(), type.get(), true);
+  return value_info->isMutable();
 }
-
-SemanticChecker::SemanticChecker(Scope *initial_scope,
-                                 ConstEvaluator *const_evaluator)
-    : current_scope_(initial_scope), const_evaluator_(const_evaluator) {
-  const_evaluator_->bindScopePointer(&current_scope_);
-}
-SemanticChecker::~SemanticChecker() = default;
 
 auto SemanticChecker::bindVarSymbol(const PatternNode *pattern_node,
                                     std::shared_ptr<TypeKind> type) -> bool {
@@ -62,37 +76,6 @@ auto SemanticChecker::bindVarSymbol(const PatternNode *pattern_node,
   }
   throw std::runtime_error("Patterns in function paras must be irrefutable.");
   return false;
-}
-
-auto SemanticChecker::judgeTypeEqual(const ExprNode *node,
-                                     const std::string &name) -> bool {
-  auto value_type = node->value_info_->getType();
-  if (name == "num") {
-    auto i32_type = current_scope_->getType("i32")->getType();
-    auto u32_type = current_scope_->getType("u32")->getType();
-    auto isize_type = current_scope_->getType("isize")->getType();
-    auto usize_type = current_scope_->getType("usize")->getType();
-    auto type_vector = std::vector<std::shared_ptr<TypeDef>>{
-        i32_type, u32_type, isize_type, usize_type};
-    auto possi_type = std::make_shared<TypeKindPossi>(std::move(type_vector));
-    return value_type->isEqual(possi_type.get());
-  }
-  auto target_type = current_scope_->getType(name)->getType();
-  return value_type->isTypePath(target_type.get());
-}
-
-auto SemanticChecker::judgeTypeEqual(const TypeKind *lhs, const TypeKind *rhs,
-                                     bool allow_cast) -> bool {
-  return ::judgeTypeEqual(lhs, rhs, allow_cast);
-}
-
-auto SemanticChecker::judgeValueMutable(const ValueInfo *value_info) -> bool {
-  auto type = value_info->getType();
-  auto refer_type = dynamic_shared_ptr_cast<TypeKindRefer>(type);
-  if (refer_type != nullptr) {
-    return refer_type->isMutRef();
-  }
-  return value_info->isMutable();
 }
 
 auto SemanticChecker::fnNodeToFunc(const ItemFnNode *node)
@@ -148,6 +131,18 @@ auto SemanticChecker::implCheck(ItemImplNode *node) -> bool {
     throw std::runtime_error("Impl type must be a path type");
   }
   return all_consts.empty() && all_functions.empty();
+}
+
+auto SemanticChecker::breakCheck(const ExprNode *node) -> bool {
+  auto loop_type = loop_type_stack_.top();
+  auto unit_type = current_scope_->getType("unit")->getType();
+  auto value_type = node == nullptr ? std::make_shared<TypeKindPath>(unit_type)
+                                    : node->value_info_->getType();
+  if (loop_type == nullptr) {
+    loop_type_stack_.top() = value_type;
+    return true;
+  }
+  return judgeTypeEqual(loop_type.get(), value_type.get(), true);
 }
 
 auto SemanticChecker::exitCheck(const ExprNode *node) -> bool {
@@ -273,7 +268,7 @@ void SemanticChecker::visit(ExprArrayNode *node) {
   if (node->length_) {
     node->length_->accept(*this);
     auto length_type = node->length_->value_info_->getType();
-    if (!judgeTypeEqual(node->length_.get(), "usize")) {
+    if (!judgeTypeEqual(length_type.get(), "usize")) {
       throw std::runtime_error("Array length must be usize.");
     }
     auto length_info = const_evaluator_->evaluateExprValue(node->length_.get())
@@ -299,7 +294,7 @@ void SemanticChecker::visit(ExprArrayIndexNode *node) {
     throw std::runtime_error("Array index operation requires an array type");
   }
   auto index_type = node->index_->value_info_->getType();
-  if (!judgeTypeEqual(node->index_.get(), "usize")) {
+  if (!judgeTypeEqual(index_type.get(), "usize")) {
     throw std::runtime_error("Array index must be Usize.");
   }
   // ValueInfo in arrayIndexExpr is decided by the array.
@@ -426,14 +421,10 @@ void SemanticChecker::visit(ExprBreakNode *node) {
   if (loop_type_stack_.empty()) {
     throw std::runtime_error("Break statement not in a loop");
   }
-  auto unit_type = current_scope_->getType("unit")->getType();
-  std::shared_ptr<TypeKind> value_type =
-      std::make_shared<TypeKindPath>(unit_type);
   if (node->value_) {
     node->value_->accept(*this);
-    value_type = node->value_->value_info_->getType();
   }
-  loop_type_stack_.top()->breakAdd(value_type);
+  breakCheck(node->value_.get());
   auto never_type = std::make_shared<TypeKindNever>();
   node->value_info_ = std::make_unique<ValueInfo>(never_type, false, false);
 }
@@ -550,9 +541,9 @@ void SemanticChecker::visit(ExprLiteralStringNode *node) {
 }
 
 void SemanticChecker::visit(ExprLoopNode *node) {
-  loop_type_stack_.push(std::make_shared<LoopContext>());
+  loop_type_stack_.push(std::make_shared<TypeKind>());
   node->loop_body_->accept(*this);
-  auto body_type = loop_type_stack_.top()->loop_type;
+  auto body_type = loop_type_stack_.top();
   if (!body_type) {
     body_type = std::make_shared<TypeKindNever>();
   }
@@ -567,9 +558,9 @@ void SemanticChecker::visit(ExprWhileNode *node) {
   if (!node->condition_->value_info_->getType()->isTypePath(bool_type)) {
     throw std::runtime_error("While condition must be a boolean");
   }
-  loop_type_stack_.push(std::make_shared<LoopContext>());
+  loop_type_stack_.push(std::make_shared<TypeKind>());
   node->loop_body_->accept(*this);
-  auto body_type = loop_type_stack_.top()->loop_type;
+  auto body_type = loop_type_stack_.top();
   if (!body_type) {
     auto unit_type = current_scope_->getType("unit")->getType();
     body_type = std::make_shared<TypeKindPath>(unit_type);
@@ -590,7 +581,7 @@ void SemanticChecker::visit(ExprOperBinaryNode *node) {
     auto type_name = rhs_type_node->path_->getPathIndexName(0);
     auto type_def = current_scope_->getType(type_name)->getType();
     auto type_def_name = type_def->getName();
-    if (!judgeTypeEqual(node->lhs_.get(), "num")) {
+    if (!judgeTypeEqual(lhs_type.get(), "num")) {
       throw std::runtime_error("As-cast only supports numeric types");
     }
     if (type_def_name != "i32" && type_def_name != "u32" &&
@@ -665,8 +656,8 @@ void SemanticChecker::visit(ExprOperBinaryNode *node) {
     if (!judgeValueMutable(node->lhs_->value_info_.get())) {
       throw std::runtime_error("Assignment requires lhs to be mutable");
     }
-    if (!judgeTypeEqual(node->lhs_.get(), "num") ||
-        !judgeTypeEqual(node->rhs_.get(), "num")) {
+    if (!judgeTypeEqual(lhs_type.get(), "num") ||
+        !judgeTypeEqual(rhs_type.get(), "num")) {
       throw std::runtime_error(
           "Calculation binary operation operands must be numeric");
     }
@@ -676,8 +667,8 @@ void SemanticChecker::visit(ExprOperBinaryNode *node) {
   }
   default:
     // These are numeric calculations.
-    if (!judgeTypeEqual(node->lhs_.get(), "num") ||
-        !judgeTypeEqual(node->rhs_.get(), "num")) {
+    if (!judgeTypeEqual(lhs_type.get(), "num") ||
+        !judgeTypeEqual(rhs_type.get(), "num")) {
       throw std::runtime_error(
           "Calculation binary operation operands must be numeric");
     }
@@ -695,7 +686,7 @@ void SemanticChecker::visit(ExprOperUnaryNode *node) {
   auto operand_type = node->operand_->value_info_->getType();
   switch (node->op_) {
   case UnaryOperator::NEGATE: {
-    if (!judgeTypeEqual(node->operand_.get(), "i32")) {
+    if (!judgeTypeEqual(operand_type.get(), "i32")) {
       throw std::runtime_error("Negation operator requires a i32 operand");
     }
     auto i32_type = std::make_shared<TypeKindPath>(
@@ -705,9 +696,8 @@ void SemanticChecker::visit(ExprOperUnaryNode *node) {
     break;
   }
   case UnaryOperator::NOT: {
-    if (!operand_type->isTypePath(
-            current_scope_->getType("bool")->getType().get()) &&
-        !judgeTypeEqual(node->operand_.get(), "num")) {
+    if (!judgeTypeEqual(operand_type.get(), "bool") &&
+        !judgeTypeEqual(operand_type.get(), "num")) {
       throw std::runtime_error(
           "Not operator requires a boolean or numeric operand");
     }

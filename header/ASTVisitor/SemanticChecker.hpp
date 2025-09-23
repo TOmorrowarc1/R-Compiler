@@ -29,11 +29,6 @@ class TypeDef;
 class ConstEvaluator;
 class ValueInfo;
 
-struct LoopContext {
-  std::shared_ptr<TypeKind> loop_type;
-  auto breakAdd(std::shared_ptr<TypeKind> type) -> bool;
-};
-
 class CanExitChecker {
 private:
   int32_t in_main_levels_;
@@ -63,20 +58,22 @@ private:
   CanExitChecker exit_checker_;
   std::shared_ptr<TypeDef> current_impl_type_;
   std::stack<std::shared_ptr<TypeKind>> fn_type_stack_;
-  std::stack<std::shared_ptr<LoopContext>> loop_type_stack_;
+  std::stack<std::shared_ptr<TypeKind>> loop_type_stack_;
 
-  auto bindVarSymbol(const PatternNode *pattern_node,
-                     std::shared_ptr<TypeKind> type) -> bool;
-
-  auto judgeTypeEqual(const ExprNode *node, const std::string &name) -> bool;
+  auto judgeTypeEqual(const TypeKind *node, const std::string &name) -> bool;
   auto judgeTypeEqual(const TypeKind *lhs, const TypeKind *rhs, bool allow_cast)
       -> bool;
   auto judgeValueMutable(const ValueInfo *value_info) -> bool;
+  auto canAssign(const ExprNode *lhs, const ExprNode *rhs, bool allow_cast)
+      -> bool;
 
+  auto bindVarSymbol(const PatternNode *pattern_node,
+                     std::shared_ptr<TypeKind> type) -> bool;
   auto fnNodeToFunc(const ItemFnNode *node)
       -> std::shared_ptr<SymbolFunctionInfo>;
   auto implCheck(ItemImplNode *node) -> bool;
 
+  auto breakCheck(const ExprNode *type) -> bool;
   auto exitCheck(const ExprNode *node) -> bool;
 
 public:
