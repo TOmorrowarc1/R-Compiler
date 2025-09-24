@@ -12,4 +12,5 @@ fn main() {
   let r2: &&mut i32 = &&mut x;
   (**r2) = 20;
   let val2: &&& i32 = &mut r2;
+  exit(0);
 }

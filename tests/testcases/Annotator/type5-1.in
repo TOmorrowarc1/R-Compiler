@@ -25,4 +25,5 @@ fn main() {
   let refint2: &i32 = &&num;
   let c:i32 = dereference(refint1,0);
   let d:[&i32;4] = [&&num,&&&num,&num,&&num];
+  exit(0);
 }

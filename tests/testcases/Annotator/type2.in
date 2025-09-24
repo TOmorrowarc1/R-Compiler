@@ -18,4 +18,5 @@ fn plus(a:A)->usize{
 fn main() {
   let instance :A = A { a:1, b:3, c:[0;5]};
   let uint32_t: usize = plus(instance);
+  exit(0);
 }

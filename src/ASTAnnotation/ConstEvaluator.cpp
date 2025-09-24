@@ -189,6 +189,16 @@ auto ConstEvaluator::evaluateExprValue(ExprNode *node)
       int_type = std::make_shared<TypeKindPath>(u32_type);
       break;
     }
+    case ExprLiteralIntNode::IntType::ISIZE: {
+      auto isize_type = (*current_scope_)->getType("isize")->getType();
+      int_type = std::make_shared<TypeKindPath>(isize_type);
+      break;
+    }
+    case ExprLiteralIntNode::IntType::USIZE: {
+      auto usize_type = (*current_scope_)->getType("usize")->getType();
+      int_type = std::make_shared<TypeKindPath>(usize_type);
+      break;
+    }
     case ExprLiteralIntNode::IntType::NUM: {
       auto i32_type = (*current_scope_)->getType("i32")->getType();
       auto u32_type = (*current_scope_)->getType("u32")->getType();

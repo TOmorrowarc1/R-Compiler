@@ -14,5 +14,6 @@ fn explicitly_returns_unit() -> () {
 }
 
 fn main() {
-  ()
+  ();
+  exit(0);
 }

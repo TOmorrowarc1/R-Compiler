@@ -13,4 +13,5 @@ fn main() {
   let y: bool = false;
   let string_ :String = "Oh my rust.";
   let char_ :char = 'a';
+  exit(0);
 }

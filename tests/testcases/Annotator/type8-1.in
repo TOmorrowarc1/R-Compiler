@@ -17,4 +17,5 @@ fn main() {
   let a:A = A{value:int32_t as u32};
   int32_t = true as i32;
   let array1:[u32;8]=[int32_t as u32;8];
+  exit(0);
 }

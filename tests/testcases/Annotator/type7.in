@@ -15,4 +15,5 @@ fn main() {
   let uSize:usize = 100;
   let iSize:isize = 100;
   let array1_:[u32;100]=[100;100];
+  exit(0);
 }
