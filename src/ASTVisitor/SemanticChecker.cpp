@@ -249,8 +249,9 @@ void SemanticChecker::visit(ItemFnNode *node) {
     current_scope_ = current_scope_->getNextChildScope();
     if (node->fn_type_ != FnType::Fn) {
       auto self_type = std::make_shared<TypeKindPath>(current_impl_type_);
+      bool is_mut = node->fn_type_ == FnType::MutMethod;
       auto var_info =
-          std::make_shared<SymbolVariableInfo>("self", self_type, true);
+          std::make_shared<SymbolVariableInfo>("self", self_type, is_mut);
       current_scope_->addVarible("self", var_info);
     }
     for (auto &param : node->parameters_) {

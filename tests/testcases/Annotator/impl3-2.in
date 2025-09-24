@@ -24,4 +24,5 @@ fn main() {
     let mut k:MyStruct = MyStruct { a:7, b:8 };
     k.timesLength(3);
     let c:i32 = k.getLength(6);
+    exit(0);
 }
