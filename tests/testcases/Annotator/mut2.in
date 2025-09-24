@@ -15,4 +15,5 @@ fn main() {
   let mut arr: [i32; 3] = [1, 2, 3];
   p.x = 15;
   arr[0] = 100;
+  exit(0);
 }

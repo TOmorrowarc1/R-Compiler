@@ -19,4 +19,5 @@ fn main() {
   let p: Point = Point { x: 10, y: 20 };
   let p_ref: &Point = &p;
   deref(p_ref);
+  exit(0);
 }

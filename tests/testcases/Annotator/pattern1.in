@@ -10,12 +10,13 @@ struct Point {
   y: i32,
 }
 
-fn event(level: i32, _: &i32) -> i32 {
+fn event(level: i32, _: i32) -> i32 {
   let level_: i32 = level;
   return level_;
 }
 
 fn main() {
-  let p = Point { x: 10, y: 20 };
+  let p :Point = Point { x: 10, y: 20 };
   event(1, 17);
+  exit(0);
 }

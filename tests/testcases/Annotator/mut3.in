@@ -14,15 +14,12 @@ impl Counter {
     self.count
   }
 
-  fn try_increment_immutably(&self) {
-    self.count = self.count + 1;
-  }
-
   fn increment(&mut self) {
     self.count = self.count + 1;
   }
 }
 
 fn main() {
-  let mut my_counter = Counter { count: 0 };
+  let mut my_counter: Counter = Counter { count: 0 };
+  exit(0);
 }

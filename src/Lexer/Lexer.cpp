@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <string_view>
 
-const uint32_t MAXLENGTH = 64;
+const uint32_t MAXLENGTH = 128;
 
 class LineFinder {
 private:

@@ -16,10 +16,11 @@ fn main() {
   let bool_true: bool = true;
   let bool_false: bool = false;
 
-  let string_literal: String = "Hello, \"World\"!\n";
-  let raw_string: String = r#"
+  let string_literal: &str = "Hello, \"World\"!\n";
+  let raw_string: &str = r#"
     This is a raw string.
     It can contain "quotes" and \backslashes\ without escaping.
   "#;
   let int_min: i32 = -2147483648;
+  exit(0);
 }
