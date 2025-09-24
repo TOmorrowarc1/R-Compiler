@@ -12,4 +12,5 @@ fn put_array(array: &[i32;8])->i32{
 fn main() {
     let x: [i32;8]=[0;8];
     let uint32_t: i32=put_array(&x);
+    exit(0);
 }

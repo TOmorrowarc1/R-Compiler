@@ -29,4 +29,5 @@ fn main(){
       break;
     }
   }
+  exit(0);
 }

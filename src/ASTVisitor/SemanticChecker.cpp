@@ -388,15 +388,18 @@ void SemanticChecker::visit(ExprBlockNode *node) {
       node->statements_.back()->accept(*this);
       auto stmt = dynamic_cast<StmtExprNode *>(node->statements_.back().get());
       if (stmt != nullptr) {
-        if (exit_checker_.canExit()) {
-          auto exit_expr = dynamic_cast<ExprCallNode *>(stmt->expr_.get());
-          if (exit_expr == nullptr || !exitCheck(exit_expr)) {
-            throw std::runtime_error("Main function must end with exit().");
-          }
-        }
         auto expr = dynamic_cast<ExprReturnNode *>(stmt->expr_.get());
         if (expr != nullptr) {
           block_type = std::make_shared<TypeKindNever>();
+        }
+      }
+      if (exit_checker_.canExit()) {
+        if (stmt == nullptr) {
+          throw std::runtime_error("Main function must end with exit().");
+        }
+        auto exit_expr = dynamic_cast<ExprCallNode *>(stmt->expr_.get());
+        if (exit_expr == nullptr || !exitCheck(exit_expr)) {
+          throw std::runtime_error("Main function must end with exit().");
         }
       }
     }
@@ -404,7 +407,6 @@ void SemanticChecker::visit(ExprBlockNode *node) {
     node->value_info_ =
         std::make_unique<ValueInfo>(std::move(block_type), false, false);
   }
-  // Block expr return a anonymous value.
   exit_checker_.removeScope();
   current_scope_ = current_scope_->getParent();
 }

@@ -13,6 +13,8 @@ auto endToEndTest(std::string input_path) -> bool {
   } catch (const CompilerException &e) {
     std::cout << e.getExceptionMessage() << '\n';
     flag = false;
+  } catch (const std::exception &e) {
+    flag = false;
   }
   return flag;
 }
@@ -24,7 +26,7 @@ TEST(AnnotatorTest, Array2) {
   EXPECT_FALSE(endToEndTest("array2-2.in"));
 }
 
-TEST(AnnotatorTest, Condition1) { EXPECT_TRUE(endToEndTest("consition1.in")); }
+TEST(AnnotatorTest, Condition1) { EXPECT_TRUE(endToEndTest("condition1.in")); }
 
 TEST(AnnotatorTest, ControlFlow1) {
   EXPECT_TRUE(endToEndTest("controlflow1.in"));
