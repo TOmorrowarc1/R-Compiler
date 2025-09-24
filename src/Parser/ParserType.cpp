@@ -16,6 +16,7 @@ auto parseTypeNode(TokenStream &stream) -> std::unique_ptr<TypeNode> {
   case TokenType::LEFT_BRACKET:
     return parseTypeArrayNode(stream);
   case TokenType::AND:
+  case TokenType::LOGIC_AND:
     return parseTypeReferNode(stream);
   case TokenType::LEFT_PAREN:
     return parseTypeUnitNode(stream);
@@ -49,13 +50,19 @@ auto parseTypeArrayNode(TokenStream &stream) -> std::unique_ptr<TypeArrayNode> {
 
 auto parseTypeReferNode(TokenStream &stream) -> std::unique_ptr<TypeReferNode> {
   Position position = stream.peek().line;
+  auto token_type = stream.peek().type;
   stream.next();
   bool is_mutable = false;
   if (stream.peek().type == TokenType::MUT) {
     is_mutable = true;
     stream.next();
   }
-  return std::make_unique<TypeReferNode>(parseTypeNode(stream), is_mutable,
+  auto refer_node = std::make_unique<TypeReferNode>(parseTypeNode(stream),
+                                                    is_mutable, position);
+  if (token_type == TokenType::AND) {
+    return refer_node;
+  }
+  return std::make_unique<TypeReferNode>(std::move(refer_node), false,
                                          position);
 }
 

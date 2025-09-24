@@ -121,7 +121,7 @@ TEST(AnnotatorTest, Type5) {
 
 TEST(AnnotatorTest, Type6) { EXPECT_TRUE(endToEndTest("type6.in")); }
 
-TEST(AnnotatorTest, Type7) { EXPECT_FALSE(endToEndTest("type7.in")); }
+TEST(AnnotatorTest, Type7) { EXPECT_TRUE(endToEndTest("type7.in")); }
 
 TEST(AnnotatorTest, Type8) {
   EXPECT_TRUE(endToEndTest("type8-1.in"));

@@ -28,9 +28,8 @@ only checked by myself.
 */
 
 const std::vector<bindPower> nud_powers = {
-    {TokenType::MINUS, 0, 23},
-    {TokenType::NOT, 0, 23},
-    {TokenType::AND, 0, 23},
+    {TokenType::MINUS, 0, 23}, {TokenType::NOT, 0, 23},
+    {TokenType::AND, 0, 23},   {TokenType::LOGIC_AND, 0, 23},
     {TokenType::MUL, 0, 23},
 };
 
@@ -282,6 +281,7 @@ auto parseNudExprNode(TokenStream &stream, int32_t power)
   case TokenType::MINUS:
   case TokenType::NOT:
   case TokenType::AND:
+  case TokenType::LOGIC_AND:
   case TokenType::MUL:
     result = parseExprOperUnaryNode(stream);
     break;

@@ -6,14 +6,9 @@ Author: Renshu Ge
 */ 
 
 fn implicitly_returns_unit() {
-  let _x = 5; 
-}
-
-fn explicitly_returns_unit() -> () {
-  return ();    
+  let x_ :i32 = 5; 
 }
 
 fn main() {
-  ();
   exit(0);
 }

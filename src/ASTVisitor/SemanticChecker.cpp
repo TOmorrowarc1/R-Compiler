@@ -34,11 +34,11 @@ auto SemanticChecker::judgeTypeEqual(const std::string &type_name,
 
 auto SemanticChecker::judgeTypeEqual(const TypeKind *lhs, const TypeKind *rhs,
                                      bool allow_cast) -> bool {
-  if (allow_cast && is_instance_of<TypeKindRefer, TypeKind>(lhs)) {
-    auto lhs_refer = dynamic_cast<const TypeKindRefer *>(lhs);
-    return lhs_refer->isEqual(rhs) || lhs_refer->canCast(rhs);
+  if (allow_cast && is_instance_of<TypeKindRefer, TypeKind>(rhs)) {
+    auto rhs_refer = dynamic_cast<const TypeKindRefer *>(rhs);
+    return rhs_refer->isEqual(lhs) || rhs_refer->canCast(lhs);
   }
-  return lhs->isEqual(rhs);
+  return rhs->isEqual(lhs);
 }
 
 auto SemanticChecker::canAssign(const TypeKind *lhs, const ExprNode *rhs,
@@ -63,7 +63,7 @@ auto SemanticChecker::canAssign(const TypeKind *lhs, const ExprNode *rhs,
       }
     }
   }
-  return judgeTypeEqual(rhs_type.get(), lhs, allow_cast);
+  return judgeTypeEqual(lhs, rhs_type.get(), allow_cast);
 }
 
 auto SemanticChecker::canAssign(const std::string &type_name,
@@ -630,7 +630,8 @@ void SemanticChecker::visit(ExprWhileNode *node) {
 void SemanticChecker::visit(ExprOperBinaryNode *node) {
   if (node->op_ == BinaryOperator::AS_CAST) {
     node->lhs_->accept(*this);
-    if (!canAssign("num", node->lhs_.get(), false)) {
+    if (!canAssign("num", node->lhs_.get(), false) &&
+        !canAssign("bool", node->lhs_.get(), false)) {
       throw std::runtime_error("As-cast only supports numeric types");
     }
     auto rhs_type_node = dynamic_cast<ExprPathNode *>(node->rhs_.get());

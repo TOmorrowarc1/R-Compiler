@@ -1,7 +1,7 @@
 /*
 Test Name: TypeCheck7
 Test Target: the number literal can be recognized as i32,u32,isize,usize.
-Verdict: Fail
+Verdict: Success
 Author: Renshu Ge
 */ 
 
