@@ -315,8 +315,10 @@ void SemanticChecker::visit(ExprArrayNode *node) {
   auto element_type = node->elements_[0]->value_info_->getType();
   for (const auto &element : node->elements_) {
     element->accept(*this);
-    if (!canAssign(element_type.get(), element.get(), true)) {
-      throw std::runtime_error("Types of all elementsmust be same in array.");
+    if (!canAssign(element_type.get(), element.get(), true) &&
+        !canAssign(element->value_info_->getType().get(),
+                   node->elements_[0].get(), true)) {
+      throw std::runtime_error("Types of all elements must be same in array.");
     }
   }
   if (node->length_) {

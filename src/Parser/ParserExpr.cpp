@@ -869,6 +869,19 @@ auto parseExprOperUnaryNode(TokenStream &stream)
   case TokenType::MUL:
     op = UnaryOperator::DEREF;
     break;
+  case TokenType::LOGIC_AND: {
+    op = UnaryOperator::REF;
+    if (stream.peek().type == TokenType::MUT) {
+      stream.next();
+      op = UnaryOperator::MUTREF;
+    }
+    auto expr = parseExprNode(
+        stream, OpPowerRecoder::getInstance().getRightNud(token.type));
+    auto ref =
+        std::make_unique<ExprOperUnaryNode>(op, std::move(expr), position);
+    op = UnaryOperator::REF;
+    return std::make_unique<ExprOperUnaryNode>(op, std::move(ref), position);
+  }
   default:
     throw CompilerException("Unexpected token in unary operator.", position);
   }
