@@ -28,4 +28,5 @@ fn main() {
     }){
         let num :i32 = MyStruct::first_const + MyStruct::second_const;
     }
+    exit(0);
 }

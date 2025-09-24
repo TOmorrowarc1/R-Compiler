@@ -18,4 +18,5 @@ fn main() {
         }
     }
     let k:MyStruct = MyStruct { a:MyStruct::length_, b:MyStruct::getLength()};
+    exit(0);
 }

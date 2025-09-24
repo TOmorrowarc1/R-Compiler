@@ -441,11 +441,13 @@ void SemanticChecker::visit(ExprCallNode *node) {
     auto type_name = path->getPathIndexName(0);
     std::shared_ptr<TypeDef> type_def;
     if (type_name == "Self") {
+      if (!current_impl_type_) {
+        throw std::runtime_error("Cannot use Self outside of impl block.");
+      }
       type_def = current_impl_type_;
     } else {
       type_def = current_scope_->getType(type_name)->getType();
     }
-
     auto function = type_def->getAssociatedFunction(path->segments_[1].name);
     function_info = function;
   }
@@ -786,7 +788,15 @@ void SemanticChecker::visit(ExprOperUnaryNode *node) {
 void SemanticChecker::visit(ExprPathNode *node) {
   if (node->path_->segments_.size() == 2) {
     auto type_name = node->path_->getPathIndexName(0);
-    auto type = current_scope_->getType(type_name)->getType();
+    std::shared_ptr<TypeDef> type;
+    if (type_name == "Self") {
+      if (!current_impl_type_) {
+        throw std::runtime_error("Cannot use Self outside of impl block.");
+      }
+      type = current_impl_type_;
+    } else {
+      type = current_scope_->getType(type_name)->getType();
+    }
     if (is_instance_of<EnumDef, TypeDef>(type.get())) {
       auto enum_def = dynamic_cast<EnumDef *>(type.get());
       auto variant_name = node->path_->getPathIndexName(1);

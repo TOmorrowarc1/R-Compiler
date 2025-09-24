@@ -110,6 +110,7 @@ void ConstTypeCollector::visit(ItemImplNode *node) {
   }
   auto type_name = type_path->path_->getPathIndexName(0);
   ctx_name_.push(type_name);
+  context_.push(ContextType::IN_TYPE_DEF);
   for (auto &item : node->items_) {
     if (item.constant) {
       item.constant->accept(*this);
@@ -117,6 +118,7 @@ void ConstTypeCollector::visit(ItemImplNode *node) {
       item.function->accept(*this);
     }
   }
+  context_.pop();
   ctx_name_.pop();
 }
 
@@ -124,6 +126,7 @@ void ConstTypeCollector::visit(ItemTraitNode *node) {
   auto trait_name = node->trait_name_;
   addTraitSymbol(trait_name);
   ctx_name_.push(trait_name);
+  context_.push(ContextType::IN_TRAIT_DEF);
   for (auto &item : node->items_) {
     if (item.constant) {
       item.constant->accept(*this);
@@ -131,6 +134,7 @@ void ConstTypeCollector::visit(ItemTraitNode *node) {
       item.function->accept(*this);
     }
   }
+  context_.pop();
   ctx_name_.pop();
 }
 
