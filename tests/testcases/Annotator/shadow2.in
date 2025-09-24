@@ -13,4 +13,5 @@ fn main() {
     return b + 1;
   }
   let wrong:i32 = plus1(7);
+  exit(0);
 }

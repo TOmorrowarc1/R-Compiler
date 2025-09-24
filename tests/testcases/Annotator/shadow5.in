@@ -10,4 +10,5 @@ const h: i32 = 5 + 5;
 fn main() {
   let h: usize = 7;
   let array_: [usize;7] = [h;7]; 
+  exit(0);
 }

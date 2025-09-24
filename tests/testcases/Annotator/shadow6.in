@@ -9,4 +9,5 @@ fn main() {
   const h: usize = 7;
   const h: usize = 5 + 5;
   let array_: [usize;7] = [h;7]; 
+  exit(0);
 }

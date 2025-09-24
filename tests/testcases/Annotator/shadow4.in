@@ -11,4 +11,5 @@ fn main() {
     return y + 1;
   }
   let x: i32= h(8);
+  exit(0);
 }

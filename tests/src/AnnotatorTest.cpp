@@ -68,7 +68,7 @@ TEST(AnnotatorTest, Pattern2) { EXPECT_FALSE(endToEndTest("pattern2.in")); }
 
 TEST(AnnotatorTest, Scope1) {
   EXPECT_TRUE(endToEndTest("scope1-1.in"));
-  EXPECT_TRUE(endToEndTest("scope2-2.in"));
+  EXPECT_FALSE(endToEndTest("scope1-2.in"));
 }
 
 TEST(AnnotatorTest, Shadow1) { EXPECT_TRUE(endToEndTest("shadow1.in")); }

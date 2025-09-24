@@ -15,4 +15,5 @@ fn main() {
       let uint32_t:u32 = x[0];
     }
     array[0] = x;
+    exit(0);
 }

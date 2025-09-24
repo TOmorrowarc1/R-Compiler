@@ -11,4 +11,5 @@ fn main() {
     return y + 1;
   }
   let k:i32 = x + 8;
+  exit(0);
 }

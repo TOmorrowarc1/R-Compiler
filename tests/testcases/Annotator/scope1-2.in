@@ -1,7 +1,7 @@
 /*
 Test Name: Scope1
 Test Target: the open and close of scope must be in pair
-Verdict: Success
+Verdict: Fail
 Author: Renshu Ge
 */
 
