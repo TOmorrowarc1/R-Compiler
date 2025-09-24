@@ -22,8 +22,8 @@ fn returnTest3()->i32{
 }
 
 fn returnTest4()->i32{
-  fn returnTest5()->str{
-    return "Hello?"
+  fn returnTest5() -> char {
+    return 'H'
   }
   return 5
 }

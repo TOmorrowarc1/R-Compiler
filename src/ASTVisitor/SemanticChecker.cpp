@@ -527,8 +527,11 @@ void SemanticChecker::visit(ExprIfNode *node) {
     if (!then_type->isEqual(else_type.get())) {
       throw std::runtime_error("Then and else blocks must have the same type");
     }
+    auto block_type = is_instance_of<TypeKindNever, TypeKind>(then_type.get())
+                          ? else_type
+                          : then_type;
     node->value_info_ =
-        std::make_unique<ValueInfo>(std::move(then_type), false, false);
+        std::make_unique<ValueInfo>(std::move(block_type), false, false);
   } else {
     auto unit_type = current_scope_->getType("unit")->getType();
     if (!then_type->isTypePath(unit_type.get())) {
