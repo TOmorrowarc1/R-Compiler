@@ -28,4 +28,5 @@ fn main() {
     const second_last :usize = B::length + b.length_ * a.array2_[B::length] ;
   }
   const last : usize = B::length + b.length_ * a.array1_[B::second_last];
+  exit(0);
 }

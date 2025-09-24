@@ -20,4 +20,5 @@ struct C{
 
 fn main() {
   let d :i32 = 1;
+  exit(0);
 }

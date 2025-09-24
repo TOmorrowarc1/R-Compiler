@@ -83,7 +83,7 @@ TEST(AnnotatorTest, Shadow5) { EXPECT_FALSE(endToEndTest("shadow5.in")); }
 
 TEST(AnnotatorTest, Shadow6) { EXPECT_FALSE(endToEndTest("shadow6.in")); }
 
-TEST(AnnotatorTest, Shadow7) { EXPECT_FALSE(endToEndTest("shadow7.in")); }
+TEST(AnnotatorTest, Shadow7) { EXPECT_TRUE(endToEndTest("shadow7.in")); }
 
 TEST(AnnotatorTest, Solve1) {
   EXPECT_FALSE(endToEndTest("solve1-1.in"));

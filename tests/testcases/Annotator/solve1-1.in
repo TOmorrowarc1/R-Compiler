@@ -15,4 +15,5 @@ struct B{
 
 fn main() {
     let c:i32=1;
+    exit(0);
 }

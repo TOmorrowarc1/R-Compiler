@@ -7,8 +7,8 @@ Author: Renshu Ge
 
 struct A{
   b:B,
-  array1_:[B;8],
-  array2_:[usize;1],
+  array1_:[B;1],
+  array2_:[usize;10],
 }
 
 struct B{
@@ -16,17 +16,19 @@ struct B{
 }
 
 const a : A = A{
-  array1_:[1;8],
-  array2_:[3;1],
+  b:B{length_:3},
+  array1_:[b_const],
+  array2_:[3;10],
 };
-const b : B = B{
+const b_const : B = B{
   length_ : 5,
 };
 
 fn main() {
   impl B {
     const length :usize = 3;
-    const second_last :usize = a.array1_[0] ;
+    const second_last :usize = a.b.length_;
   }
-  const last : usize = B::length + b.length_ * a.array1_[B::second_last];
+  const last : usize = B::length + b_const.length_ * a.array2_[B::second_last];
+  exit(0);
 }

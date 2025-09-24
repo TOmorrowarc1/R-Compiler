@@ -24,4 +24,5 @@ fn main() {
   impl B{
       const theory_:usize=1;
   }
+  exit(0);
 }
