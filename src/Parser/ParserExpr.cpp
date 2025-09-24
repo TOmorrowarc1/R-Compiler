@@ -684,14 +684,51 @@ auto parseExprLiteralIntNode(TokenStream &stream)
              << " symbol: " << stream.peek().content;
 
   Position position = stream.peek().line;
-  size_t end_pos = std::string::npos;
   std::string str = stream.next().content;
   ExprLiteralIntNode::IntType int_type = ExprLiteralIntNode::IntType::NUM;
-  for (size_t i = 0; i < str.length() && end_pos == std::string::npos; ++i) {
+  int32_t base = 10;
+  size_t begin_pos = 0;
+  size_t end_pos = str.length();
+  if (str[0] == '0') {
+    if (std::isalpha(str[1])) {
+      str[1] = std::tolower(str[1]);
+    }
+    switch (str[1]) {
+    case 'x':
+      base = 16;
+      begin_pos = 2;
+      break;
+    case 'o':
+      base = 8;
+      begin_pos = 2;
+      break;
+    case 'b':
+      base = 2;
+      begin_pos = 2;
+      break;
+    }
+  }
+  for (size_t i = begin_pos; i < end_pos; ++i) {
     char c = str[i];
     if (std::isalpha(c)) {
       str[i] = std::tolower(c);
-      if (str[i] != 'b' && str[i] != 'o' && str[i] != 'x') {
+      if (base == 16) {
+        if (str[i] < 'a' || str[i] > 'f') {
+          end_pos = i;
+          switch (str[i]) {
+          case 'i':
+            int_type = str[i + 1] == '3' ? ExprLiteralIntNode::IntType::I32
+                                         : ExprLiteralIntNode::IntType::ISIZE;
+            break;
+          case 'u':
+            int_type = str[i + 1] == '3' ? ExprLiteralIntNode::IntType::U32
+                                         : ExprLiteralIntNode::IntType::USIZE;
+            break;
+          default:
+            throw CompilerException("Unknown suffix in int literal.", position);
+          }
+        }
+      } else {
         end_pos = i;
         switch (str[i]) {
         case 'i':
@@ -708,7 +745,8 @@ auto parseExprLiteralIntNode(TokenStream &stream)
       }
     }
   }
-  std::string_view numberic_part = std::string_view(str).substr(0, end_pos);
+  std::string_view numberic_part =
+      std::string_view(str).substr(begin_pos, end_pos);
   std::string cleaned_literal;
   for (char c : numberic_part) {
     if (c != '_') {
@@ -718,21 +756,8 @@ auto parseExprLiteralIntNode(TokenStream &stream)
   if (cleaned_literal.empty()) {
     throw CompilerException("Literal contains no digits.", position);
   }
-  int32_t base = 10;
-  size_t pos = 0;
-  if (cleaned_literal.length() > 2) {
-    if (cleaned_literal[0] == '0' && cleaned_literal[1] == 'x') {
-      base = 16;
-      pos = 2;
-    } else if (cleaned_literal[0] == '0' && cleaned_literal[1] == 'o') {
-      base = 8;
-      pos = 2;
-    } else if (cleaned_literal[0] == '0' && cleaned_literal[1] == 'b') {
-      base = 2;
-      pos = 2;
-    }
-  }
-  uint32_t value = std::stoul(cleaned_literal.substr(pos), &pos, base);
+  uint32_t value =
+      std::stoul(cleaned_literal.substr(begin_pos), &begin_pos, base);
   logger.log(LogLevel::DEBUG, debug_info.str());
   return std::make_unique<ExprLiteralIntNode>(value, int_type, position);
 }
