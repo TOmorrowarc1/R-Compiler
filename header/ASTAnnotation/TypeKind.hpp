@@ -77,3 +77,11 @@ public:
   auto isEqual(const TypeKind *other) const -> bool override;
   auto isTypePath(const TypeDef *typeDef) const -> bool override;
 };
+
+class TypeKindExit : public TypeKind {
+public:
+  TypeKindExit();
+  ~TypeKindExit() override;
+  auto isEqual(const TypeKind *other) const -> bool override;
+  auto isTypePath(const TypeDef *typeDef) const -> bool override;
+};

@@ -136,8 +136,17 @@ auto TypeKindRefer::isMutRef() const -> bool { return is_mut_ref_; }
 TypeKindNever::TypeKindNever() = default;
 TypeKindNever::~TypeKindNever() = default;
 auto TypeKindNever::isEqual(const TypeKind *other) const -> bool {
-  return true;
+  return dynamic_cast<const TypeKindExit *>(other) == nullptr;
 }
 auto TypeKindNever::isTypePath(const TypeDef *typeDef) const -> bool {
   return true;
+}
+
+TypeKindExit::TypeKindExit() = default;
+TypeKindExit::~TypeKindExit() = default;
+auto TypeKindExit::isEqual(const TypeKind *other) const -> bool {
+  return dynamic_cast<const TypeKindExit *>(other) != nullptr;
+}
+auto TypeKindExit::isTypePath(const TypeDef *typeDef) const -> bool {
+  return false;
 }
