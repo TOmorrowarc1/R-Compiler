@@ -896,6 +896,12 @@ void SemanticChecker::visit(ExprMethodNode *node) {
   }
   auto type_def = path_type->getTypeDef();
   auto method_info = type_def->getMethod(node->ID_);
+  auto method_type = method_info->getFnType();
+  if (method_type == SymbolFunctionInfo::FnType::MutMethod &&
+      !judgeValueMutable(node->instance_->value_info_.get())) {
+    throw std::runtime_error(
+        "Cannot call a mutable method on an immutable instance.");
+  }
   auto target_parameters = method_info->getParametersType();
   if (target_parameters.size() != node->parameters_.size()) {
     throw std::runtime_error("Method call parameters count mismatch");

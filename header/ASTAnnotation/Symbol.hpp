@@ -55,6 +55,7 @@ public:
       -> const std::vector<std::shared_ptr<TypeKind>> &;
   // Check whether two function signatures are the same.
   auto isEqual(const SymbolFunctionInfo *other) const -> bool;
+  auto getFnType() const -> FnType;
   void setFnType(FnType type);
 };
 

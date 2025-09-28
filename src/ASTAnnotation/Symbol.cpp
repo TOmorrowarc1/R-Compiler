@@ -51,6 +51,7 @@ auto SymbolFunctionInfo::isEqual(const SymbolFunctionInfo *other) const
   return return_type_->isEqual(other->return_type_.get()) &&
          fn_type_ == other->fn_type_;
 }
+auto SymbolFunctionInfo::getFnType() const -> FnType { return fn_type_; }
 void SymbolFunctionInfo::setFnType(FnType type) { fn_type_ = type; }
 
 SymbolTypeInfo::SymbolTypeInfo(const std::string &name,
