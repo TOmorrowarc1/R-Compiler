@@ -17,7 +17,7 @@ struct CycleInfo {
 
 // Linear congruential generator for pseudorandom sequence
 fn lcg_next(seed: i32, a: i32, c: i32, m: i32) -> i32 {
-    let result: i32 = ((seed as i32 * a as i32 + c as i32) % m as i32) as i32;
+    let result: i32 = ((seed as i64 * a as i64 + c as i64) % m as i64) as i32;
     if (result < 0) {
         return result + m;
     }
