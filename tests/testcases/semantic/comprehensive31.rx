@@ -22,10 +22,8 @@ Function call simulation and stack frame management.
 // - Integer arithmetic and logical operations within the VM.
 // - Function call simulation and stack frame management.
 
-fn printInt(n: i32) {}
-
-const STACK_SIZE: i32 = 256;
-const PROG_MEM_SIZE: i32 = 1024;
+const STACK_SIZE: usize = 256;
+const PROG_MEM_SIZE: usize = 1024;
 
 const PUSH: i32 = 1;
 const POP: i32 = 2;
@@ -54,14 +52,14 @@ struct VM {
 fn main() {
     let mut vm: VM = VM {
         pc: 0,
-        sp: -1,
+        sp: STACK_SIZE as i32 - 1,
         stack: [0; STACK_SIZE],
         program: [0; PROG_MEM_SIZE],
     };
 
     load_program(&mut vm);
     execute(&mut vm);
-    printInt(9999);
+    printlnInt(9999);
 }
 
 fn load_program(vm: &mut VM) {
@@ -69,81 +67,85 @@ fn load_program(vm: &mut VM) {
 
     let mut i: i32 = 0;
 
-    prog[i] = PUSH; i = i + 1;
-    prog[i] = 10; i = i + 1;
-    prog[i] = PUSH; i = i + 1;
-    prog[i] = 20; i = i + 1;
-    prog[i] = CALL; i = i + 1;
-    prog[i] = 50; i = i + 1;
-    prog[i] = PRINT; i = i + 1;
-    prog[i] = HALT; i = i + 1;
+    prog[i as usize] = PUSH; i = i + 1;
+    prog[i as usize] = 10; i = i + 1;
+    prog[i as usize] = PUSH; i = i + 1;
+    prog[i as usize] = 20; i = i + 1;
+    prog[i as usize] = CALL; i = i + 1;
+    prog[i as usize] = 50; i = i + 1;
+    prog[i as usize] = PRINT; i = i + 1;
+    prog[i as usize] = HALT; i = i + 1;
 
     i = 50;
-    prog[i] = PUSH; i = i + 1;
-    prog[i] = 5; i = i + 1;
-    prog[i] = PUSH; i = i + 1;
-    prog[i] = 3; i = i + 1;
-    prog[i] = SUB; i = i + 1;
-    prog[i] = PRINT; i = i + 1;
-    prog[i] = PUSH; i = i + 1;
-    prog[i] = 100; i = i + 1;
-    prog[i] = CALL; i = i + 1;
-    prog[i] = 200; i = i + 1;
-    prog[i] = ADD; i = i + 1;
-    prog[i] = RET; i = i + 1;
+    prog[i as usize] = PUSH; i = i + 1;
+    prog[i as usize] = 5; i = i + 1;
+    prog[i as usize] = PUSH; i = i + 1;
+    prog[i as usize] = 3; i = i + 1;
+    prog[i as usize] = SUB; i = i + 1;
+    prog[i as usize] = PRINT; i = i + 1;
+    prog[i as usize] = PUSH; i = i + 1;
+    prog[i as usize] = 100; i = i + 1;
+    prog[i as usize] = CALL; i = i + 1;
+    prog[i as usize] = 200; i = i + 1;
+    prog[i as usize] = ADD; i = i + 1;
+    prog[i as usize] = RET; i = i + 1;
 
     i = 100;
-    prog[i] = PUSH; i = i + 1;
-    prog[i] = 1; i = i + 1;
-    prog[i] = PUSH; i = i + 1;
-    prog[i] = 1; i = i + 1;
+    prog[i as usize] = PUSH; i = i + 1;
+    prog[i as usize] = 1; i = i + 1;
+    prog[i as usize] = PUSH; i = i + 1;
+    prog[i as usize] = 1; i = i + 1;
     let mut j: i32 = 0;
     while (j < 10) {
-        prog[i] = ADD; i = i + 1;
-        prog[i] = PUSH; i = i + 1;
-        prog[i] = vm.stack[vm.sp]; i = i + 1;
-        prog[i] = PUSH; i = i + 1;
-        prog[i] = vm.stack[vm.sp - 1]; i = i + 1;
+        prog[i as usize] = ADD; i = i + 1;
+        prog[i as usize] = PUSH; i = i + 1;
+        prog[i as usize] = vm.stack[(vm.sp) as usize]; i = i + 1;
+        prog[i as usize] = PUSH; i = i + 1;
+        prog[i as usize] = vm.stack[(vm.sp - 1) as usize]; i = i + 1;
         j = j + 1;
     }
-    prog[i] = POP; i = i + 1;
-    prog[i] = PRINT; i = i + 1;
-    prog[i] = RET; i = i + 1;
+    prog[i as usize] = POP; i = i + 1;
+    prog[i as usize] = PRINT; i = i + 1;
+    prog[i as usize] = RET; i = i + 1;
 
     i = 200;
-    prog[i] = PUSH; i = i + 1;
-    prog[i] = 10; i = i + 1;
-    prog[i] = PUSH; i = i + 1;
-    prog[i] = 0; i = i + 1;
-    prog[i] = PUSH; i = i + 1;
-    prog[i] = 1; i = i + 1;
+    prog[i as usize] = PUSH; i = i + 1;
+    prog[i as usize] = 10; i = i + 1;
+    prog[i as usize] = PUSH; i = i + 1;
+    prog[i as usize] = 0; i = i + 1;
+    prog[i as usize] = PUSH; i = i + 1;
+    prog[i as usize] = 1; i = i + 1;
     let loop_start: i32 = i;
-    prog[i] = PUSH; i = i + 1;
-    prog[i] = vm.stack[vm.sp - 2]; i = i + 1;
-    prog[i] = PUSH; i = i + 1;
-    prog[i] = vm.stack[vm.sp - 2]; i = i + 1;
-    prog[i] = ADD; i = i + 1;
-    prog[i] = POP; i = i + 1;
-    prog[i] = vm.stack[vm.sp - 2] = vm.stack[vm.sp]; i = i + 1;
-    prog[i] = POP; i = i + 1;
-    prog[i] = PUSH; i = i + 1;
-    prog[i] = vm.stack[vm.sp - 1]; i = i + 1;
-    prog[i] = PUSH; i = i + 1;
-    prog[i] = 1; i = i + 1;
-    prog[i] = ADD; i = i + 1;
-    prog[i] = POP; i = i + 1;
-    prog[i] = vm.stack[vm.sp - 1] = vm.stack[vm.sp]; i = i + 1;
-    prog[i] = POP; i = i + 1;
-    prog[i] = PUSH; i = i + 1;
-    prog[i] = vm.stack[vm.sp]; i = i + 1;
-    prog[i] = PUSH; i = i + 1;
-    prog[i] = 10; i = i + 1;
-    prog[i] = LT; i = i + 1;
-    prog[i] = JNZ; i = i + 1;
-    prog[i] = loop_start; i = i + 1;
-    prog[i] = POP; i = i + 1;
-    prog[i] = POP; i = i + 1;
-    prog[i] = RET; i = i + 1;
+    prog[i as usize] = PUSH; i = i + 1;
+    prog[i as usize] = vm.stack[(vm.sp - 2) as usize]; i = i + 1;
+    prog[i as usize] = PUSH; i = i + 1;
+    prog[i as usize] = vm.stack[(vm.sp - 2) as usize]; i = i + 1;
+    prog[i as usize] = ADD; i = i + 1;
+    prog[i as usize] = POP; i = i + 1;
+    vm.stack[(vm.sp - 2) as usize] = vm.stack[(vm.sp) as usize];
+    prog[i as usize] = vm.stack[(vm.sp - 2) as usize];
+    i = i + 1;
+    prog[i as usize] = POP; i = i + 1;
+    prog[i as usize] = PUSH; i = i + 1;
+    prog[i as usize] = vm.stack[(vm.sp - 1) as usize]; i = i + 1;
+    prog[i as usize] = PUSH; i = i + 1;
+    prog[i as usize] = 1; i = i + 1;
+    prog[i as usize] = ADD; i = i + 1;
+    prog[i as usize] = POP; i = i + 1;
+    prog[i as usize] = vm.stack[(vm.sp - 1) as usize];
+    vm.stack[(vm.sp - 1) as usize] = vm.stack[(vm.sp) as usize];
+    i = i + 1;
+    prog[i as usize] = POP; i = i + 1;
+    prog[i as usize] = PUSH; i = i + 1;
+    prog[i as usize] = vm.stack[(vm.sp) as usize]; i = i + 1;
+    prog[i as usize] = PUSH; i = i + 1;
+    prog[i as usize] = 10; i = i + 1;
+    prog[i as usize] = LT; i = i + 1;
+    prog[i as usize] = JNZ; i = i + 1;
+    prog[i as usize] = loop_start; i = i + 1;
+    prog[i as usize] = POP; i = i + 1;
+    prog[i as usize] = POP; i = i + 1;
+    prog[i as usize] = RET; i = i + 1;
 
     vm.program = prog;
 }
@@ -177,7 +179,7 @@ fn execute(vm: &mut VM) {
             if (b != 0) {
                 push(vm, a / b);
             } else {
-                printInt(-1);
+                printlnInt(-1);
                 running = false;
             }
         } else if (op == EQ) {
@@ -211,28 +213,31 @@ fn execute(vm: &mut VM) {
         } else if (op == RET) {
             vm.pc = pop(vm);
         } else if (op == PRINT) {
-            printInt(vm.stack[vm.sp]);
+            printlnInt(vm.stack[(vm.sp) as usize]);
         } else {
-            printInt(-2);
+            printlnInt(-2);
             running = false;
         }
     }
 }
 
 fn fetch(vm: &mut VM) -> i32 {
-    let instruction: i32 = vm.program[vm.pc];
+    let instruction: i32 = vm.program[(vm.pc) as usize];
     vm.pc = vm.pc + 1;
     return instruction;
 }
 
 fn push(vm: &mut VM, val: i32) {
-    vm.sp = vm.sp + 1;
-    vm.stack[vm.sp] = val;
+    vm.sp = (vm.sp + 1) % (STACK_SIZE as i32);
+    vm.stack[(vm.sp) as usize] = val;
 }
 
 fn pop(vm: &mut VM) -> i32 {
-    let val: i32 = vm.stack[vm.sp];
+    let val: i32 = vm.stack[(vm.sp) as usize];
     vm.sp = vm.sp - 1;
+    if (vm.sp < 0) {
+        vm.sp += STACK_SIZE as i32;
+    }
     return val;
 }
 
@@ -259,54 +264,54 @@ fn complex_stack_manipulation(vm: &mut VM) {
         push(vm, a + b);
         i = i + 1;
     }
-    printInt(pop(vm));
+    printlnInt(pop(vm));
 }
 
 fn run_fibonacci_in_vm(vm: &mut VM, n: i32) {
     let mut prog: [i32; PROG_MEM_SIZE] = [0; PROG_MEM_SIZE];
     let mut i: i32 = 0;
 
-    prog[i] = PUSH; i = i + 1;
-    prog[i] = n; i = i + 1;
-    prog[i] = CALL; i = i + 1;
-    prog[i] = 10; i = i + 1;
-    prog[i] = PRINT; i = i + 1;
-    prog[i] = HALT; i = i + 1;
+    prog[i as usize] = PUSH; i = i + 1;
+    prog[i as usize] = n; i = i + 1;
+    prog[i as usize] = CALL; i = i + 1;
+    prog[i as usize] = 10; i = i + 1;
+    prog[i as usize] = PRINT; i = i + 1;
+    prog[i as usize] = HALT; i = i + 1;
 
     i = 10;
     let fib_start: i32 = i;
-    prog[i] = PUSH; i = i + 1;
-    prog[i] = vm.stack[vm.sp]; i = i + 1;
-    prog[i] = PUSH; i = i + 1;
-    prog[i] = 2; i = i + 1;
-    prog[i] = LT; i = i + 1;
-    prog[i] = JZ; i = i + 1;
-    prog[i] = fib_start + 20; i = i + 1;
+    prog[i as usize] = PUSH; i = i + 1;
+    prog[i as usize] = vm.stack[(vm.sp) as usize]; i = i + 1;
+    prog[i as usize] = PUSH; i = i + 1;
+    prog[i as usize] = 2; i = i + 1;
+    prog[i as usize] = LT; i = i + 1;
+    prog[i as usize] = JZ; i = i + 1;
+    prog[i as usize] = fib_start + 20; i = i + 1;
 
-    prog[i] = PUSH; i = i + 1;
-    prog[i] = vm.stack[vm.sp]; i = i + 1;
-    prog[i] = PUSH; i = i + 1;
-    prog[i] = 1; i = i + 1;
-    prog[i] = SUB; i = i + 1;
-    prog[i] = CALL; i = i + 1;
-    prog[i] = fib_start; i = i + 1;
+    prog[i as usize] = PUSH; i = i + 1;
+    prog[i as usize] = vm.stack[(vm.sp) as usize]; i = i + 1;
+    prog[i as usize] = PUSH; i = i + 1;
+    prog[i as usize] = 1; i = i + 1;
+    prog[i as usize] = SUB; i = i + 1;
+    prog[i as usize] = CALL; i = i + 1;
+    prog[i as usize] = fib_start; i = i + 1;
 
-    prog[i] = PUSH; i = i + 1;
-    prog[i] = vm.stack[vm.sp + 1]; i = i + 1;
-    prog[i] = PUSH; i = i + 1;
-    prog[i] = 2; i = i + 1;
-    prog[i] = SUB; i = i + 1;
-    prog[i] = CALL; i = i + 1;
-    prog[i] = fib_start; i = i + 1;
+    prog[i as usize] = PUSH; i = i + 1;
+    prog[i as usize] = vm.stack[(vm.sp + 1) as usize]; i = i + 1;
+    prog[i as usize] = PUSH; i = i + 1;
+    prog[i as usize] = 2; i = i + 1;
+    prog[i as usize] = SUB; i = i + 1;
+    prog[i as usize] = CALL; i = i + 1;
+    prog[i as usize] = fib_start; i = i + 1;
 
-    prog[i] = ADD; i = i + 1;
-    prog[i] = RET; i = i + 1;
+    prog[i as usize] = ADD; i = i + 1;
+    prog[i as usize] = RET; i = i + 1;
 
     i = fib_start + 20;
-    prog[i] = POP; i = i + 1;
-    prog[i] = PUSH; i = i + 1;
-    prog[i] = vm.stack[vm.sp]; i = i + 1;
-    prog[i] = RET; i = i + 1;
+    prog[i as usize] = POP; i = i + 1;
+    prog[i as usize] = PUSH; i = i + 1;
+    prog[i as usize] = vm.stack[(vm.sp) as usize]; i = i + 1;
+    prog[i as usize] = RET; i = i + 1;
 
     let mut old_prog: [i32; PROG_MEM_SIZE] = vm.program;
     let old_pc: i32 = vm.pc;
@@ -314,7 +319,7 @@ fn run_fibonacci_in_vm(vm: &mut VM, n: i32) {
 
     vm.program = prog;
     vm.pc = 0;
-    vm.sp = -1;
+    vm.sp = STACK_SIZE as i32 - 1;
     execute(vm);
 
     vm.program = old_prog;
@@ -325,18 +330,18 @@ fn run_fibonacci_in_vm(vm: &mut VM, n: i32) {
 fn error_case_test(vm: VM) {
     let mut local_vm: VM = vm;
     local_vm.sp = local_vm.sp + 10;
-    if (local_vm.sp > STACK_SIZE) {
-        printInt(-100);
+    if (local_vm.sp > STACK_SIZE as i32) {
+        printlnInt(-100);
     }
-    local_vm.sp = -10;
+    local_vm.sp = STACK_SIZE as i32 - 10;
     let val: i32 = pop(&mut local_vm);
-    printInt(val);
+    printlnInt(val);
 }
 
 fn another_test_scenario() {
     let mut vm: VM = VM {
         pc: 0,
-        sp: -1,
+        sp: STACK_SIZE as i32 - 1,
         stack: [0; STACK_SIZE],
         program: [0; PROG_MEM_SIZE],
     };

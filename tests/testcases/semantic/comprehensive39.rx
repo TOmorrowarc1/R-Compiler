@@ -25,6 +25,20 @@ Branch prediction accuracy for irregular, data-driven control flow.
 Correct handling of variable shadowing and mutability in nested scopes.
 */
 
+
+
+// Unified RNG: Park–Miller (a=16807, m=2147483647) using Schrage method to avoid overflow
+fn pm_rand_update(x: i32) -> i32 {
+    let a = 16807;
+    let m = 2147483647;
+    let q = 127773; // m / a
+    let r = 2836;   // m % a
+    let mut k = x / q;
+    let mut new_x = a * (x - k * q) - r * k;
+    if (new_x <= 0) { new_x += m; }
+    return new_x;
+}
+
 // comprehensive39.rx - Advanced Control Flow and Logic Simulation
 // This test comprehensively evaluates compiler optimizations for:
 // - Deeply nested and complex conditional (if/else) and loop (while) structures.
@@ -35,93 +49,90 @@ Correct handling of variable shadowing and mutability in nested scopes.
 // - Branch prediction accuracy for irregular, data-driven control flow.
 // - Correct handling of variable shadowing and mutability in nested scopes.
 
-let STATE_A: i32 = 0;
-let STATE_B: i32 = 1;
-let STATE_C: i32 = 2;
-let STATE_D: i32 = 3;
-let STATE_E: i32 = 4;
-let STATE_F: i32 = 5;
-let STATE_G: i32 = 6;
-let STATE_H: i32 = 7;
-let NUM_STATES: i32 = 8;
+const STATE_A: i32 = 0;
+const STATE_B: i32 = 1;
+const STATE_C: i32 = 2;
+const STATE_D: i32 = 3;
+const STATE_E: i32 = 4;
+const STATE_F: i32 = 5;
+const STATE_G: i32 = 6;
+const STATE_H: i32 = 7;
+const NUM_STATES: i32 = 8;
 
-let INPUT_X: i32 = 0;
-let INPUT_Y: i32 = 1;
-let INPUT_Z: i32 = 2;
-let NUM_INPUTS: i32 = 3;
+const INPUT_X: i32 = 0;
+const INPUT_Y: i32 = 1;
+const INPUT_Z: i32 = 2;
+const NUM_INPUTS: i32 = 3;
 
-let mut transition_table: [[i32; 3]; 8] = [[0; 3]; 8];
-let mut output_table: [[i32; 3]; 8] = [[0; 3]; 8];
+fn setup_fsm(transition_table: &mut [[i32; 3]; 8], output_table: &mut [[i32; 3]; 8]) {
+    transition_table[STATE_A as usize][INPUT_X as usize] = STATE_B;
+    transition_table[STATE_A as usize][INPUT_Y as usize] = STATE_C;
+    transition_table[STATE_A as usize][INPUT_Z as usize] = STATE_A;
+    output_table[STATE_A as usize][INPUT_X as usize] = 1;
+    output_table[STATE_A as usize][INPUT_Y as usize] = 0;
+    output_table[STATE_A as usize][INPUT_Z as usize] = -1;
 
-fn setup_fsm() {
-    transition_table[STATE_A][INPUT_X] = STATE_B;
-    transition_table[STATE_A][INPUT_Y] = STATE_C;
-    transition_table[STATE_A][INPUT_Z] = STATE_A;
-    output_table[STATE_A][INPUT_X] = 1;
-    output_table[STATE_A][INPUT_Y] = 0;
-    output_table[STATE_A][INPUT_Z] = -1;
+    transition_table[STATE_B as usize][INPUT_X as usize] = STATE_D;
+    transition_table[STATE_B as usize][INPUT_Y as usize] = STATE_E;
+    transition_table[STATE_B as usize][INPUT_Z as usize] = STATE_A;
+    output_table[STATE_B as usize][INPUT_X as usize] = 2;
+    output_table[STATE_B as usize][INPUT_Y as usize] = 3;
+    output_table[STATE_B as usize][INPUT_Z as usize] = 0;
 
-    transition_table[STATE_B][INPUT_X] = STATE_D;
-    transition_table[STATE_B][INPUT_Y] = STATE_E;
-    transition_table[STATE_B][INPUT_Z] = STATE_A;
-    output_table[STATE_B][INPUT_X] = 2;
-    output_table[STATE_B][INPUT_Y] = 3;
-    output_table[STATE_B][INPUT_Z] = 0;
+    transition_table[STATE_C as usize][INPUT_X as usize] = STATE_F;
+    transition_table[STATE_C as usize][INPUT_Y as usize] = STATE_G;
+    transition_table[STATE_C as usize][INPUT_Z as usize] = STATE_B;
+    output_table[STATE_C as usize][INPUT_X as usize] = 5;
+    output_table[STATE_C as usize][INPUT_Y as usize] = 8;
+    output_table[STATE_C as usize][INPUT_Z as usize] = 13;
 
-    transition_table[STATE_C][INPUT_X] = STATE_F;
-    transition_table[STATE_C][INPUT_Y] = STATE_G;
-    transition_table[STATE_C][INPUT_Z] = STATE_B;
-    output_table[STATE_C][INPUT_X] = 5;
-    output_table[STATE_C][INPUT_Y] = 8;
-    output_table[STATE_C][INPUT_Z] = 13;
+    transition_table[STATE_D as usize][INPUT_X as usize] = STATE_H;
+    transition_table[STATE_D as usize][INPUT_Y as usize] = STATE_A;
+    transition_table[STATE_D as usize][INPUT_Z as usize] = STATE_B;
+    output_table[STATE_D as usize][INPUT_X as usize] = 21;
+    output_table[STATE_D as usize][INPUT_Y as usize] = 34;
+    output_table[STATE_D as usize][INPUT_Z as usize] = 55;
 
-    transition_table[STATE_D][INPUT_X] = STATE_H;
-    transition_table[STATE_D][INPUT_Y] = STATE_A;
-    transition_table[STATE_D][INPUT_Z] = STATE_B;
-    output_table[STATE_D][INPUT_X] = 21;
-    output_table[STATE_D][INPUT_Y] = 34;
-    output_table[STATE_D][INPUT_Z] = 55;
+    transition_table[STATE_E as usize][INPUT_X as usize] = STATE_C;
+    transition_table[STATE_E as usize][INPUT_Y as usize] = STATE_F;
+    transition_table[STATE_E as usize][INPUT_Z as usize] = STATE_E;
+    output_table[STATE_E as usize][INPUT_X as usize] = -1;
+    output_table[STATE_E as usize][INPUT_Y as usize] = -2;
+    output_table[STATE_E as usize][INPUT_Z as usize] = -3;
 
-    transition_table[STATE_E][INPUT_X] = STATE_C;
-    transition_table[STATE_E][INPUT_Y] = STATE_F;
-    transition_table[STATE_E][INPUT_Z] = STATE_E;
-    output_table[STATE_E][INPUT_X] = -1;
-    output_table[STATE_E][INPUT_Y] = -2;
-    output_table[STATE_E][INPUT_Z] = -3;
+    transition_table[STATE_F as usize][INPUT_X as usize] = STATE_G;
+    transition_table[STATE_F as usize][INPUT_Y as usize] = STATE_H;
+    transition_table[STATE_F as usize][INPUT_Z as usize] = STATE_D;
+    output_table[STATE_F as usize][INPUT_X as usize] = 10;
+    output_table[STATE_F as usize][INPUT_Y as usize] = 20;
+    output_table[STATE_F as usize][INPUT_Z as usize] = 30;
 
-    transition_table[STATE_F][INPUT_X] = STATE_G;
-    transition_table[STATE_F][INPUT_Y] = STATE_H;
-    transition_table[STATE_F][INPUT_Z] = STATE_D;
-    output_table[STATE_F][INPUT_X] = 10;
-    output_table[STATE_F][INPUT_Y] = 20;
-    output_table[STATE_F][INPUT_Z] = 30;
+    transition_table[STATE_G as usize][INPUT_X as usize] = STATE_A;
+    transition_table[STATE_G as usize][INPUT_Y as usize] = STATE_B;
+    transition_table[STATE_G as usize][INPUT_Z as usize] = STATE_C;
+    output_table[STATE_G as usize][INPUT_X as usize] = 40;
+    output_table[STATE_G as usize][INPUT_Y as usize] = 50;
+    output_table[STATE_G as usize][INPUT_Z as usize] = 60;
 
-    transition_table[STATE_G][INPUT_X] = STATE_A;
-    transition_table[STATE_G][INPUT_Y] = STATE_B;
-    transition_table[STATE_G][INPUT_Z] = STATE_C;
-    output_table[STATE_G][INPUT_X] = 40;
-    output_table[STATE_G][INPUT_Y] = 50;
-    output_table[STATE_G][INPUT_Z] = 60;
-
-    transition_table[STATE_H][INPUT_X] = STATE_E;
-    transition_table[STATE_H][INPUT_Y] = STATE_D;
-    transition_table[STATE_H][INPUT_Z] = STATE_F;
-    output_table[STATE_H][INPUT_X] = 70;
-    output_table[STATE_H][INPUT_Y] = 80;
-    output_table[STATE_H][INPUT_Z] = 90;
+    transition_table[STATE_H as usize][INPUT_X as usize] = STATE_E;
+    transition_table[STATE_H as usize][INPUT_Y as usize] = STATE_D;
+    transition_table[STATE_H as usize][INPUT_Z as usize] = STATE_F;
+    output_table[STATE_H as usize][INPUT_X as usize] = 70;
+    output_table[STATE_H as usize][INPUT_Y as usize] = 80;
+    output_table[STATE_H as usize][INPUT_Z as usize] = 90;
 }
 
-fn run_fsm(inputs: [i32; 100], len: i32) -> i32 {
+fn run_fsm(transition_table: &mut [[i32; 3]; 8], output_table: &mut [[i32; 3]; 8], inputs: [i32; 100], len: i32) -> i32 {
     let mut current_state: i32 = STATE_A;
     let mut accumulated_output: i32 = 0;
     let mut i: i32 = 0;
 
     while (i < len) {
-        let input: i32 = inputs[i];
+        let input: i32 = inputs[i as usize];
         if (input >= 0) {
             if (input < NUM_INPUTS) {
-                let output: i32 = output_table[current_state][input];
-                let next_state: i32 = transition_table[current_state][input];
+                let output: i32 = output_table[current_state as usize][input as usize];
+                let next_state: i32 = transition_table[current_state as usize][input as usize];
 
                 if (output > 0) {
                     if (current_state % 2 == 0) {
@@ -162,32 +173,34 @@ fn generate_inputs(seed: i32, len: i32) -> [i32; 100] {
     let mut current_val: i32 = seed;
     let mut i: i32 = 0;
     while (i < len) {
-        current_val = (current_val * 1103515245 + 12345) / 65536;
-        inputs[i] = current_val % NUM_INPUTS;
+        current_val = pm_rand_update(current_val) / 65536;
+        inputs[i as usize] = current_val % NUM_INPUTS;
         i = i + 1;
     }
     return inputs;
 }
 
 fn main() {
-    setup_fsm();
+    let mut transition_table: [[i32; 3]; 8] = [[0; 3]; 8];
+    let mut output_table: [[i32; 3]; 8] = [[0; 3]; 8];
+    setup_fsm(&mut transition_table, &mut output_table);
 
     let inputs1: [i32; 100] = generate_inputs(42, 100);
-    let result1: i32 = run_fsm(inputs1, 100);
-    printInt(result1);
+    let result1: i32 = run_fsm(&mut transition_table, &mut output_table, inputs1, 100);
+    printlnInt(result1);
 
     let inputs2: [i32; 100] = generate_inputs(1337, 80);
-    let result2: i32 = run_fsm(inputs2, 80);
-    printInt(result2);
+    let result2: i32 = run_fsm(&mut transition_table, &mut output_table, inputs2, 80);
+    printlnInt(result2);
 
     let mut custom_inputs: [i32; 100] = [0; 100];
     let mut i: i32 = 0;
     while (i < 50) {
-        custom_inputs[i] = (i * i) % NUM_INPUTS;
+        custom_inputs[i as usize] = (i * i) % NUM_INPUTS;
         i = i + 1;
     }
-    let result3: i32 = run_fsm(custom_inputs, 50);
-    printInt(result3);
+    let result3: i32 = run_fsm(&mut transition_table, &mut output_table, custom_inputs, 50);
+    printlnInt(result3);
 
     let mut counter: i32 = 0;
     let mut outer_loop: i32 = 0;
@@ -211,7 +224,7 @@ fn main() {
         }
         outer_loop = outer_loop + 1;
     }
-    printInt(counter);
+    printlnInt(counter);
 
     let mut a: i32 = 10;
     let mut b: i32 = 20;
@@ -219,19 +232,19 @@ fn main() {
 
     if (a > b) {
         if (b > c) {
-            printInt(1);
+            printlnInt(1);
         } else {
-            printInt(2);
+            printlnInt(2);
         }
     } else {
         if (b < c) {
             if (a < c) {
-                printInt(3);
+                printlnInt(3);
             } else {
-                printInt(4);
+                printlnInt(4);
             }
         } else {
-            printInt(5);
+            printlnInt(5);
         }
     }
 
@@ -256,9 +269,9 @@ fn main() {
         }
         i = i + 1;
     }
-    printInt(x);
-    printInt(y);
-    printInt(z);
+    printlnInt(x);
+    printlnInt(y);
+    printlnInt(z);
 
     let mut shadow: i32 = 100;
     if (shadow > 50) {
@@ -266,13 +279,13 @@ fn main() {
         if (shadow > 150) {
             let mut shadow: i32 = 300;
             shadow = shadow + 1;
-            printInt(shadow);
+            printlnInt(shadow);
         }
         shadow = shadow + 1;
-        printInt(shadow);
+        printlnInt(shadow);
     }
     shadow = shadow + 1;
-    printInt(shadow);
+    printlnInt(shadow);
 
     let mut k: i32 = 0;
     while (k < 1) {
@@ -287,9 +300,9 @@ fn main() {
         if (m == 0) {
             let mut another_loop_var: i32 = 789;
             another_loop_var = another_loop_var + 1;
-            printInt(another_loop_var);
+            printlnInt(another_loop_var);
         }
-        printInt(another_loop_var);
+        printlnInt(another_loop_var);
         m = m + 1;
     }
 
@@ -304,5 +317,5 @@ fn main() {
         final_val = final_val + temp;
         p = p + 1;
     }
-    printInt(final_val);
+    printlnInt(final_val);
 }
