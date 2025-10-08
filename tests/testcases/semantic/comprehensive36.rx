@@ -281,7 +281,7 @@ fn main() {
     while (r < 50) {
         let mut s: i32 = 0;
         while (s < 50) {
-            if (r * s) % 3 == 0 {
+            if ((r * s) % 3 == 0) {
                 complex_calc = complex_calc + r - s;
             } else {
                 complex_calc = complex_calc + s - r;
@@ -381,4 +381,5 @@ fn main() {
     let mut inner_error_var: i32 = 1;
     error_var = inner_error_var;
     inner_error_var = 2;
+    exit(0);
 }
