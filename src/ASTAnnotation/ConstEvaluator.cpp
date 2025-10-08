@@ -236,6 +236,24 @@ auto ConstEvaluator::evaluateExprValue(ExprNode *node)
   }
   if (is_instance_of<ExprOperBinaryNode, ExprNode>(node)) {
     auto binary_node = static_cast<ExprOperBinaryNode *>(node);
+    if (binary_node->op_ == BinaryOperator::AS_CAST) {
+      // AS_CAST is a special case, and we only support numeric types now.
+      auto lhs_const = evaluateExprValue(binary_node->lhs_.get());
+      auto rhs_type_node =
+          dynamic_cast<ExprPathNode *>(binary_node->rhs_.get());
+      if (rhs_type_node == nullptr) {
+        throw std::runtime_error("As-cast rhs must be a type path");
+      }
+      auto type_name = rhs_type_node->path_->getPathIndexName(0);
+      if (type_name != "i32" && type_name != "u32" && type_name != "isize" &&
+          type_name != "usize") {
+        throw std::runtime_error("As-cast only supports numeric types");
+      }
+      auto target_type_def = (*current_scope_)->getType(type_name)->getType();
+      auto target_type = std::make_shared<TypeKindPath>(target_type_def);
+      return std::make_shared<ConstInfo>(target_type,
+                                         lhs_const->getConstValue());
+    }
     auto lhs_const = evaluateExprValue(binary_node->lhs_.get());
     auto rhs_const = evaluateExprValue(binary_node->rhs_.get());
     auto lhs_value = lhs_const->getConstValue();
