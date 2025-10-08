@@ -214,6 +214,10 @@ auto parseExprNode(TokenStream &stream, int32_t power)
 
   auto result = parseNudExprNode(stream, power);
   while (true) {
+    if (is_instance_of<ExprWhileNode, ExprNode>(result.get())) {
+      // While expr can never be followed by leds.
+      break;
+    }
     auto token = stream.peek();
     if (token.type == TokenType::END_OF_FILE) {
       break;
