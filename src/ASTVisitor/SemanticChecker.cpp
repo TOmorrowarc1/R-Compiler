@@ -723,6 +723,15 @@ void SemanticChecker::visit(ExprOperBinaryNode *node) {
         std::make_unique<ValueInfo>(std::move(lhs_type), true, true);
     break;
   }
+  case BinaryOperator::LEFT_SHIFT:
+  case BinaryOperator::RIGHT_SHIFT:
+    if (!canAssign("num", node->lhs_.get(), false) ||
+        !canAssign("num", node->rhs_.get(), false)) {
+      throw std::runtime_error("left and right shift operands must be numeric");
+    }
+    node->value_info_ =
+        std::make_unique<ValueInfo>(std::move(lhs_type), false, false);
+    break;
   default:
     // These are numeric calculations.
     if (!canAssign("num", node->lhs_.get(), false) ||
