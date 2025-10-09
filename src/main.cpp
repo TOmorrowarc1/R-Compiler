@@ -15,9 +15,7 @@ int main() {
 
   try {
     auto lex_result = lex(text);
-    for (auto &token : lex_result) {
-      std::cout << token.content << "\n";
-    }
+    
     auto AST_root = parse(lex_result);
 
     Scope init_scope;
