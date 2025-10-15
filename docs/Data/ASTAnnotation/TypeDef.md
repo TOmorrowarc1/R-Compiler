@@ -2,28 +2,80 @@
 
 ## 简介
 
-`TypeDef` 类及其派生类构成了 AST 标注系统中的类型定义体系。这个多态类层次结构用于表示程序中的各种类型定义（结构体、枚举等），为编译器的类型系统实现提供了基础支持。类型定义系统允许定义自定义数据类型，支持字段、变体和特征实现等特性。
+`TypeDef` 类及其派生类构成了 AST 标注系统中的类型定义体系，用于表示程序中的各种类型定义（结构体、枚举等），为编译器的类型系统实现提供了基础支持。
+该多态类在 `Data/ASTAnnotation/TypeDef.hpp` 中声明，对应的实现位于 `Data/ASTAnnotation/TypeDef.cpp` 中。
 
-## 基类结构
+## 继承结构
+TypeDef
+  ├── StructDef
+  └── EnumDef
 
-```cpp
+## 依赖类型
+
+`TypeDef` 类依赖以下类：
+声明中需要`SymbolFunctionInfo``SymbolConstInfo``TypeKind`的声明；
+定义中需要以上类的实现。
+
+## TypeDef 类接口与数据结构
+
+``` cpp
 class TypeDef {
-protected:
-  std::string name_;  // 类型名称
-  std::set<std::string> impl_traits_;  // 实现的特征列表
+private:
+  std::string name_;
+  std::unordered_map<std::string, std::shared_ptr<SymbolConstInfo>>
+      type_consts_;
+  std::unordered_map<std::string, std::shared_ptr<SymbolFunctionInfo>> methods_;
+  std::unordered_map<std::string, std::shared_ptr<SymbolFunctionInfo>>
+      associated_functions_;
+  std::set<std::string> impl_traits_;
 
 public:
-  TypeDef();
   TypeDef(const std::string &name);
-  virtual ~TypeDef() = default;
-  
-  // 类型名称管理
+  virtual ~TypeDef();
   auto getName() const -> const std::string &;
-  
-  // 特征实现管理
+  auto addConst(const std::string &name,
+                std::shared_ptr<SymbolConstInfo> type_const) -> bool;
+  auto getConst(const std::string &name) const
+      -> std::shared_ptr<SymbolConstInfo>;
+  auto addMethod(const std::string &name,
+                 std::shared_ptr<SymbolFunctionInfo> method) -> bool;
+  auto getMethod(const std::string &name) const
+      -> std::shared_ptr<SymbolFunctionInfo>;
+  auto addAssociatedFunction(const std::string &name,
+                             std::shared_ptr<SymbolFunctionInfo> function)
+      -> bool;
+  auto getAssociatedFunction(const std::string &name) const
+      -> std::shared_ptr<SymbolFunctionInfo>;
   auto addImplTrait(const std::string &trait_name) -> bool;
-  auto getImplTraits() const -> const std::set<std::string> &;
-  auto hasImplTrait(const std::string &trait_name) const -> bool;
+};
+
+class StructDef : public TypeDef {
+private:
+  std::unordered_map<std::string, std::shared_ptr<TypeKind>> members_;
+
+public:
+  StructDef(const std::string &name);
+  StructDef(const std::string &name,
+            const std::vector<std::string> &member_names,
+            std::vector<std::shared_ptr<TypeKind>> &&member_types);
+  ~StructDef() override;
+  auto addMember(const std::string &name, std::shared_ptr<TypeKind> type)
+      -> bool;
+  auto getMember(const std::string &name) const -> std::shared_ptr<TypeKind>;
+  auto getMemNum() const -> size_t;
+};
+
+class EnumDef : public TypeDef {
+private:
+  std::set<std::string> variants_;
+
+public:
+  EnumDef(const std::string &name);
+  EnumDef(const std::string &name, const std::vector<std::string> &variants);
+  ~EnumDef() override;
+  auto addVariant(const std::string &variant) -> bool;
+  auto getVariant(const std::string &variant) const -> bool;
+  auto getVariants() const -> const std::vector<std::string>;
 };
 ```
 
@@ -357,7 +409,3 @@ if (point_def->hasImplTrait("Drawable")) {
 4. **内存管理**：正确使用智能指针，避免循环引用
 5. **线程安全**：当前的 `TypeDef` 实现不是线程安全的
 6. **特征实现**：确保类型实现特征时提供了所有必需的方法和常量
-
-## 总结
-
-`TypeDef` 类及其派生类构成了一个完整的类型定义体系，支持编译器中的各种类型定义和特征实现需求。通过多态设计和智能指针管理，提供了类型安全、内存安全和扩展性强的类型定义处理机制。与 `SymbolTypeInfo`、`TypeKind`、`TraitDef` 和 `ConstEvaluator` 等组件紧密协作，为编译器的语义分析阶段提供了强大的类型系统支持。

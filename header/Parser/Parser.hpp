@@ -1,5 +1,5 @@
 #pragma once
-#include "Token.hpp"
+#include "Data/Token/Token.hpp"
 #include <memory>
 #include <vector>
 

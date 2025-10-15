@@ -10,54 +10,59 @@ add_subdirectory(third_party/googletest)
 
 # 对应命令行中的 -I，不过 target_include_directories更强调针对目标对象的引入。
 set(HEADER_ALL
-  header/Lexer
-  header/Parser
-  header/ASTNode
-  header/ASTVisitor
-  header/ASTAnnotation
-  header/ASTAnnotator
-  header/utils
+  ${CMAKE_CURRENT_SOURCE_DIR}/header
+  ${CMAKE_CURRENT_SOURCE_DIR}/header/Data/ASTAnnotation
+  ${CMAKE_CURRENT_SOURCE_DIR}/header/Data/ASTNode
+  ${CMAKE_CURRENT_SOURCE_DIR}/header/Data/Token
+  ${CMAKE_CURRENT_SOURCE_DIR}/header/Lexer
+  ${CMAKE_CURRENT_SOURCE_DIR}/header/Parser
+  ${CMAKE_CURRENT_SOURCE_DIR}/header/Semantic
+  ${CMAKE_CURRENT_SOURCE_DIR}/header/Semantic/ASTVisitor
+  ${CMAKE_CURRENT_SOURCE_DIR}/header/Semantic/BuildInInit
+  ${CMAKE_CURRENT_SOURCE_DIR}/header/Semantic/ConstTypeManager
+  ${CMAKE_CURRENT_SOURCE_DIR}/header/utils
 )
 
 set(EXECUTABLE_SOURCES
-  src/ASTNode/ASTRootNode.cpp
-  src/ASTNode/ExprArrayIndexNode.cpp
-  src/ASTNode/ExprArrayNode.cpp
-  src/ASTNode/ExprBlockNode.cpp
-  src/ASTNode/ExprCallNode.cpp
-  src/ASTNode/ExprFieldNode.cpp
-  src/ASTNode/ExprFlowNode.cpp
-  src/ASTNode/ExprGroupNode.cpp
-  src/ASTNode/ExprIfNode.cpp
-  src/ASTNode/ExprLiteralNode.cpp
-  src/ASTNode/ExprLoopNode.cpp
-  src/ASTNode/ExprMethodNode.cpp
-  src/ASTNode/ExprOperBinaryNode.cpp
-  src/ASTNode/ExprOperUnaryNode.cpp
-  src/ASTNode/ExprPathNode.cpp
-  src/ASTNode/ExprStructNode.cpp
-  src/ASTNode/ItemConstNode.cpp
-  src/ASTNode/ItemEnumNode.cpp
-  src/ASTNode/ItemFnNode.cpp
-  src/ASTNode/ItemImplNode.cpp
-  src/ASTNode/ItemStructNode.cpp
-  src/ASTNode/ItemTraitNode.cpp
-  src/ASTNode/PathNode.cpp
-  src/ASTNode/PatternIDNode.cpp
-  src/ASTNode/PatternLiteralNode.cpp
-  src/ASTNode/PatternPathNode.cpp
-  src/ASTNode/PatternWildNode.cpp
-  src/ASTNode/PatternReferNode.cpp
-  src/ASTNode/StmtEmptyNode.cpp
-  src/ASTNode/StmtExprNode.cpp
-  src/ASTNode/StmtItemNode.cpp
-  src/ASTNode/StmtLetNode.cpp
-  src/ASTNode/TypeArrayNode.cpp
-  src/ASTNode/TypePathNode.cpp
-  src/ASTNode/TypeReferNode.cpp
-  src/ASTNode/TypeUnitNode.cpp
+  src/Data/ASTNode/ASTRootNode.cpp
+  src/Data/ASTNode/ExprArrayIndexNode.cpp
+  src/Data/ASTNode/ExprArrayNode.cpp
+  src/Data/ASTNode/ExprBlockNode.cpp
+  src/Data/ASTNode/ExprCallNode.cpp
+  src/Data/ASTNode/ExprFieldNode.cpp
+  src/Data/ASTNode/ExprFlowNode.cpp
+  src/Data/ASTNode/ExprGroupNode.cpp
+  src/Data/ASTNode/ExprIfNode.cpp
+  src/Data/ASTNode/ExprLiteralNode.cpp
+  src/Data/ASTNode/ExprLoopNode.cpp
+  src/Data/ASTNode/ExprMethodNode.cpp
+  src/Data/ASTNode/ExprOperBinaryNode.cpp
+  src/Data/ASTNode/ExprOperUnaryNode.cpp
+  src/Data/ASTNode/ExprPathNode.cpp
+  src/Data/ASTNode/ExprStructNode.cpp
+  src/Data/ASTNode/ExprUnderScoreNode.cpp
+  src/Data/ASTNode/ItemConstNode.cpp
+  src/Data/ASTNode/ItemEnumNode.cpp
+  src/Data/ASTNode/ItemFnNode.cpp
+  src/Data/ASTNode/ItemImplNode.cpp
+  src/Data/ASTNode/ItemStructNode.cpp
+  src/Data/ASTNode/ItemTraitNode.cpp
+  src/Data/ASTNode/PathNode.cpp
+  src/Data/ASTNode/PatternIDNode.cpp
+  src/Data/ASTNode/PatternLiteralNode.cpp
+  src/Data/ASTNode/PatternPathNode.cpp
+  src/Data/ASTNode/PatternWildNode.cpp
+  src/Data/ASTNode/PatternReferNode.cpp
+  src/Data/ASTNode/StmtEmptyNode.cpp
+  src/Data/ASTNode/StmtExprNode.cpp
+  src/Data/ASTNode/StmtItemNode.cpp
+  src/Data/ASTNode/StmtLetNode.cpp
+  src/Data/ASTNode/TypeArrayNode.cpp
+  src/Data/ASTNode/TypePathNode.cpp
+  src/Data/ASTNode/TypeReferNode.cpp
+  src/Data/ASTNode/TypeUnitNode.cpp
+  src/Data/Token/Token.cpp
   src/Lexer/Lexer.cpp
-  src/Lexer/Token.cpp
   src/Parser/Parser.cpp
   src/Parser/ParserExpr.cpp
   src/Parser/ParserItem.cpp
@@ -65,21 +70,21 @@ set(EXECUTABLE_SOURCES
   src/Parser/ParserPattern.cpp
   src/Parser/ParserStmt.cpp
   src/Parser/ParserType.cpp
-  src/ASTAnnotation/ConstEvaluator.cpp
-  src/ASTAnnotation/ConstInfo.cpp
-  src/ASTAnnotation/ConstValue.cpp
-  src/ASTAnnotation/Scope.cpp
-  src/ASTAnnotation/Symbol.cpp
-  src/ASTAnnotation/TraitDef.cpp
-  src/ASTAnnotation/TypeDef.cpp
-  src/ASTAnnotation/TypeKind.cpp
-  src/ASTAnnotation/ValueInfo.cpp
-  src/ASTVisitor/ConstTypeCollector.cpp
-  src/ASTVisitor/ConstTypeEvaluator.cpp
-  src/ASTVisitor/FuncTraitCollector.cpp
-  src/ASTVisitor/SemanticChecker.cpp
-  src/ASTAnnotator/ASTAnnotator.cpp
-  src/ASTAnnotator/BuiltInInit.cpp
+  src/Data/ASTAnnotation/ConstInfo.cpp
+  src/Data/ASTAnnotation/ConstValue.cpp
+  src/Data/ASTAnnotation/Scope.cpp
+  src/Data/ASTAnnotation/Symbol.cpp
+  src/Data/ASTAnnotation/TraitDef.cpp
+  src/Data/ASTAnnotation/TypeDef.cpp
+  src/Data/ASTAnnotation/TypeKind.cpp
+  src/Data/ASTAnnotation/ValueInfo.cpp
+  src/Semantic/ASTVisitor/ConstTypeCollector.cpp
+  src/Semantic/ASTVisitor/ConstTypeEvaluator.cpp
+  src/Semantic/ASTVisitor/FuncTraitCollector.cpp
+  src/Semantic/ASTVisitor/SemanticChecker.cpp
+  src/Semantic/ASTAnnotator.cpp
+  src/Semantic/BuildInInit/BuiltInInit.cpp
+  src/Semantic/ConstTypeManager/ConstEvaluator.cpp
   src/utils/position.cpp
   src/utils/exception.cpp
   src/utils/logger.cpp

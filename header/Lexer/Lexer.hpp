@@ -1,5 +1,5 @@
 #pragma once
-#include "Token.hpp"
+#include "Data/Token/Token.hpp"
 
 /*
 The Lexer converts the string, a plain copy of the whole program into a stream

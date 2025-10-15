@@ -1,8 +1,8 @@
 #include "ItemFnNode.hpp"
+#include "ValueInfo.hpp"
 #include "ExprBlockNode.hpp"
 #include "PatternANode.hpp"
 #include "TypeANode.hpp"
-#include "ValueInfo.hpp"
 #include "Visitor.hpp"
 
 ItemFnNode::ItemFnNode(const std::string &ID,
